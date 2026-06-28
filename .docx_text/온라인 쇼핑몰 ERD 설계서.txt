@@ -1,0 +1,675 @@
+온라인쇼핑몰ERD상세설계서v1
+설계목적
+주문·결제·재고의정합성을지킨다.상품,주문,결제,배송,리뷰의상태변경이력을추적할수있게한다.동시주문,중복결제,중복리뷰같은RaceCondition을DB제약조건으로방어한다.조회API패턴에맞는인덱스를설계한다.배치,장애복구,운영모니터링을위한테이블을포함한다.주문·결제·재고의정합성을지킨다.상품,주문,결제,배송,리뷰의상태변경이력을추적할수있게한다.동시주문,중복결제,중복리뷰같은RaceCondition을DB제약조건으로방어한다.조회API패턴에맞는인덱스를설계한다.배치,장애복구,운영모니터링을위한테이블을포함한다.이문서는SpringBoot기반온라인쇼핑몰의운영가능한데이터모델을정의한다. 핵심목표는다음과같다.
+주문·결제·재고의정합성을지킨다.
+상품,주문,결제,배송,리뷰의상태변경이력을추적할수있게한다.
+동시주문,중복결제,중복리뷰같은RaceCondition을DB제약조건으로방어한다.
+조회API패턴에맞는인덱스를설계한다.
+배치,장애복구,운영모니터링을위한테이블을포함한다.
+주문·결제·재고의정합성을지킨다.
+상품,주문,결제,배송,리뷰의상태변경이력을추적할수있게한다.
+동시주문,중복결제,중복리뷰같은RaceCondition을DB제약조건으로방어한다.
+조회API패턴에맞는인덱스를설계한다.
+배치,장애복구,운영모니터링을위한테이블을포함한다.
+erDiagramMEMBER||--o{ORDERS:places MEMBER||--o{REVIEW:writes MEMBER ||--o{CART : ownsMEMBER||--o{COUPON_ISSUE:receives MEMBER ||--o{POINT_HISTORY : hasCATEGORY||--o{PRODUCT:contains PRODUCT||--||INVENTORY:hasPRODUCT||--o{ORDER_ITEM:ordered_as PRODUCT||--o{REVIEW:reviewed PRODUCT||--o{CART_ITEM:containedPRODUCT||--||PRODUCT_STAT:summarized_byORDERS||--o{ORDER_ITEM:contains ORDERS||--||PAYMENT:paid_by ORDERS||--||DELIVERY:delivered_by ORDERS||--o{ORDER_EVENT_LOG:logsORDER_ITEM||--o|REVIEW:reviewed_by CART ||--o{CART_ITEM : containsCOUPON||--o{COUPON_ISSUE:issued_as ORDERS||--o|COUPON_ISSUE:useserDiagramMEMBER||--o{ORDERS:places MEMBER||--o{REVIEW:writes MEMBER ||--o{CART : ownsMEMBER||--o{COUPON_ISSUE:receives MEMBER ||--o{POINT_HISTORY : hasCATEGORY||--o{PRODUCT:contains PRODUCT||--||INVENTORY:hasPRODUCT||--o{ORDER_ITEM:ordered_as PRODUCT||--o{REVIEW:reviewed PRODUCT||--o{CART_ITEM:containedPRODUCT||--||PRODUCT_STAT:summarized_byORDERS||--o{ORDER_ITEM:contains ORDERS||--||PAYMENT:paid_by ORDERS||--||DELIVERY:delivered_by ORDERS||--o{ORDER_EVENT_LOG:logsORDER_ITEM||--o|REVIEW:reviewed_by CART ||--o{CART_ITEM : containsCOUPON||--o{COUPON_ISSUE:issued_as ORDERS||--o|COUPON_ISSUE:uses전체ERD개요
+erDiagram
+MEMBER||--o{ORDERS:places MEMBER||--o{REVIEW:writes MEMBER ||--o{CART : owns
+MEMBER||--o{COUPON_ISSUE:receives MEMBER ||--o{POINT_HISTORY : has
+CATEGORY||--o{PRODUCT:contains PRODUCT||--||INVENTORY:has
+PRODUCT||--o{ORDER_ITEM:ordered_as PRODUCT||--o{REVIEW:reviewed PRODUCT||--o{CART_ITEM:contained
+PRODUCT||--||PRODUCT_STAT:summarized_by
+ORDERS||--o{ORDER_ITEM:contains ORDERS||--||PAYMENT:paid_by ORDERS||--||DELIVERY:delivered_by ORDERS||--o{ORDER_EVENT_LOG:logs
+ORDER_ITEM||--o|REVIEW:reviewed_by CART ||--o{CART_ITEM : contains
+COUPON||--o{COUPON_ISSUE:issued_as ORDERS||--o|COUPON_ISSUE:uses
+erDiagram
+MEMBER||--o{ORDERS:places MEMBER||--o{REVIEW:writes MEMBER ||--o{CART : owns
+MEMBER||--o{COUPON_ISSUE:receives MEMBER ||--o{POINT_HISTORY : has
+CATEGORY||--o{PRODUCT:contains PRODUCT||--||INVENTORY:has
+PRODUCT||--o{ORDER_ITEM:ordered_as PRODUCT||--o{REVIEW:reviewed PRODUCT||--o{CART_ITEM:contained
+PRODUCT||--||PRODUCT_STAT:summarized_by
+ORDERS||--o{ORDER_ITEM:contains ORDERS||--||PAYMENT:paid_by ORDERS||--||DELIVERY:delivered_by ORDERS||--o{ORDER_EVENT_LOG:logs
+ORDER_ITEM||--o|REVIEW:reviewed_by CART ||--o{CART_ITEM : contains
+COUPON||--o{COUPON_ISSUE:issued_as ORDERS||--o|COUPON_ISSUE:uses
+BATCH_JOB_EXECUTION||--o{BATCH_FAILURE:hasBATCH_JOB_EXECUTION||--o{BATCH_FAILURE:has핵심설계원칙
+BATCH_JOB_EXECUTION||--o{BATCH_FAILURE:has
+BATCH_JOB_EXECUTION||--o{BATCH_FAILURE:has
+2-1.주문과상품은다대다로설계하지않는다
+주문과상품은겉으로는N:M관계처럼보인다.
+OrderN:MProductOrderN:MProductorder_itemorder_item하지만실무에서는반드시중간엔티티인을둔다.
+OrderN:MProduct
+OrderN:MProduct
+order_item
+order_item
+orders1 : Norder_item product1 : Norder_itemorders1 : Norder_item product1 : Norder_item이유는주문상품에단순연결정보만있는것이아니라,주문당시의상품정보가저장되어야하기때문이다.
+orders1 : Norder_item product1 : Norder_item
+orders1 : Norder_item product1 : Norder_item
+주문당시상품명주문당시가격주문수량주문당시옵션명할인금액주문당시상품명주문당시가격주문수량주문당시옵션명할인금액상품명이바뀌어도과거주문내역은바뀌면안된다. 상품 가격이 바뀌어도 과거 주문 금액은 바뀌면 안 된다.
+주문당시상품명
+주문당시가격
+주문수량
+주문당시옵션명
+할인금액
+주문당시상품명
+주문당시가격
+주문수량
+주문당시옵션명
+할인금액
+2-2.상품과재고를분리한다
+상품정보와재고정보는변경성격이다르다.
+product이름,가격,카테고리,판매상태inventory총재고,예약재고,판매가능재고product이름,가격,카테고리,판매상태inventory총재고,예약재고,판매가능재고상품정보는조회가많고변경이상대적으로적다.
+product
+이름,가격,카테고리,판매상태
+inventory
+총재고,예약재고,판매가능재고
+product
+이름,가격,카테고리,판매상태
+inventory
+총재고,예약재고,판매가능재고
+재고정보는주문시마다자주변경되며동시성제어가필요하다.
+product.stock_quantityproduct.stock_quantity따라서운영환경에서는 이좋다.
+product.stock_quantity
+product.stock_quantity
+2-3.결제는멱등성을가진다
+payment_key idempotency_key pg_transaction_idpayment_key idempotency_key pg_transaction_id결제 승인 요청과 PG콜백은 중복으로 들어올 수 있다. 따라서다음값은UNIQUE제약조건을둔다.
+payment_key idempotency_key pg_transaction_id
+payment_key idempotency_key pg_transaction_id
+하나로처리하기보다
+테이블을분리하는것
+inventoryinventory
+inventory
+inventory
+동일결제가중복요청되어도한번만승인처리되어야한다.
+2-4.리뷰중복작성은DB제약조건으로막는다
+애플리케이션에서먼저조회하고막는것만으로는부족하다.
+요청:리뷰없음확인요청:리뷰없음확인요청:리뷰INSERT요청:리뷰INSERT요청:리뷰없음확인요청:리뷰없음확인요청:리뷰INSERT요청:리뷰INSERTALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);review.order_item_idreview.order_item_id따라서에 UNIQUE제약조건을둔다.
+요청:리뷰없음확인
+요청:리뷰없음확인
+요청:리뷰INSERT
+요청:리뷰INSERT
+요청:리뷰없음확인
+요청:리뷰없음확인
+요청:리뷰INSERT
+요청:리뷰INSERT
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+review.order_item_id
+review.order_item_id
+테이블상세설계
+3-1.member
+CREATETABLEmember(member_id BIGINT PRIMARY KEY AUTO_INCREMENT, email VARCHAR(255) NOTNULL,CREATETABLEmember(member_id BIGINT PRIMARY KEY AUTO_INCREMENT, email VARCHAR(255) NOTNULL,회원테이블이다.
+CREATETABLEmember(
+member_id BIGINT PRIMARY KEY AUTO_INCREMENT, email VARCHAR(255) NOTNULL,
+CREATETABLEmember(
+member_id BIGINT PRIMARY KEY AUTO_INCREMENT, email VARCHAR(255) NOTNULL,
+passwordVARCHAR(255)NOTNULL, name VARCHAR(100) NOT NULL, phoneVARCHAR(30),roleVARCHAR(30)NOTNULL, statusVARCHAR(30)NOTNULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,CONSTRAINTuk_member_emailUNIQUE(email));passwordVARCHAR(255)NOTNULL, name VARCHAR(100) NOT NULL, phoneVARCHAR(30),roleVARCHAR(30)NOTNULL, statusVARCHAR(30)NOTNULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,CONSTRAINTuk_member_emailUNIQUE(email));roleUSERADMINstatusACTIVEDORMANTWITHDRAWNBLOCKEDroleUSERADMINstatusACTIVEDORMANTWITHDRAWNBLOCKED상태값
+passwordVARCHAR(255)NOTNULL, name VARCHAR(100) NOT NULL, phoneVARCHAR(30),
+roleVARCHAR(30)NOTNULL, statusVARCHAR(30)NOTNULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,
+CONSTRAINTuk_member_emailUNIQUE(email)
+);
+passwordVARCHAR(255)NOTNULL, name VARCHAR(100) NOT NULL, phoneVARCHAR(30),
+roleVARCHAR(30)NOTNULL, statusVARCHAR(30)NOTNULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,
+CONSTRAINTuk_member_emailUNIQUE(email)
+);
+role
+USER
+ADMIN
+status
+ACTIVE
+DORMANT
+WITHDRAWN
+BLOCKED
+role
+USER
+ADMIN
+status
+ACTIVE
+DORMANT
+WITHDRAWN
+BLOCKED
+CREATEINDEXix_member_status_created ONmember(status,created_atDESC);CREATEINDEXix_member_status_created ONmember(status,created_atDESC);주요인덱스
+CREATEINDEXix_member_status_created ONmember(status,created_atDESC);
+CREATEINDEXix_member_status_created ONmember(status,created_atDESC);
+3-2.category
+CREATETABLEcategory(category_idBIGINTPRIMARYKEYAUTO_INCREMENT,parent_idBIGINTNULL,nameVARCHAR(100)NOTNULL,depthINT NOTNULL, sort_orderINT NOTNULL, is_activeBOOLEANNOTNULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CREATETABLEcategory(category_idBIGINTPRIMARYKEYAUTO_INCREMENT,parent_idBIGINTNULL,nameVARCHAR(100)NOTNULL,depthINT NOTNULL, sort_orderINT NOTNULL, is_activeBOOLEANNOTNULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,상품카테고리테이블이다.
+CREATETABLEcategory(
+category_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+parent_idBIGINTNULL,
+nameVARCHAR(100)NOTNULL,
+depthINT NOTNULL, sort_orderINT NOTNULL, is_activeBOOLEANNOTNULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CREATETABLEcategory(
+category_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+parent_idBIGINTNULL,
+nameVARCHAR(100)NOTNULL,
+depthINT NOTNULL, sort_orderINT NOTNULL, is_activeBOOLEANNOTNULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_category_parentFOREIGNKEY(parent_id)REFERENCEScategory(category_id));CONSTRAINTfk_category_parentFOREIGNKEY(parent_id)REFERENCEScategory(category_id));CREATEINDEXix_category_parent_sort ONcategory(parent_id,sort_order);CREATEINDEXix_category_parent_sort ONcategory(parent_id,sort_order);주요인덱스
+CONSTRAINTfk_category_parent
+FOREIGNKEY(parent_id)REFERENCEScategory(category_id)
+);
+CONSTRAINTfk_category_parent
+FOREIGNKEY(parent_id)REFERENCEScategory(category_id)
+);
+CREATEINDEXix_category_parent_sort ONcategory(parent_id,sort_order);
+CREATEINDEXix_category_parent_sort ONcategory(parent_id,sort_order);
+3-3.product
+상품기본정보테이블이다.
+CREATETABLEproduct(product_idBIGINTPRIMARYKEYAUTO_INCREMENT,category_idBIGINTNOTNULL, nameVARCHAR(255)NOTNULL,priceINTNOTNULL,statusVARCHAR(30)NOTNULL,thumbnail_urlVARCHAR(500), descriptionTEXT,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,CONSTRAINTfk_product_categoryFOREIGNKEY(category_id)REFERENCEScategory(category_id),CONSTRAINTchk_product_price CHECK(price>=0));CREATETABLEproduct(product_idBIGINTPRIMARYKEYAUTO_INCREMENT,category_idBIGINTNOTNULL, nameVARCHAR(255)NOTNULL,priceINTNOTNULL,statusVARCHAR(30)NOTNULL,thumbnail_urlVARCHAR(500), descriptionTEXT,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,CONSTRAINTfk_product_categoryFOREIGNKEY(category_id)REFERENCEScategory(category_id),CONSTRAINTchk_product_price CHECK(price>=0));statusSELLINGSOLD_OUTHIDDENDISCONTINUEDstatusSELLINGSOLD_OUTHIDDENDISCONTINUED상태값
+CREATETABLEproduct(
+product_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+category_idBIGINTNOTNULL, nameVARCHAR(255)NOTNULL,
+priceINTNOTNULL,
+statusVARCHAR(30)NOTNULL,
+thumbnail_urlVARCHAR(500), descriptionTEXT,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,
+CONSTRAINTfk_product_category
+FOREIGNKEY(category_id)REFERENCEScategory(category_id),
+CONSTRAINTchk_product_price CHECK(price>=0)
+);
+CREATETABLEproduct(
+product_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+category_idBIGINTNOTNULL, nameVARCHAR(255)NOTNULL,
+priceINTNOTNULL,
+statusVARCHAR(30)NOTNULL,
+thumbnail_urlVARCHAR(500), descriptionTEXT,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,
+CONSTRAINTfk_product_category
+FOREIGNKEY(category_id)REFERENCEScategory(category_id),
+CONSTRAINTchk_product_price CHECK(price>=0)
+);
+status
+SELLING
+SOLD_OUT
+HIDDEN
+DISCONTINUED
+status
+SELLING
+SOLD_OUT
+HIDDEN
+DISCONTINUED
+주요인덱스
+상품목록조회용:
+CREATEINDEXix_product_category_status_createdONproduct(category_id,status,created_atDESC,product_idDESC);CREATEINDEXix_product_category_status_createdONproduct(category_id,status,created_atDESC,product_idDESC);CREATEINDEXix_product_status_createdONproduct(status,created_atDESC,product_idDESC);CREATEINDEXix_product_status_createdONproduct(status,created_atDESC,product_idDESC);관리자상품검색용:
+CREATEINDEXix_product_category_status_created
+ONproduct(category_id,status,created_atDESC,product_idDESC);
+CREATEINDEXix_product_category_status_created
+ONproduct(category_id,status,created_atDESC,product_idDESC);
+CREATEINDEXix_product_status_created
+ONproduct(status,created_atDESC,product_idDESC);
+CREATEINDEXix_product_status_created
+ONproduct(status,created_atDESC,product_idDESC);
+3-4.inventory
+재고테이블이다.
+CREATE TABLEinventory( product_idBIGINTPRIMARYKEY, total_quantityINT NOTNULL, reserved_quantityINTNOTNULL, available_quantityINTNOTNULL, versionBIGINT NOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_inventory_productFOREIGNKEY(product_id)REFERENCESproduct(product_id),CONSTRAINTchk_inventory_quantity CHECK(total_quantity>=0ANDreserved_quantity>=0 ANDavailable_quantity>=0));CREATE TABLEinventory( product_idBIGINTPRIMARYKEY, total_quantityINT NOTNULL, reserved_quantityINTNOTNULL, available_quantityINTNOTNULL, versionBIGINT NOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_inventory_productFOREIGNKEY(product_id)REFERENCESproduct(product_id),CONSTRAINTchk_inventory_quantity CHECK(total_quantity>=0ANDreserved_quantity>=0 ANDavailable_quantity>=0));컬럼의미
+CREATE TABLEinventory( product_idBIGINTPRIMARYKEY, total_quantityINT NOTNULL, reserved_quantityINTNOTNULL, available_quantityINTNOTNULL, versionBIGINT NOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_inventory_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id),
+CONSTRAINTchk_inventory_quantity CHECK(
+total_quantity>=0
+ANDreserved_quantity>=0 ANDavailable_quantity>=0
+)
+);
+CREATE TABLEinventory( product_idBIGINTPRIMARYKEY, total_quantityINT NOTNULL, reserved_quantityINTNOTNULL, available_quantityINTNOTNULL, versionBIGINT NOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_inventory_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id),
+CONSTRAINTchk_inventory_quantity CHECK(
+total_quantity>=0
+ANDreserved_quantity>=0 ANDavailable_quantity>=0
+)
+);
+컬럼
+의미
+total_quantity
+전체보유재고
+reserved_quantity
+결제대기등으로예약된재고
+available_quantity
+실제주문가능한재고
+version
+낙관적락용버전
+UPDATEinventorySET reserved_quantity = reserved_quantity + :quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;UPDATEinventorySET reserved_quantity = reserved_quantity + :quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;재고예약SQL
+UPDATEinventory
+SET reserved_quantity = reserved_quantity + :quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+UPDATEinventory
+SET reserved_quantity = reserved_quantity + :quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantityWHEREproduct_id=:productIdANDreserved_quantity>=:quantity;UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantityWHEREproduct_id=:productIdANDreserved_quantity>=:quantity;예약재고확정SQL
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantity
+WHEREproduct_id=:productId
+ANDreserved_quantity>=:quantity;
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantity
+WHEREproduct_id=:productId
+ANDreserved_quantity>=:quantity;
+UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productIdANDreserved_quantity>=:quantity;UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productIdANDreserved_quantity>=:quantity;예약재고해제SQL
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productId
+ANDreserved_quantity>=:quantity;
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productId
+ANDreserved_quantity>=:quantity;
+3-5.orders
+CREATETABLEorders(order_idBIGINTPRIMARYKEYAUTO_INCREMENT, order_noVARCHAR(50) NOTNULL,member_id BIGINT NOTNULL, order_statusVARCHAR(50)NOTNULL, total_priceINT NOTNULL,total_discount_amountINTNOTNULLDEFAULT0, final_payment_amountINT NOTNULL, ordered_atDATETIMENOTNULL,paid_atDATETIMENULL, cancelled_atDATETIMENULL, created_at DATETIME NOT NULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_orders_memberCREATETABLEorders(order_idBIGINTPRIMARYKEYAUTO_INCREMENT, order_noVARCHAR(50) NOTNULL,member_id BIGINT NOTNULL, order_statusVARCHAR(50)NOTNULL, total_priceINT NOTNULL,total_discount_amountINTNOTNULLDEFAULT0, final_payment_amountINT NOTNULL, ordered_atDATETIMENOTNULL,paid_atDATETIMENULL, cancelled_atDATETIMENULL, created_at DATETIME NOT NULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_orders_member주문마스터테이블이다.
+CREATETABLEorders(
+order_idBIGINTPRIMARYKEYAUTO_INCREMENT, order_noVARCHAR(50) NOTNULL,
+member_id BIGINT NOTNULL, order_statusVARCHAR(50)NOTNULL, total_priceINT NOTNULL,
+total_discount_amountINTNOTNULLDEFAULT0, final_payment_amountINT NOTNULL, ordered_atDATETIMENOTNULL,
+paid_atDATETIMENULL, cancelled_atDATETIMENULL, created_at DATETIME NOT NULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_orders_member
+CREATETABLEorders(
+order_idBIGINTPRIMARYKEYAUTO_INCREMENT, order_noVARCHAR(50) NOTNULL,
+member_id BIGINT NOTNULL, order_statusVARCHAR(50)NOTNULL, total_priceINT NOTNULL,
+total_discount_amountINTNOTNULLDEFAULT0, final_payment_amountINT NOTNULL, ordered_atDATETIMENOTNULL,
+paid_atDATETIMENULL, cancelled_atDATETIMENULL, created_at DATETIME NOT NULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_orders_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTuk_orders_order_noUNIQUE(order_no), CONSTRAINTchk_orders_priceCHECK(total_price>=0ANDfinal_payment_amount>=0));FOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTuk_orders_order_noUNIQUE(order_no), CONSTRAINTchk_orders_priceCHECK(total_price>=0ANDfinal_payment_amount>=0));PENDING_PAYMENT PAID PAYMENT_FAILED PREPARING SHIPPEDDELIVERED CONFIRMED CANCEL_REQUESTED CANCELLED REFUND_REQUESTED REFUNDEDPENDING_PAYMENT PAID PAYMENT_FAILED PREPARING SHIPPEDDELIVERED CONFIRMED CANCEL_REQUESTED CANCELLED REFUND_REQUESTED REFUNDED주문상태
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTuk_orders_order_noUNIQUE(order_no), CONSTRAINTchk_orders_price
+CHECK(total_price>=0ANDfinal_payment_amount>=0)
+);
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTuk_orders_order_noUNIQUE(order_no), CONSTRAINTchk_orders_price
+CHECK(total_price>=0ANDfinal_payment_amount>=0)
+);
+PENDING_PAYMENT PAID PAYMENT_FAILED PREPARING SHIPPEDDELIVERED CONFIRMED CANCEL_REQUESTED CANCELLED REFUND_REQUESTED REFUNDED
+PENDING_PAYMENT PAID PAYMENT_FAILED PREPARING SHIPPEDDELIVERED CONFIRMED CANCEL_REQUESTED CANCELLED REFUND_REQUESTED REFUNDED
+주요인덱스
+내주문목록조회:
+CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC, order_idDESC);CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC, order_idDESC);관리자주문검색:
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC, order_idDESC);
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC, order_idDESC);
+CREATEINDEXix_orders_status_orderedONorders(order_status,ordered_atDESC,order_idDESC);CREATEINDEXix_orders_status_orderedONorders(order_status,ordered_atDESC,order_idDESC);CREATEINDEXix_orders_status_created ONorders(order_status,created_at);CREATEINDEXix_orders_status_created ONorders(order_status,created_at);결제대기만료배치:
+CREATEINDEXix_orders_status_ordered
+ONorders(order_status,ordered_atDESC,order_idDESC);
+CREATEINDEXix_orders_status_ordered
+ONorders(order_status,ordered_atDESC,order_idDESC);
+CREATEINDEXix_orders_status_created ONorders(order_status,created_at);
+CREATEINDEXix_orders_status_created ONorders(order_status,created_at);
+3-6.order_item
+주문상품테이블이다.
+CREATETABLEorder_item(
+order_item_id BIGINT PRIMARY KEY AUTO_INCREMENT, order_idBIGINT NOTNULL,
+product_idBIGINT NOTNULL, product_name_snapshot VARCHAR(255) NOT NULL, option_name_snapshotVARCHAR(255),
+order_priceINTNOTNULL, quantity INT NOTNULL,
+discount_amountINTNOTNULLDEFAULT0, created_atDATETIMENOTNULL,
+CONSTRAINTfk_order_item_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id),
+CONSTRAINTfk_order_item_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id),
+CONSTRAINTchk_order_item_quantity CHECK(quantity>0),
+CONSTRAINTchk_order_item_price CHECK(order_price>=0)
+);
+CREATEINDEXix_order_item_order ONorder_item(order_id);CREATEINDEXix_order_item_product ONorder_item(product_id);CREATEINDEXix_order_item_order ONorder_item(order_id);CREATEINDEXix_order_item_product ONorder_item(product_id);주요인덱스
+CREATEINDEXix_order_item_order ONorder_item(order_id);
+CREATEINDEXix_order_item_product ONorder_item(product_id);
+CREATEINDEXix_order_item_order ONorder_item(order_id);
+CREATEINDEXix_order_item_product ONorder_item(product_id);
+3-7.payment
+CREATETABLEpayment(payment_idBIGINT PRIMARYKEYAUTO_INCREMENT,order_idBIGINT NOTNULL, payment_keyVARCHAR(100)NOTNULL, pg_providerVARCHAR(50) NOTNULL, pg_transaction_idVARCHAR(100),idempotency_keyVARCHAR(150)NOTNULL, payment_statusVARCHAR(50) NOTNULL,CREATETABLEpayment(payment_idBIGINT PRIMARYKEYAUTO_INCREMENT,order_idBIGINT NOTNULL, payment_keyVARCHAR(100)NOTNULL, pg_providerVARCHAR(50) NOTNULL, pg_transaction_idVARCHAR(100),idempotency_keyVARCHAR(150)NOTNULL, payment_statusVARCHAR(50) NOTNULL,결제테이블이다.
+CREATETABLEpayment(
+payment_idBIGINT PRIMARYKEYAUTO_INCREMENT,
+order_idBIGINT NOTNULL, payment_keyVARCHAR(100)NOTNULL, pg_providerVARCHAR(50) NOTNULL, pg_transaction_idVARCHAR(100),
+idempotency_keyVARCHAR(150)NOTNULL, payment_statusVARCHAR(50) NOTNULL,
+CREATETABLEpayment(
+payment_idBIGINT PRIMARYKEYAUTO_INCREMENT,
+order_idBIGINT NOTNULL, payment_keyVARCHAR(100)NOTNULL, pg_providerVARCHAR(50) NOTNULL, pg_transaction_idVARCHAR(100),
+idempotency_keyVARCHAR(150)NOTNULL, payment_statusVARCHAR(50) NOTNULL,
+requested_amountINT NOTNULL, approved_amountINTNOTNULLDEFAULT0, cancelled_amountINTNOTNULLDEFAULT0, approved_atDATETIMENULL,failed_atDATETIMENULL, cancelled_atDATETIMENULL, failure_codeVARCHAR(100), failure_messageVARCHAR(500), created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_payment_orderFOREIGNKEY(order_id)REFERENCESorders(order_id),CONSTRAINT uk_payment_keyUNIQUE(payment_key),CONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key), CONSTRAINTuk_payment_pg_transactionUNIQUE(pg_transaction_id),CONSTRAINTchk_payment_amountCHECK(requested_amount>=0ANDapproved_amount>=0ANDcancelled_amount>=0));requested_amountINT NOTNULL, approved_amountINTNOTNULLDEFAULT0, cancelled_amountINTNOTNULLDEFAULT0, approved_atDATETIMENULL,failed_atDATETIMENULL, cancelled_atDATETIMENULL, failure_codeVARCHAR(100), failure_messageVARCHAR(500), created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_payment_orderFOREIGNKEY(order_id)REFERENCESorders(order_id),CONSTRAINT uk_payment_keyUNIQUE(payment_key),CONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key), CONSTRAINTuk_payment_pg_transactionUNIQUE(pg_transaction_id),CONSTRAINTchk_payment_amountCHECK(requested_amount>=0ANDapproved_amount>=0ANDcancelled_amount>=0));READY REQUESTED APPROVED FAILED CANCELLEDPARTIAL_CANCELLED REFUNDEDREADY REQUESTED APPROVED FAILED CANCELLEDPARTIAL_CANCELLED REFUNDED결제상태
+requested_amountINT NOTNULL, approved_amountINTNOTNULLDEFAULT0, cancelled_amountINTNOTNULLDEFAULT0, approved_atDATETIMENULL,
+failed_atDATETIMENULL, cancelled_atDATETIMENULL, failure_codeVARCHAR(100), failure_messageVARCHAR(500), created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_payment_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id),
+CONSTRAINT uk_payment_keyUNIQUE(payment_key),
+CONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key), CONSTRAINTuk_payment_pg_transactionUNIQUE(pg_transaction_id),
+CONSTRAINTchk_payment_amount
+CHECK(requested_amount>=0ANDapproved_amount>=0ANDcancelled_amount>=0)
+);
+requested_amountINT NOTNULL, approved_amountINTNOTNULLDEFAULT0, cancelled_amountINTNOTNULLDEFAULT0, approved_atDATETIMENULL,
+failed_atDATETIMENULL, cancelled_atDATETIMENULL, failure_codeVARCHAR(100), failure_messageVARCHAR(500), created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_payment_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id),
+CONSTRAINT uk_payment_keyUNIQUE(payment_key),
+CONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key), CONSTRAINTuk_payment_pg_transactionUNIQUE(pg_transaction_id),
+CONSTRAINTchk_payment_amount
+CHECK(requested_amount>=0ANDapproved_amount>=0ANDcancelled_amount>=0)
+);
+READY REQUESTED APPROVED FAILED CANCELLED
+PARTIAL_CANCELLED REFUNDED
+READY REQUESTED APPROVED FAILED CANCELLED
+PARTIAL_CANCELLED REFUNDED
+CREATEINDEXix_payment_order ONpayment(order_id);CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);CREATEINDEXix_payment_approved_order_status ONpayment(payment_status,approved_at);CREATEINDEXix_payment_order ONpayment(order_id);CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);CREATEINDEXix_payment_approved_order_status ONpayment(payment_status,approved_at);주요인덱스
+CREATEINDEXix_payment_order ONpayment(order_id);
+CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);
+CREATEINDEXix_payment_approved_order_status ONpayment(payment_status,approved_at);
+CREATEINDEXix_payment_order ONpayment(order_id);
+CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);
+CREATEINDEXix_payment_approved_order_status ONpayment(payment_status,approved_at);
+3-8.delivery
+배송테이블이다.
+CREATETABLEdelivery(delivery_id BIGINT PRIMARYKEY AUTO_INCREMENT,order_idBIGINT NOTNULL, receiver_nameVARCHAR(100)NOTNULL, receiver_phone VARCHAR(30) NOT NULL, zipcodeVARCHAR(20)NOTNULL, address1VARCHAR(255)NOTNULL,address2VARCHAR(255),delivery_status VARCHAR(50) NOT NULL, tracking_numberVARCHAR(100), shipped_atDATETIMENULL, delivered_atDATETIMENULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_delivery_orderFOREIGNKEY(order_id)REFERENCESorders(order_id),CONSTRAINTuk_delivery_orderUNIQUE(order_id));CREATETABLEdelivery(delivery_id BIGINT PRIMARYKEY AUTO_INCREMENT,order_idBIGINT NOTNULL, receiver_nameVARCHAR(100)NOTNULL, receiver_phone VARCHAR(30) NOT NULL, zipcodeVARCHAR(20)NOTNULL, address1VARCHAR(255)NOTNULL,address2VARCHAR(255),delivery_status VARCHAR(50) NOT NULL, tracking_numberVARCHAR(100), shipped_atDATETIMENULL, delivered_atDATETIMENULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_delivery_orderFOREIGNKEY(order_id)REFERENCESorders(order_id),CONSTRAINTuk_delivery_orderUNIQUE(order_id));READY PREPARING SHIPPED DELIVERED RETURNING RETURNEDREADY PREPARING SHIPPED DELIVERED RETURNING RETURNED배송상태
+CREATETABLEdelivery(
+delivery_id BIGINT PRIMARYKEY AUTO_INCREMENT,
+order_idBIGINT NOTNULL, receiver_nameVARCHAR(100)NOTNULL, receiver_phone VARCHAR(30) NOT NULL, zipcodeVARCHAR(20)NOTNULL, address1VARCHAR(255)NOTNULL,
+address2VARCHAR(255),
+delivery_status VARCHAR(50) NOT NULL, tracking_numberVARCHAR(100), shipped_atDATETIMENULL, delivered_atDATETIMENULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_delivery_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id),
+CONSTRAINTuk_delivery_orderUNIQUE(order_id)
+);
+CREATETABLEdelivery(
+delivery_id BIGINT PRIMARYKEY AUTO_INCREMENT,
+order_idBIGINT NOTNULL, receiver_nameVARCHAR(100)NOTNULL, receiver_phone VARCHAR(30) NOT NULL, zipcodeVARCHAR(20)NOTNULL, address1VARCHAR(255)NOTNULL,
+address2VARCHAR(255),
+delivery_status VARCHAR(50) NOT NULL, tracking_numberVARCHAR(100), shipped_atDATETIMENULL, delivered_atDATETIMENULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_delivery_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id),
+CONSTRAINTuk_delivery_orderUNIQUE(order_id)
+);
+READY PREPARING SHIPPED DELIVERED RETURNING RETURNED
+READY PREPARING SHIPPED DELIVERED RETURNING RETURNED
+CREATEINDEXix_delivery_status_created ONdelivery(delivery_status,created_at);CREATEINDEXix_delivery_status_created ONdelivery(delivery_status,created_at);주요인덱스
+CREATEINDEXix_delivery_status_created ONdelivery(delivery_status,created_at);
+CREATEINDEXix_delivery_status_created ONdelivery(delivery_status,created_at);
+3-9.review
+리뷰테이블이다.
+CREATETABLEreview(
+review_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+member_id BIGINT NOTNULL, product_idBIGINT NOTNULL, order_item_idBIGINTNOTNULL, ratingINT NOTNULL,
+contentTEXTNOTNULL, created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL, deleted_atDATETIMENULL,
+CONSTRAINTfk_review_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTfk_review_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id),
+CONSTRAINTfk_review_order_item
+FOREIGNKEY(order_item_id)REFERENCESorder_item(order_item_id),
+CONSTRAINTuk_review_order_itemUNIQUE(order_item_id),
+CONSTRAINTchk_review_rating CHECK(ratingBETWEEN1AND5)
+);
+주요인덱스
+상품리뷰목록:
+CREATEINDEXix_review_product_createdONreview(product_id,created_atDESC,review_idDESC);CREATEINDEXix_review_product_createdONreview(product_id,created_atDESC,review_idDESC);CREATEINDEX ix_review_member_createdONreview(member_id,created_atDESC,review_idDESC);CREATEINDEX ix_review_member_createdONreview(member_id,created_atDESC,review_idDESC);내리뷰목록:
+CREATEINDEXix_review_product_created
+ONreview(product_id,created_atDESC,review_idDESC);
+CREATEINDEXix_review_product_created
+ONreview(product_id,created_atDESC,review_idDESC);
+CREATEINDEX ix_review_member_created
+ONreview(member_id,created_atDESC,review_idDESC);
+CREATEINDEX ix_review_member_created
+ONreview(member_id,created_atDESC,review_idDESC);
+3-10.product_stat
+상품통계테이블이다.
+CREATETABLEproduct_stat( product_idBIGINTPRIMARYKEY,review_countINTNOTNULLDEFAULT0, average_ratingDECIMAL(3,2)NOTNULLDEFAULT0, rating_1_countINTNOTNULLDEFAULT0, rating_2_countINTNOTNULLDEFAULT0, rating_3_countINTNOTNULLDEFAULT0, rating_4_countINTNOTNULLDEFAULT0, rating_5_countINTNOTNULLDEFAULT0, sales_countINTNOTNULLDEFAULT0,updated_atDATETIMENOTNULL,CONSTRAINTfk_product_stat_productFOREIGNKEY(product_id)REFERENCESproduct(product_id));CREATETABLEproduct_stat( product_idBIGINTPRIMARYKEY,review_countINTNOTNULLDEFAULT0, average_ratingDECIMAL(3,2)NOTNULLDEFAULT0, rating_1_countINTNOTNULLDEFAULT0, rating_2_countINTNOTNULLDEFAULT0, rating_3_countINTNOTNULLDEFAULT0, rating_4_countINTNOTNULLDEFAULT0, rating_5_countINTNOTNULLDEFAULT0, sales_countINTNOTNULLDEFAULT0,updated_atDATETIMENOTNULL,CONSTRAINTfk_product_stat_productFOREIGNKEY(product_id)REFERENCESproduct(product_id));3-11.cart
+CREATETABLEproduct_stat( product_idBIGINTPRIMARYKEY,
+review_countINTNOTNULLDEFAULT0, average_ratingDECIMAL(3,2)NOTNULLDEFAULT0, rating_1_countINTNOTNULLDEFAULT0, rating_2_countINTNOTNULLDEFAULT0, rating_3_countINTNOTNULLDEFAULT0, rating_4_countINTNOTNULLDEFAULT0, rating_5_countINTNOTNULLDEFAULT0, sales_countINTNOTNULLDEFAULT0,
+updated_atDATETIMENOTNULL,
+CONSTRAINTfk_product_stat_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id)
+);
+CREATETABLEproduct_stat( product_idBIGINTPRIMARYKEY,
+review_countINTNOTNULLDEFAULT0, average_ratingDECIMAL(3,2)NOTNULLDEFAULT0, rating_1_countINTNOTNULLDEFAULT0, rating_2_countINTNOTNULLDEFAULT0, rating_3_countINTNOTNULLDEFAULT0, rating_4_countINTNOTNULLDEFAULT0, rating_5_countINTNOTNULLDEFAULT0, sales_countINTNOTNULLDEFAULT0,
+updated_atDATETIMENOTNULL,
+CONSTRAINTfk_product_stat_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id)
+);
+CREATETABLE cart (cart_idBIGINTPRIMARYKEYAUTO_INCREMENT,member_id BIGINT NOTNULL, created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_cart_memberFOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTuk_cart_memberUNIQUE(member_id));CREATETABLE cart (cart_idBIGINTPRIMARYKEYAUTO_INCREMENT,member_id BIGINT NOTNULL, created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTfk_cart_memberFOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTuk_cart_memberUNIQUE(member_id));장바구니테이블이다.
+CREATETABLE cart (
+cart_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+member_id BIGINT NOTNULL, created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_cart_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTuk_cart_memberUNIQUE(member_id)
+);
+CREATETABLE cart (
+cart_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+member_id BIGINT NOTNULL, created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTfk_cart_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTuk_cart_memberUNIQUE(member_id)
+);
+3-12.cart_item
+CREATETABLEcart_item(cart_item_id BIGINT PRIMARY KEY AUTO_INCREMENT, cart_idBIGINT NOTNULL,product_idBIGINT NOTNULL, quantity INT NOTNULL, created_atDATETIMENOTNULL,CREATETABLEcart_item(cart_item_id BIGINT PRIMARY KEY AUTO_INCREMENT, cart_idBIGINT NOTNULL,product_idBIGINT NOTNULL, quantity INT NOTNULL, created_atDATETIMENOTNULL,장바구니상품테이블이다.
+CREATETABLEcart_item(
+cart_item_id BIGINT PRIMARY KEY AUTO_INCREMENT, cart_idBIGINT NOTNULL,
+product_idBIGINT NOTNULL, quantity INT NOTNULL, created_atDATETIMENOTNULL,
+CREATETABLEcart_item(
+cart_item_id BIGINT PRIMARY KEY AUTO_INCREMENT, cart_idBIGINT NOTNULL,
+product_idBIGINT NOTNULL, quantity INT NOTNULL, created_atDATETIMENOTNULL,
+updated_atDATETIMENOTNULL,CONSTRAINTfk_cart_item_cartFOREIGNKEY(cart_id)REFERENCEScart(cart_id),CONSTRAINTfk_cart_item_productFOREIGNKEY(product_id)REFERENCESproduct(product_id),CONSTRAINT uk_cart_item_product UNIQUE(cart_id, product_id),CONSTRAINTchk_cart_item_quantityCHECK(quantity>0));updated_atDATETIMENOTNULL,CONSTRAINTfk_cart_item_cartFOREIGNKEY(cart_id)REFERENCEScart(cart_id),CONSTRAINTfk_cart_item_productFOREIGNKEY(product_id)REFERENCESproduct(product_id),CONSTRAINT uk_cart_item_product UNIQUE(cart_id, product_id),CONSTRAINTchk_cart_item_quantityCHECK(quantity>0));3-13.coupon
+updated_atDATETIMENOTNULL,
+CONSTRAINTfk_cart_item_cart
+FOREIGNKEY(cart_id)REFERENCEScart(cart_id),
+CONSTRAINTfk_cart_item_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id),
+CONSTRAINT uk_cart_item_product UNIQUE(cart_id, product_id),CONSTRAINTchk_cart_item_quantity
+CHECK(quantity>0)
+);
+updated_atDATETIMENOTNULL,
+CONSTRAINTfk_cart_item_cart
+FOREIGNKEY(cart_id)REFERENCEScart(cart_id),
+CONSTRAINTfk_cart_item_product
+FOREIGNKEY(product_id)REFERENCESproduct(product_id),
+CONSTRAINT uk_cart_item_product UNIQUE(cart_id, product_id),CONSTRAINTchk_cart_item_quantity
+CHECK(quantity>0)
+);
+CREATETABLEcoupon(coupon_idBIGINTPRIMARYKEYAUTO_INCREMENT, nameVARCHAR(255)NOTNULL,discount_typeVARCHAR(30) NOTNULL, discount_valueINT NOTNULL, minimum_order_amountINTNOTNULLDEFAULT0, issued_quantity INT NOTNULL,used_quantityINTNOTNULLDEFAULT0, valid_fromDATETIMENOTNULL, valid_toDATETIMENOTNULL,statusVARCHAR(30)NOTNULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTchk_coupon_quantity CHECK(issued_quantity>=0ANDused_quantity>=0));CREATETABLEcoupon(coupon_idBIGINTPRIMARYKEYAUTO_INCREMENT, nameVARCHAR(255)NOTNULL,discount_typeVARCHAR(30) NOTNULL, discount_valueINT NOTNULL, minimum_order_amountINTNOTNULLDEFAULT0, issued_quantity INT NOTNULL,used_quantityINTNOTNULLDEFAULT0, valid_fromDATETIMENOTNULL, valid_toDATETIMENOTNULL,statusVARCHAR(30)NOTNULL,created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,CONSTRAINTchk_coupon_quantity CHECK(issued_quantity>=0ANDused_quantity>=0));쿠폰마스터테이블이다.
+CREATETABLEcoupon(
+coupon_idBIGINTPRIMARYKEYAUTO_INCREMENT, nameVARCHAR(255)NOTNULL,
+discount_typeVARCHAR(30) NOTNULL, discount_valueINT NOTNULL, minimum_order_amountINTNOTNULLDEFAULT0, issued_quantity INT NOTNULL,
+used_quantityINTNOTNULLDEFAULT0, valid_fromDATETIMENOTNULL, valid_toDATETIMENOTNULL,
+statusVARCHAR(30)NOTNULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTchk_coupon_quantity CHECK(issued_quantity>=0ANDused_quantity>=0)
+);
+CREATETABLEcoupon(
+coupon_idBIGINTPRIMARYKEYAUTO_INCREMENT, nameVARCHAR(255)NOTNULL,
+discount_typeVARCHAR(30) NOTNULL, discount_valueINT NOTNULL, minimum_order_amountINTNOTNULLDEFAULT0, issued_quantity INT NOTNULL,
+used_quantityINTNOTNULLDEFAULT0, valid_fromDATETIMENOTNULL, valid_toDATETIMENOTNULL,
+statusVARCHAR(30)NOTNULL,
+created_atDATETIMENOTNULL, updated_atDATETIMENOTNULL,
+CONSTRAINTchk_coupon_quantity CHECK(issued_quantity>=0ANDused_quantity>=0)
+);
+3-14.coupon_issue
+CREATETABLEcoupon_issue(coupon_issue_id BIGINT PRIMARY KEY AUTO_INCREMENT, coupon_idBIGINT NOTNULL,CREATETABLEcoupon_issue(coupon_issue_id BIGINT PRIMARY KEY AUTO_INCREMENT, coupon_idBIGINT NOTNULL,회원에게발급된쿠폰테이블이다.
+CREATETABLEcoupon_issue(
+coupon_issue_id BIGINT PRIMARY KEY AUTO_INCREMENT, coupon_idBIGINT NOTNULL,
+CREATETABLEcoupon_issue(
+coupon_issue_id BIGINT PRIMARY KEY AUTO_INCREMENT, coupon_idBIGINT NOTNULL,
+member_idBIGINTNOTNULL, order_idBIGINTNULL,statusVARCHAR(30)NOTNULL,issued_atDATETIMENOTNULL, used_atDATETIMENULL, expired_atDATETIMENULL,CONSTRAINTfk_coupon_issue_couponFOREIGNKEY(coupon_id)REFERENCEScoupon(coupon_id),CONSTRAINTfk_coupon_issue_memberFOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTfk_coupon_issue_orderFOREIGNKEY(order_id)REFERENCESorders(order_id));member_idBIGINTNOTNULL, order_idBIGINTNULL,statusVARCHAR(30)NOTNULL,issued_atDATETIMENOTNULL, used_atDATETIMENULL, expired_atDATETIMENULL,CONSTRAINTfk_coupon_issue_couponFOREIGNKEY(coupon_id)REFERENCEScoupon(coupon_id),CONSTRAINTfk_coupon_issue_memberFOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTfk_coupon_issue_orderFOREIGNKEY(order_id)REFERENCESorders(order_id));주요제약조건
+member_idBIGINTNOTNULL, order_idBIGINTNULL,
+statusVARCHAR(30)NOTNULL,
+issued_atDATETIMENOTNULL, used_atDATETIMENULL, expired_atDATETIMENULL,
+CONSTRAINTfk_coupon_issue_coupon
+FOREIGNKEY(coupon_id)REFERENCEScoupon(coupon_id),
+CONSTRAINTfk_coupon_issue_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTfk_coupon_issue_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id)
+);
+member_idBIGINTNOTNULL, order_idBIGINTNULL,
+statusVARCHAR(30)NOTNULL,
+issued_atDATETIMENOTNULL, used_atDATETIMENULL, expired_atDATETIMENULL,
+CONSTRAINTfk_coupon_issue_coupon
+FOREIGNKEY(coupon_id)REFERENCEScoupon(coupon_id),
+CONSTRAINTfk_coupon_issue_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTfk_coupon_issue_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id)
+);
+CREATEUNIQUEINDEXuk_coupon_issue_member_coupon ONcoupon_issue(member_id,coupon_id);CREATEUNIQUEINDEXuk_coupon_issue_member_coupon ONcoupon_issue(member_id,coupon_id);동일쿠폰을회원이한번만받을수있게하려면다음제약조건을둔다.
+CREATEUNIQUEINDEXuk_coupon_issue_member_coupon ONcoupon_issue(member_id,coupon_id);
+CREATEUNIQUEINDEXuk_coupon_issue_member_coupon ONcoupon_issue(member_id,coupon_id);
+3-15.point_history
+CREATE TABLEpoint_history(point_history_id BIGINT PRIMARY KEY AUTO_INCREMENT, member_id BIGINT NOTNULL,order_idBIGINTNULL,point_typeVARCHAR(30)NOTNULL, amount INT NOTNULL, balance_afterINT NOTNULL,reasonVARCHAR(255)NOTNULL,created_atDATETIMENOTNULL,CONSTRAINTfk_point_history_memberFOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTfk_point_history_orderCREATE TABLEpoint_history(point_history_id BIGINT PRIMARY KEY AUTO_INCREMENT, member_id BIGINT NOTNULL,order_idBIGINTNULL,point_typeVARCHAR(30)NOTNULL, amount INT NOTNULL, balance_afterINT NOTNULL,reasonVARCHAR(255)NOTNULL,created_atDATETIMENOTNULL,CONSTRAINTfk_point_history_memberFOREIGNKEY(member_id)REFERENCESmember(member_id),CONSTRAINTfk_point_history_order포인트이력테이블이다.
+CREATE TABLEpoint_history(
+point_history_id BIGINT PRIMARY KEY AUTO_INCREMENT, member_id BIGINT NOTNULL,
+order_idBIGINTNULL,
+point_typeVARCHAR(30)NOTNULL, amount INT NOTNULL, balance_afterINT NOTNULL,
+reasonVARCHAR(255)NOTNULL,
+created_atDATETIMENOTNULL,
+CONSTRAINTfk_point_history_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTfk_point_history_order
+CREATE TABLEpoint_history(
+point_history_id BIGINT PRIMARY KEY AUTO_INCREMENT, member_id BIGINT NOTNULL,
+order_idBIGINTNULL,
+point_typeVARCHAR(30)NOTNULL, amount INT NOTNULL, balance_afterINT NOTNULL,
+reasonVARCHAR(255)NOTNULL,
+created_atDATETIMENOTNULL,
+CONSTRAINTfk_point_history_member
+FOREIGNKEY(member_id)REFERENCESmember(member_id),
+CONSTRAINTfk_point_history_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id));FOREIGNKEY(order_id)REFERENCESorders(order_id));EARN USECANCEL_EARN CANCEL_USE EXPIREEARN USECANCEL_EARN CANCEL_USE EXPIRE포인트타입
+FOREIGNKEY(order_id)REFERENCESorders(order_id)
+);
+FOREIGNKEY(order_id)REFERENCESorders(order_id)
+);
+EARN USE
+CANCEL_EARN CANCEL_USE EXPIRE
+EARN USE
+CANCEL_EARN CANCEL_USE EXPIRE
+3-16.outbox_event
+이벤트발행보장용Outbox테이블이다.
+CREATETABLEoutbox_event(event_idBIGINTPRIMARYKEYAUTO_INCREMENT,aggregate_typeVARCHAR(100)NOTNULL, aggregate_idBIGINT NOTNULL, event_typeVARCHAR(100) NOTNULL, payloadJSON NOTNULL,statusVARCHAR(30)NOTNULL,retry_countINTNOTNULLDEFAULT0, created_atDATETIMENOTNULL, published_atDATETIMENULL);CREATETABLEoutbox_event(event_idBIGINTPRIMARYKEYAUTO_INCREMENT,aggregate_typeVARCHAR(100)NOTNULL, aggregate_idBIGINT NOTNULL, event_typeVARCHAR(100) NOTNULL, payloadJSON NOTNULL,statusVARCHAR(30)NOTNULL,retry_countINTNOTNULLDEFAULT0, created_atDATETIMENOTNULL, published_atDATETIMENULL);CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);주요인덱스
+CREATETABLEoutbox_event(
+event_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+aggregate_typeVARCHAR(100)NOTNULL, aggregate_idBIGINT NOTNULL, event_typeVARCHAR(100) NOTNULL, payloadJSON NOTNULL,
+statusVARCHAR(30)NOTNULL,
+retry_countINTNOTNULLDEFAULT0, created_atDATETIMENOTNULL, published_atDATETIMENULL
+);
+CREATETABLEoutbox_event(
+event_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+aggregate_typeVARCHAR(100)NOTNULL, aggregate_idBIGINT NOTNULL, event_typeVARCHAR(100) NOTNULL, payloadJSON NOTNULL,
+statusVARCHAR(30)NOTNULL,
+retry_countINTNOTNULLDEFAULT0, created_atDATETIMENOTNULL, published_atDATETIMENULL
+);
+CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);
+CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);
+3-17.order_event_log
+CREATETABLEorder_event_log(order_event_log_id BIGINT PRIMARY KEY AUTO_INCREMENT, order_idBIGINT NOTNULL,from_statusVARCHAR(50), to_statusVARCHAR(50)NOTNULL,CREATETABLEorder_event_log(order_event_log_id BIGINT PRIMARY KEY AUTO_INCREMENT, order_idBIGINT NOTNULL,from_statusVARCHAR(50), to_statusVARCHAR(50)NOTNULL,주문상태변경이력테이블이다.
+CREATETABLEorder_event_log(
+order_event_log_id BIGINT PRIMARY KEY AUTO_INCREMENT, order_idBIGINT NOTNULL,
+from_statusVARCHAR(50), to_statusVARCHAR(50)NOTNULL,
+CREATETABLEorder_event_log(
+order_event_log_id BIGINT PRIMARY KEY AUTO_INCREMENT, order_idBIGINT NOTNULL,
+from_statusVARCHAR(50), to_statusVARCHAR(50)NOTNULL,
+event_typeVARCHAR(100)NOTNULL, reasonVARCHAR(500),created_byBIGINTNULL, created_atDATETIMENOTNULL,CONSTRAINTfk_order_event_log_orderFOREIGNKEY(order_id)REFERENCESorders(order_id));event_typeVARCHAR(100)NOTNULL, reasonVARCHAR(500),created_byBIGINTNULL, created_atDATETIMENOTNULL,CONSTRAINTfk_order_event_log_orderFOREIGNKEY(order_id)REFERENCESorders(order_id));CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);주요인덱스
+event_typeVARCHAR(100)NOTNULL, reasonVARCHAR(500),
+created_byBIGINTNULL, created_atDATETIMENOTNULL,
+CONSTRAINTfk_order_event_log_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id)
+);
+event_typeVARCHAR(100)NOTNULL, reasonVARCHAR(500),
+created_byBIGINTNULL, created_atDATETIMENOTNULL,
+CONSTRAINTfk_order_event_log_order
+FOREIGNKEY(order_id)REFERENCESorders(order_id)
+);
+CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);
+CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);
+3-18.batch_job_execution
+CREATETABLEbatch_job_execution(execution_id BIGINT PRIMARY KEY AUTO_INCREMENT, job_name VARCHAR(100) NOTNULL,statusVARCHAR(30)NOTNULL,started_atDATETIMENOTNULL, ended_atDATETIMENULL,processed_countINTNOTNULLDEFAULT0, success_countINTNOTNULLDEFAULT0, fail_countINTNOTNULLDEFAULT0, last_processed_idBIGINTNULL, error_messageTEXTNULL);CREATETABLEbatch_job_execution(execution_id BIGINT PRIMARY KEY AUTO_INCREMENT, job_name VARCHAR(100) NOTNULL,statusVARCHAR(30)NOTNULL,started_atDATETIMENOTNULL, ended_atDATETIMENULL,processed_countINTNOTNULLDEFAULT0, success_countINTNOTNULLDEFAULT0, fail_countINTNOTNULLDEFAULT0, last_processed_idBIGINTNULL, error_messageTEXTNULL);배치실행이력테이블이다.
+CREATETABLEbatch_job_execution(
+execution_id BIGINT PRIMARY KEY AUTO_INCREMENT, job_name VARCHAR(100) NOTNULL,
+statusVARCHAR(30)NOTNULL,
+started_atDATETIMENOTNULL, ended_atDATETIMENULL,
+processed_countINTNOTNULLDEFAULT0, success_countINTNOTNULLDEFAULT0, fail_countINTNOTNULLDEFAULT0, last_processed_idBIGINTNULL, error_messageTEXTNULL
+);
+CREATETABLEbatch_job_execution(
+execution_id BIGINT PRIMARY KEY AUTO_INCREMENT, job_name VARCHAR(100) NOTNULL,
+statusVARCHAR(30)NOTNULL,
+started_atDATETIMENOTNULL, ended_atDATETIMENULL,
+processed_countINTNOTNULLDEFAULT0, success_countINTNOTNULLDEFAULT0, fail_countINTNOTNULLDEFAULT0, last_processed_idBIGINTNULL, error_messageTEXTNULL
+);
+3-19.batch_failure
+CREATETABLEbatch_failure(failure_idBIGINTPRIMARYKEYAUTO_INCREMENT,execution_idBIGINTNOTNULL, target_idBIGINT NOTNULL, reasonVARCHAR(500)NOTNULL,payloadJSONNULL,created_atDATETIMENOTNULL,CREATETABLEbatch_failure(failure_idBIGINTPRIMARYKEYAUTO_INCREMENT,execution_idBIGINTNOTNULL, target_idBIGINT NOTNULL, reasonVARCHAR(500)NOTNULL,payloadJSONNULL,created_atDATETIMENOTNULL,배치실패데이터테이블이다.
+CREATETABLEbatch_failure(
+failure_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+execution_idBIGINTNOTNULL, target_idBIGINT NOTNULL, reasonVARCHAR(500)NOTNULL,
+payloadJSONNULL,
+created_atDATETIMENOTNULL,
+CREATETABLEbatch_failure(
+failure_idBIGINTPRIMARYKEYAUTO_INCREMENT,
+execution_idBIGINTNOTNULL, target_idBIGINT NOTNULL, reasonVARCHAR(500)NOTNULL,
+payloadJSONNULL,
+created_atDATETIMENOTNULL,
+CREATEINDEXix_orders_status_created ONorders(order_status,created_at);CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);CREATEINDEXix_orders_status_created ONorders(order_status,created_at);CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);
+CREATEINDEXix_orders_status_created ONorders(order_status,created_at);
+CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);
+CREATEINDEXix_orders_status_created ONorders(order_status,created_at);
+CREATEINDEXix_outbox_status_created ONoutbox_event(status,created_at);
+CONSTRAINTfk_batch_failure_executionFOREIGNKEY(execution_id)REFERENCESbatch_job_execution(execution_id));CONSTRAINTfk_batch_failure_executionFOREIGNKEY(execution_id)REFERENCESbatch_job_execution(execution_id));인덱스설계요약
+CONSTRAINTfk_batch_failure_execution
+FOREIGNKEY(execution_id)REFERENCESbatch_job_execution(execution_id)
+);
+CONSTRAINTfk_batch_failure_execution
+FOREIGNKEY(execution_id)REFERENCESbatch_job_execution(execution_id)
+);
+CREATEINDEXix_product_category_status_createdONproduct(category_id,status,created_atDESC,product_idDESC);CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC, order_idDESC);CREATEINDEXix_review_product_createdONreview(product_id,created_atDESC,review_idDESC);CREATEINDEXix_product_category_status_createdONproduct(category_id,status,created_atDESC,product_idDESC);CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC, order_idDESC);CREATEINDEXix_review_product_createdONreview(product_id,created_atDESC,review_idDESC);4-1.사용자화면조회용
+CREATEINDEXix_product_category_status_created
+ONproduct(category_id,status,created_atDESC,product_idDESC);
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC, order_idDESC);
+CREATEINDEXix_review_product_created
+ONreview(product_id,created_atDESC,review_idDESC);
+CREATEINDEXix_product_category_status_created
+ONproduct(category_id,status,created_atDESC,product_idDESC);
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC, order_idDESC);
+CREATEINDEXix_review_product_created
+ONreview(product_id,created_atDESC,review_idDESC);
+CREATEINDEXix_orders_status_orderedONorders(order_status,ordered_atDESC,order_idDESC);CREATEINDEXix_product_status_createdONproduct(status,created_atDESC,product_idDESC);CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);CREATEINDEXix_orders_status_orderedONorders(order_status,ordered_atDESC,order_idDESC);CREATEINDEXix_product_status_createdONproduct(status,created_atDESC,product_idDESC);CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);4-2.관리자검색용
+CREATEINDEXix_orders_status_ordered
+ONorders(order_status,ordered_atDESC,order_idDESC);
+CREATEINDEXix_product_status_created
+ONproduct(status,created_atDESC,product_idDESC);
+CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);
+CREATEINDEXix_orders_status_ordered
+ONorders(order_status,ordered_atDESC,order_idDESC);
+CREATEINDEXix_product_status_created
+ONproduct(status,created_atDESC,product_idDESC);
+CREATEINDEXix_payment_status_created ONpayment(payment_status,created_at);
+4-3.배치처리용
+주문과상품은OrderItem으로풀어낸다.주문당시상품명,가격,옵션은스냅샷으로저장한다.상품과재고는 분리한다.재고는available_quantity,reserved_quantity,total_quantity로관리한다.결제는payment_key와idempotency_key로중복처리를방지한다.리뷰중복은DBUNIQUE제약조건으로막는다.주문과상품은OrderItem으로풀어낸다.주문당시상품명,가격,옵션은스냅샷으로저장한다.상품과재고는 분리한다.재고는available_quantity,reserved_quantity,total_quantity로관리한다.결제는payment_key와idempotency_key로중복처리를방지한다.리뷰중복은DBUNIQUE제약조건으로막는다.
+주문과상품은OrderItem으로풀어낸다.
+주문당시상품명,가격,옵션은스냅샷으로저장한다.
+상품과재고는 분리한다.
+재고는available_quantity,reserved_quantity,total_quantity로관리한다.
+결제는payment_key와idempotency_key로중복처리를방지한다.
+리뷰중복은DBUNIQUE제약조건으로막는다.
+주문과상품은OrderItem으로풀어낸다.
+주문당시상품명,가격,옵션은스냅샷으로저장한다.
+상품과재고는 분리한다.
+재고는available_quantity,reserved_quantity,total_quantity로관리한다.
+결제는payment_key와idempotency_key로중복처리를방지한다.
+리뷰중복은DBUNIQUE제약조건으로막는다.
+CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);설계상중요한제약조건요약
+CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);
+CREATEINDEXix_order_event_log_order_created ONorder_event_log(order_id,created_at);
+--회원이메일중복방지 ALTERTABLEmember
+ADDCONSTRAINTuk_member_emailUNIQUE(email);
+--주문번호중복방지 ALTERTABLEorders
+ADDCONSTRAINTuk_orders_order_noUNIQUE(order_no);
+--결제키중복방지 ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_keyUNIQUE(payment_key);
+--결제멱등키중복방지 ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);
+--리뷰중복작성방지 ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+--장바구니동일상품중복방지 ALTERTABLEcart_item
+ADD CONSTRAINTuk_cart_item_productUNIQUE(cart_id, product_id);
+최종정리
+이ERD의핵심은다음과같다.
+조회패턴기준으로인덱스를설계한다.장애복구를위해outbox_event,order_event_log,batch_execution테이블을둔다.조회패턴기준으로인덱스를설계한다.장애복구를위해outbox_event,order_event_log,batch_execution테이블을둔다.운영가능한쇼핑몰ERD는단순관계도보다정합성,중복방지,장애복구,조회성능을함께담아야한다.
+조회패턴기준으로인덱스를설계한다.
+장애복구를위해outbox_event,order_event_log,batch_execution테이블을둔다.
+조회패턴기준으로인덱스를설계한다.
+장애복구를위해outbox_event,order_event_log,batch_execution테이블을둔다.

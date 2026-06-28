@@ -1,0 +1,563 @@
+온라인쇼핑몰시퀀스다이어그램설계서v1
+문서목적
+주문생성및재고예약결제승인성공PG콜백중복수신결제실패및재고예약해제주문취소및결제취소리뷰작성결제대기주문만료배치결제상태불일치복구배치주문생성및재고예약결제승인성공PG콜백중복수신결제실패및재고예약해제주문취소및결제취소리뷰작성결제대기주문만료배치결제상태불일치복구배치이 문서는 온라인 쇼핑몰의 핵심 유스케이스를 시퀀스 다이어그램으로 정의한다. 대상흐름은다음과같다.
+주문생성및재고예약
+결제승인성공
+PG콜백중복수신
+결제실패및재고예약해제
+주문취소및결제취소
+리뷰작성
+결제대기주문만료배치
+결제상태불일치복구배치
+주문생성및재고예약
+결제승인성공
+PG콜백중복수신
+결제실패및재고예약해제
+주문취소및결제취소
+리뷰작성
+결제대기주문만료배치
+결제상태불일치복구배치
+주문생성및재고예약
+1-1.목적
+PENDING_PAYMENTPENDING_PAYMENT주문생성시실제결제완료전까지는주문을
+PENDING_PAYMENT
+PENDING_PAYMENT
+주문생성과재고예약은하나의DB트랜잭션으로처리한다.여러상품을주문할경우product_id오름차순으로재고를예약한다.재고부족상품이하나라도있으면전체주문생성을실패시킨다.외부PG호출은DB트랜잭션안에서수행하지않는다.주문생성과재고예약은하나의DB트랜잭션으로처리한다.여러상품을주문할경우product_id오름차순으로재고를예약한다.재고부족상품이하나라도있으면전체주문생성을실패시킨다.외부PG호출은DB트랜잭션안에서수행하지않는다.1-2.핵심규칙
+주문생성과재고예약은하나의DB트랜잭션으로처리한다.
+여러상품을주문할경우product_id오름차순으로재고를예약한다.
+재고부족상품이하나라도있으면전체주문생성을실패시킨다.
+외부PG호출은DB트랜잭션안에서수행하지않는다.
+주문생성과재고예약은하나의DB트랜잭션으로처리한다.
+여러상품을주문할경우product_id오름차순으로재고를예약한다.
+재고부족상품이하나라도있으면전체주문생성을실패시킨다.
+외부PG호출은DB트랜잭션안에서수행하지않는다.
+상태로생성하고,재고는예약상태로잡아둔다.
+sequenceDiagram actorUserparticipantClient participantOrderController participantOrderService participantProductRepositoryparticipantInventoryRepository participantOrderRepository participantPaymentRepositorysequenceDiagram actorUserparticipantClient participantOrderController participantOrderService participantProductRepositoryparticipantInventoryRepository participantOrderRepository participantPaymentRepository1-3.시퀀스다이어그램
+sequenceDiagram actorUser
+participantClient participantOrderController participantOrderService participantProductRepository
+participantInventoryRepository participantOrderRepository participantPaymentRepository
+sequenceDiagram actorUser
+participantClient participantOrderController participantOrderService participantProductRepository
+participantInventoryRepository participantOrderRepository participantPaymentRepository
+participantDBUser->>Client:주문 요청Client->>OrderController:POST/api/ordersOrderController->>OrderService:createOrder(memberId,request)OrderService->>ProductRepository:상품목록조회ProductRepository->>DB:SELECTproductWHEREproduct_idIN (...) DB-->>ProductRepository:상품 목록ProductRepository-->>OrderService:상품목록반환OrderService->>OrderService:product_id오름차순정렬loop주문상품별재고예약OrderService->>InventoryRepository:reserve(productId,quantity) InventoryRepository->>DB:UPDATEinventorySETreserved+=q,available-=qWHEREavailable>=qDB-->>InventoryRepository:updatedrowcount InventoryRepository-->>OrderService:예약성공/실패endalt재고부족OrderService-->>OrderController:OUT_OF_STOCK예외OrderController-->>Client:400OUT_OF_STOCK Client-->>User:재고부족안내else재고예약성공OrderService->>OrderRepository:주문PENDING_PAYMENT저장OrderRepository->>DB:INSERTorders OrderRepository->>DB:INSERTorder_item OrderRepository->>DB:INSERTdeliveryOrderService->>PaymentRepository:결제READY저장PaymentRepository->>DB:INSERTpaymentOrderService-->>OrderController:orderId,orderNo,paymentKey OrderController-->>Client:주문생성성공Client-->>User:결제진행화면표시endparticipantDBUser->>Client:주문 요청Client->>OrderController:POST/api/ordersOrderController->>OrderService:createOrder(memberId,request)OrderService->>ProductRepository:상품목록조회ProductRepository->>DB:SELECTproductWHEREproduct_idIN (...) DB-->>ProductRepository:상품 목록ProductRepository-->>OrderService:상품목록반환OrderService->>OrderService:product_id오름차순정렬loop주문상품별재고예약OrderService->>InventoryRepository:reserve(productId,quantity) InventoryRepository->>DB:UPDATEinventorySETreserved+=q,available-=qWHEREavailable>=qDB-->>InventoryRepository:updatedrowcount InventoryRepository-->>OrderService:예약성공/실패endalt재고부족OrderService-->>OrderController:OUT_OF_STOCK예외OrderController-->>Client:400OUT_OF_STOCK Client-->>User:재고부족안내else재고예약성공OrderService->>OrderRepository:주문PENDING_PAYMENT저장OrderRepository->>DB:INSERTorders OrderRepository->>DB:INSERTorder_item OrderRepository->>DB:INSERTdeliveryOrderService->>PaymentRepository:결제READY저장PaymentRepository->>DB:INSERTpaymentOrderService-->>OrderController:orderId,orderNo,paymentKey OrderController-->>Client:주문생성성공Client-->>User:결제진행화면표시end결제승인성공
+participantDB
+User->>Client:주문 요청
+Client->>OrderController:POST/api/orders
+OrderController->>OrderService:createOrder(memberId,request)
+OrderService->>ProductRepository:상품목록조회
+ProductRepository->>DB:SELECTproductWHEREproduct_idIN (...) DB-->>ProductRepository:상품 목록
+ProductRepository-->>OrderService:상품목록반환
+OrderService->>OrderService:product_id오름차순정렬
+loop주문상품별재고예약
+OrderService->>InventoryRepository:reserve(productId,quantity) InventoryRepository->>DB:UPDATEinventorySETreserved+=q,
+available-=qWHEREavailable>=q
+DB-->>InventoryRepository:updatedrowcount InventoryRepository-->>OrderService:예약성공/실패
+end
+alt재고부족
+OrderService-->>OrderController:OUT_OF_STOCK예외
+OrderController-->>Client:400OUT_OF_STOCK Client-->>User:재고부족안내
+else재고예약성공
+OrderService->>OrderRepository:주문PENDING_PAYMENT저장
+OrderRepository->>DB:INSERTorders OrderRepository->>DB:INSERTorder_item OrderRepository->>DB:INSERTdelivery
+OrderService->>PaymentRepository:결제READY저장
+PaymentRepository->>DB:INSERTpayment
+OrderService-->>OrderController:orderId,orderNo,paymentKey OrderController-->>Client:주문생성성공
+Client-->>User:결제진행화면표시
+end
+participantDB
+User->>Client:주문 요청
+Client->>OrderController:POST/api/orders
+OrderController->>OrderService:createOrder(memberId,request)
+OrderService->>ProductRepository:상품목록조회
+ProductRepository->>DB:SELECTproductWHEREproduct_idIN (...) DB-->>ProductRepository:상품 목록
+ProductRepository-->>OrderService:상품목록반환
+OrderService->>OrderService:product_id오름차순정렬
+loop주문상품별재고예약
+OrderService->>InventoryRepository:reserve(productId,quantity) InventoryRepository->>DB:UPDATEinventorySETreserved+=q,
+available-=qWHEREavailable>=q
+DB-->>InventoryRepository:updatedrowcount InventoryRepository-->>OrderService:예약성공/실패
+end
+alt재고부족
+OrderService-->>OrderController:OUT_OF_STOCK예외
+OrderController-->>Client:400OUT_OF_STOCK Client-->>User:재고부족안내
+else재고예약성공
+OrderService->>OrderRepository:주문PENDING_PAYMENT저장
+OrderRepository->>DB:INSERTorders OrderRepository->>DB:INSERTorder_item OrderRepository->>DB:INSERTdelivery
+OrderService->>PaymentRepository:결제READY저장
+PaymentRepository->>DB:INSERTpayment
+OrderService-->>OrderController:orderId,orderNo,paymentKey OrderController-->>Client:주문생성성공
+Client-->>User:결제진행화면표시
+end
+2-1.목적
+사용자가결제를완료하면서버는PG결제승인결과를확인하고,주문상태를
+PAIDPAID로변경한다.
+PAID
+PAID
+결제승인API는Idempotency-Key를사용한다.동일결제승인요청이중복되어도한번만처리한다.결제금액과주문금액이반드시일치해야한다.결제승인성공후예약재고를확정차감한다.결제완료이벤트는Outbox테이블에저장한다.결제승인API는Idempotency-Key를사용한다.동일결제승인요청이중복되어도한번만처리한다.결제금액과주문금액이반드시일치해야한다.결제승인성공후예약재고를확정차감한다.결제완료이벤트는Outbox테이블에저장한다.2-2.핵심규칙
+결제승인API는Idempotency-Key를사용한다.
+동일결제승인요청이중복되어도한번만처리한다.
+결제금액과주문금액이반드시일치해야한다.
+결제승인성공후예약재고를확정차감한다.
+결제완료이벤트는Outbox테이블에저장한다.
+결제승인API는Idempotency-Key를사용한다.
+동일결제승인요청이중복되어도한번만처리한다.
+결제금액과주문금액이반드시일치해야한다.
+결제승인성공후예약재고를확정차감한다.
+결제완료이벤트는Outbox테이블에저장한다.
+sequenceDiagram actorUserparticipantClientparticipantPaymentController participantPaymentService participantPGparticipantPaymentRepository participantOrderRepository participantInventoryRepository participantOutboxRepository participantDBUser->>Client:결제 완료Client->>PaymentController:POST/api/payments/approve+Idempotency-Key PaymentController->>PaymentService:approvePayment(request,idempotencyKey)PaymentService->>PaymentRepository:idempotencyKey로기존결제조회 PaymentRepository->>DB: SELECT payment WHERE idempotency_key = ? DB-->>PaymentRepository:기존 결제 없음PaymentRepository-->>PaymentService:없음PaymentService->>OrderRepository:주문 조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:PENDING_PAYMENT주문 OrderRepository-->>PaymentService:주문 반환PaymentService->>PaymentService:주문금액과결제요청금액검증PaymentService->>PG:결제승인요청PG-->>PaymentService:승인 성공PaymentService->>PaymentRepository:paymentAPPROVED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=APPROVEDPaymentService->>OrderRepository:orderPAID변경sequenceDiagram actorUserparticipantClientparticipantPaymentController participantPaymentService participantPGparticipantPaymentRepository participantOrderRepository participantInventoryRepository participantOutboxRepository participantDBUser->>Client:결제 완료Client->>PaymentController:POST/api/payments/approve+Idempotency-Key PaymentController->>PaymentService:approvePayment(request,idempotencyKey)PaymentService->>PaymentRepository:idempotencyKey로기존결제조회 PaymentRepository->>DB: SELECT payment WHERE idempotency_key = ? DB-->>PaymentRepository:기존 결제 없음PaymentRepository-->>PaymentService:없음PaymentService->>OrderRepository:주문 조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:PENDING_PAYMENT주문 OrderRepository-->>PaymentService:주문 반환PaymentService->>PaymentService:주문금액과결제요청금액검증PaymentService->>PG:결제승인요청PG-->>PaymentService:승인 성공PaymentService->>PaymentRepository:paymentAPPROVED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=APPROVEDPaymentService->>OrderRepository:orderPAID변경2-3.시퀀스다이어그램
+sequenceDiagram actorUser
+participantClientparticipantPaymentController participantPaymentService participantPG
+participantPaymentRepository participantOrderRepository participantInventoryRepository participantOutboxRepository participantDB
+User->>Client:결제 완료
+Client->>PaymentController:POST/api/payments/approve+Idempotency-Key PaymentController->>PaymentService:approvePayment(request,
+idempotencyKey)
+PaymentService->>PaymentRepository:idempotencyKey로기존결제조회 PaymentRepository->>DB: SELECT payment WHERE idempotency_key = ? DB-->>PaymentRepository:기존 결제 없음
+PaymentRepository-->>PaymentService:없음
+PaymentService->>OrderRepository:주문 조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:PENDING_PAYMENT주문 OrderRepository-->>PaymentService:주문 반환
+PaymentService->>PaymentService:주문금액과결제요청금액검증
+PaymentService->>PG:결제승인요청
+PG-->>PaymentService:승인 성공
+PaymentService->>PaymentRepository:paymentAPPROVED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=APPROVED
+PaymentService->>OrderRepository:orderPAID변경
+sequenceDiagram actorUser
+participantClientparticipantPaymentController participantPaymentService participantPG
+participantPaymentRepository participantOrderRepository participantInventoryRepository participantOutboxRepository participantDB
+User->>Client:결제 완료
+Client->>PaymentController:POST/api/payments/approve+Idempotency-Key PaymentController->>PaymentService:approvePayment(request,
+idempotencyKey)
+PaymentService->>PaymentRepository:idempotencyKey로기존결제조회 PaymentRepository->>DB: SELECT payment WHERE idempotency_key = ? DB-->>PaymentRepository:기존 결제 없음
+PaymentRepository-->>PaymentService:없음
+PaymentService->>OrderRepository:주문 조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:PENDING_PAYMENT주문 OrderRepository-->>PaymentService:주문 반환
+PaymentService->>PaymentService:주문금액과결제요청금액검증
+PaymentService->>PG:결제승인요청
+PG-->>PaymentService:승인 성공
+PaymentService->>PaymentRepository:paymentAPPROVED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=APPROVED
+PaymentService->>OrderRepository:orderPAID변경
+OrderRepository->>DB:UPDATEordersSETstatus=PAIDloop주문상품별재고확정PaymentService->>InventoryRepository:confirmReservedStock(productId, quantity)InventoryRepository->>DB:UPDATEinventorySETreserved-=q,total-=qendPaymentService->>OutboxRepository:OrderPaidEvent저장OutboxRepository->>DB:INSERToutbox_eventPaymentService-->>PaymentController:결제승인결과PaymentController-->>Client:200OK Client-->>User:결제완료화면OrderRepository->>DB:UPDATEordersSETstatus=PAIDloop주문상품별재고확정PaymentService->>InventoryRepository:confirmReservedStock(productId, quantity)InventoryRepository->>DB:UPDATEinventorySETreserved-=q,total-=qendPaymentService->>OutboxRepository:OrderPaidEvent저장OutboxRepository->>DB:INSERToutbox_eventPaymentService-->>PaymentController:결제승인결과PaymentController-->>Client:200OK Client-->>User:결제완료화면PG콜백중복수신
+OrderRepository->>DB:UPDATEordersSETstatus=PAID
+loop주문상품별재고확정
+PaymentService->>InventoryRepository:confirmReservedStock(productId, quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q,total-
+=qend
+PaymentService->>OutboxRepository:OrderPaidEvent저장
+OutboxRepository->>DB:INSERToutbox_event
+PaymentService-->>PaymentController:결제승인결과
+PaymentController-->>Client:200OK Client-->>User:결제완료화면
+OrderRepository->>DB:UPDATEordersSETstatus=PAID
+loop주문상품별재고확정
+PaymentService->>InventoryRepository:confirmReservedStock(productId, quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q,total-
+=qend
+PaymentService->>OutboxRepository:OrderPaidEvent저장
+OutboxRepository->>DB:INSERToutbox_event
+PaymentService-->>PaymentController:결제승인결과
+PaymentController-->>Client:200OK Client-->>User:결제완료화면
+3-1.목적
+PG사는 결제 성공 콜백을 여러 번 보낼 수 있다. 서버는중복콜백을안전하게처리해야한다.
+payment_key기준으로결제정보를찾는다.이미APPROVED상태이면추가처리하지않는다.중복콜백에도성공응답을반환한다.콜백처리실패시PG사가재시도할수있으므로멱등해야한다.payment_key기준으로결제정보를찾는다.이미APPROVED상태이면추가처리하지않는다.중복콜백에도성공응답을반환한다.콜백처리실패시PG사가재시도할수있으므로멱등해야한다.3-2.핵심규칙
+payment_key기준으로결제정보를찾는다.
+이미APPROVED상태이면추가처리하지않는다.
+중복콜백에도성공응답을반환한다.
+콜백처리실패시PG사가재시도할수있으므로멱등해야한다.
+payment_key기준으로결제정보를찾는다.
+이미APPROVED상태이면추가처리하지않는다.
+중복콜백에도성공응답을반환한다.
+콜백처리실패시PG사가재시도할수있으므로멱등해야한다.
+sequenceDiagram participantPGparticipantPaymentCallbackController participantPaymentService participantPaymentRepository participantOrderRepository participantDBPG->>PaymentCallbackController:POST/api/payments/callback PaymentCallbackController->>PaymentService:handleCallback(callback)sequenceDiagram participantPGparticipantPaymentCallbackController participantPaymentService participantPaymentRepository participantOrderRepository participantDBPG->>PaymentCallbackController:POST/api/payments/callback PaymentCallbackController->>PaymentService:handleCallback(callback)3-3.시퀀스다이어그램
+sequenceDiagram participantPG
+participantPaymentCallbackController participantPaymentService participantPaymentRepository participantOrderRepository participantDB
+PG->>PaymentCallbackController:POST/api/payments/callback PaymentCallbackController->>PaymentService:handleCallback(callback)
+sequenceDiagram participantPG
+participantPaymentCallbackController participantPaymentService participantPaymentRepository participantOrderRepository participantDB
+PG->>PaymentCallbackController:POST/api/payments/callback PaymentCallbackController->>PaymentService:handleCallback(callback)
+PaymentService->>PaymentRepository:paymentKey로결제조회PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentAPPROVEDPaymentRepository-->>PaymentService:결제정보반환alt이미APPROVED상태PaymentService->>PaymentService:중복콜백으로판단PaymentService-->>PaymentCallbackController:성공처리PaymentCallbackController-->>PG:200OK else아직처리되지않은콜백PaymentService->>PaymentRepository:paymentAPPROVED변경PaymentRepository->>DB:UPDATEpaymentPaymentService->>OrderRepository:orderPAID변경OrderRepository->>DB:UPDATEordersPaymentService-->>PaymentCallbackController:성공처리PaymentCallbackController-->>PG:200OKendPaymentService->>PaymentRepository:paymentKey로결제조회PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentAPPROVEDPaymentRepository-->>PaymentService:결제정보반환alt이미APPROVED상태PaymentService->>PaymentService:중복콜백으로판단PaymentService-->>PaymentCallbackController:성공처리PaymentCallbackController-->>PG:200OK else아직처리되지않은콜백PaymentService->>PaymentRepository:paymentAPPROVED변경PaymentRepository->>DB:UPDATEpaymentPaymentService->>OrderRepository:orderPAID변경OrderRepository->>DB:UPDATEordersPaymentService-->>PaymentCallbackController:성공처리PaymentCallbackController-->>PG:200OKend결제실패및재고예약해제
+PaymentService->>PaymentRepository:paymentKey로결제조회
+PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentAPPROVED
+PaymentRepository-->>PaymentService:결제정보반환
+alt이미APPROVED상태
+PaymentService->>PaymentService:중복콜백으로판단
+PaymentService-->>PaymentCallbackController:성공처리
+PaymentCallbackController-->>PG:200OK else아직처리되지않은콜백
+PaymentService->>PaymentRepository:paymentAPPROVED변경
+PaymentRepository->>DB:UPDATEpayment
+PaymentService->>OrderRepository:orderPAID변경
+OrderRepository->>DB:UPDATEorders
+PaymentService-->>PaymentCallbackController:성공처리
+PaymentCallbackController-->>PG:200OK
+end
+PaymentService->>PaymentRepository:paymentKey로결제조회
+PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentAPPROVED
+PaymentRepository-->>PaymentService:결제정보반환
+alt이미APPROVED상태
+PaymentService->>PaymentService:중복콜백으로판단
+PaymentService-->>PaymentCallbackController:성공처리
+PaymentCallbackController-->>PG:200OK else아직처리되지않은콜백
+PaymentService->>PaymentRepository:paymentAPPROVED변경
+PaymentRepository->>DB:UPDATEpayment
+PaymentService->>OrderRepository:orderPAID변경
+OrderRepository->>DB:UPDATEorders
+PaymentService-->>PaymentCallbackController:성공처리
+PaymentCallbackController-->>PG:200OK
+end
+PAYMENT_FAILEDPAYMENT_FAILED4-1.목적
+PAYMENT_FAILED
+PAYMENT_FAILED
+결제실패시주문상태를
+결제실패사유를payment.failure_code,failure_message에저장한다.주문상태를PAYMENT_FAILED로변경한다.예약재고를available_quantity로복구한다.결제실패도주문이벤트로그에남긴다.결제실패사유를payment.failure_code,failure_message에저장한다.주문상태를PAYMENT_FAILED로변경한다.예약재고를available_quantity로복구한다.결제실패도주문이벤트로그에남긴다.4-2.핵심규칙
+결제실패사유를payment.failure_code,failure_message에저장한다.
+주문상태를PAYMENT_FAILED로변경한다.
+예약재고를available_quantity로복구한다.
+결제실패도주문이벤트로그에남긴다.
+결제실패사유를payment.failure_code,failure_message에저장한다.
+주문상태를PAYMENT_FAILED로변경한다.
+예약재고를available_quantity로복구한다.
+결제실패도주문이벤트로그에남긴다.
+로변경하고예약된재고를해제한다.
+sequenceDiagram actorUserparticipantClientparticipantPaymentController participantPaymentService participantPaymentRepository participantOrderRepositoryparticipantInventoryRepositorysequenceDiagram actorUserparticipantClientparticipantPaymentController participantPaymentService participantPaymentRepository participantOrderRepositoryparticipantInventoryRepository4-3.시퀀스다이어그램
+sequenceDiagram actorUser
+participantClientparticipantPaymentController participantPaymentService participantPaymentRepository participantOrderRepository
+participantInventoryRepository
+sequenceDiagram actorUser
+participantClientparticipantPaymentController participantPaymentService participantPaymentRepository participantOrderRepository
+participantInventoryRepository
+participantOrderEventLogRepository participantDBUser->>Client:결제 실패Client->>PaymentController:POST/api/payments/fail PaymentController->>PaymentService:failPayment(request)PaymentService->>PaymentRepository:결제 조회 PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentREADYPaymentRepository-->>PaymentService:결제정보반환PaymentService->>PaymentRepository:paymentFAILED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILED,failure_code=?PaymentService->>OrderRepository:orderPAYMENT_FAILED변경OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILEDloop주문상품별예약재고해제PaymentService->>InventoryRepository:releaseReservedStock(productId, quantity)InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=qendPaymentService->>OrderEventLogRepository:결제실패이벤트저장OrderEventLogRepository->>DB:INSERTorder_event_logPaymentService-->>PaymentController:실패처리완료PaymentController-->>Client:200OK Client-->>User:결제실패안내participantOrderEventLogRepository participantDBUser->>Client:결제 실패Client->>PaymentController:POST/api/payments/fail PaymentController->>PaymentService:failPayment(request)PaymentService->>PaymentRepository:결제 조회 PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentREADYPaymentRepository-->>PaymentService:결제정보반환PaymentService->>PaymentRepository:paymentFAILED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILED,failure_code=?PaymentService->>OrderRepository:orderPAYMENT_FAILED변경OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILEDloop주문상품별예약재고해제PaymentService->>InventoryRepository:releaseReservedStock(productId, quantity)InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=qendPaymentService->>OrderEventLogRepository:결제실패이벤트저장OrderEventLogRepository->>DB:INSERTorder_event_logPaymentService-->>PaymentController:실패처리완료PaymentController-->>Client:200OK Client-->>User:결제실패안내주문취소및결제취소
+participantOrderEventLogRepository participantDB
+User->>Client:결제 실패
+Client->>PaymentController:POST/api/payments/fail PaymentController->>PaymentService:failPayment(request)
+PaymentService->>PaymentRepository:결제 조회 PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentREADY
+PaymentRepository-->>PaymentService:결제정보반환
+PaymentService->>PaymentRepository:paymentFAILED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILED,failure_code
+=?
+PaymentService->>OrderRepository:orderPAYMENT_FAILED변경
+OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILED
+loop주문상품별예약재고해제
+PaymentService->>InventoryRepository:releaseReservedStock(productId, quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=q
+end
+PaymentService->>OrderEventLogRepository:결제실패이벤트저장
+OrderEventLogRepository->>DB:INSERTorder_event_log
+PaymentService-->>PaymentController:실패처리완료
+PaymentController-->>Client:200OK Client-->>User:결제실패안내
+participantOrderEventLogRepository participantDB
+User->>Client:결제 실패
+Client->>PaymentController:POST/api/payments/fail PaymentController->>PaymentService:failPayment(request)
+PaymentService->>PaymentRepository:결제 조회 PaymentRepository->>DB:SELECTpaymentWHEREpayment_key=? DB-->>PaymentRepository:paymentREADY
+PaymentRepository-->>PaymentService:결제정보반환
+PaymentService->>PaymentRepository:paymentFAILED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILED,failure_code
+=?
+PaymentService->>OrderRepository:orderPAYMENT_FAILED변경
+OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILED
+loop주문상품별예약재고해제
+PaymentService->>InventoryRepository:releaseReservedStock(productId, quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=q
+end
+PaymentService->>OrderEventLogRepository:결제실패이벤트저장
+OrderEventLogRepository->>DB:INSERTorder_event_log
+PaymentService-->>PaymentController:실패처리완료
+PaymentController-->>Client:200OK Client-->>User:결제실패안내
+5-1.목적
+사용자가주문을취소하면주문상태,결제상태,재고상태를함께보정한다.
+본인주문인지 검증한다.배송시작전주문만일반취소가능하다.결제승인상태라면PG결제취소를먼저수행한다.본인주문인지 검증한다.배송시작전주문만일반취소가능하다.결제승인상태라면PG결제취소를먼저수행한다.5-2.핵심규칙
+본인주문인지 검증한다.
+배송시작전주문만일반취소가능하다.
+결제승인상태라면PG결제취소를먼저수행한다.
+본인주문인지 검증한다.
+배송시작전주문만일반취소가능하다.
+결제승인상태라면PG결제취소를먼저수행한다.
+PG취소성공후주문상태를CANCELLED로변경한다.재고를복구한다.결제취소요청도Idempotency-Key를사용한다.PG취소성공후주문상태를CANCELLED로변경한다.재고를복구한다.결제취소요청도Idempotency-Key를사용한다.5-3.시퀀스다이어그램
+PG취소성공후주문상태를CANCELLED로변경한다.
+재고를복구한다.
+결제취소요청도Idempotency-Key를사용한다.
+PG취소성공후주문상태를CANCELLED로변경한다.
+재고를복구한다.
+결제취소요청도Idempotency-Key를사용한다.
+sequenceDiagram actorUserparticipantClientparticipantOrderController participantOrderService participantOrderRepository participantDeliveryRepository participantPaymentRepository participantPGparticipantInventoryRepository participantOrderEventLogRepository participantDBUser->>Client:주문취소요청Client->>OrderController:POST/api/orders/{orderId}/cancel OrderController->>OrderService:cancelOrder(memberId,orderId,reason)OrderService->>OrderRepository:주문조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:주문반환OrderRepository-->>OrderService:주문반환OrderService->>OrderService:본인주문여부검증OrderService->>DeliveryRepository:배송상태조회DeliveryRepository->>DB:SELECTdeliveryWHEREorder_id=? DB-->>DeliveryRepository:배송상태READYDeliveryRepository-->>OrderService:배송정보반환alt배송중또는배송완료OrderService-->>OrderController:INVALID_ORDER_STATUS OrderController-->>Client:400취소 불가Client-->>User:취소불가안내else취소가능OrderService->>PaymentRepository:결제조회PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentAPPROVEDPaymentRepository-->>OrderService:결제정보반환OrderService->>PG:결제취소요청PG-->>OrderService:결제취소성공sequenceDiagram actorUserparticipantClientparticipantOrderController participantOrderService participantOrderRepository participantDeliveryRepository participantPaymentRepository participantPGparticipantInventoryRepository participantOrderEventLogRepository participantDBUser->>Client:주문취소요청Client->>OrderController:POST/api/orders/{orderId}/cancel OrderController->>OrderService:cancelOrder(memberId,orderId,reason)OrderService->>OrderRepository:주문조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:주문반환OrderRepository-->>OrderService:주문반환OrderService->>OrderService:본인주문여부검증OrderService->>DeliveryRepository:배송상태조회DeliveryRepository->>DB:SELECTdeliveryWHEREorder_id=? DB-->>DeliveryRepository:배송상태READYDeliveryRepository-->>OrderService:배송정보반환alt배송중또는배송완료OrderService-->>OrderController:INVALID_ORDER_STATUS OrderController-->>Client:400취소 불가Client-->>User:취소불가안내else취소가능OrderService->>PaymentRepository:결제조회PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentAPPROVEDPaymentRepository-->>OrderService:결제정보반환OrderService->>PG:결제취소요청PG-->>OrderService:결제취소성공
+sequenceDiagram actorUser
+participantClientparticipantOrderController participantOrderService participantOrderRepository participantDeliveryRepository participantPaymentRepository participantPG
+participantInventoryRepository participantOrderEventLogRepository participantDB
+User->>Client:주문취소요청
+Client->>OrderController:POST/api/orders/{orderId}/cancel OrderController->>OrderService:cancelOrder(memberId,orderId,reason)
+OrderService->>OrderRepository:주문조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:주문반환
+OrderRepository-->>OrderService:주문반환
+OrderService->>OrderService:본인주문여부검증
+OrderService->>DeliveryRepository:배송상태조회
+DeliveryRepository->>DB:SELECTdeliveryWHEREorder_id=? DB-->>DeliveryRepository:배송상태READY
+DeliveryRepository-->>OrderService:배송정보반환
+alt배송중또는배송완료
+OrderService-->>OrderController:INVALID_ORDER_STATUS OrderController-->>Client:400취소 불가
+Client-->>User:취소불가안내
+else취소가능
+OrderService->>PaymentRepository:결제조회
+PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentAPPROVED
+PaymentRepository-->>OrderService:결제정보반환
+OrderService->>PG:결제취소요청
+PG-->>OrderService:결제취소성공
+sequenceDiagram actorUser
+participantClientparticipantOrderController participantOrderService participantOrderRepository participantDeliveryRepository participantPaymentRepository participantPG
+participantInventoryRepository participantOrderEventLogRepository participantDB
+User->>Client:주문취소요청
+Client->>OrderController:POST/api/orders/{orderId}/cancel OrderController->>OrderService:cancelOrder(memberId,orderId,reason)
+OrderService->>OrderRepository:주문조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:주문반환
+OrderRepository-->>OrderService:주문반환
+OrderService->>OrderService:본인주문여부검증
+OrderService->>DeliveryRepository:배송상태조회
+DeliveryRepository->>DB:SELECTdeliveryWHEREorder_id=? DB-->>DeliveryRepository:배송상태READY
+DeliveryRepository-->>OrderService:배송정보반환
+alt배송중또는배송완료
+OrderService-->>OrderController:INVALID_ORDER_STATUS OrderController-->>Client:400취소 불가
+Client-->>User:취소불가안내
+else취소가능
+OrderService->>PaymentRepository:결제조회
+PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentAPPROVED
+PaymentRepository-->>OrderService:결제정보반환
+OrderService->>PG:결제취소요청
+PG-->>OrderService:결제취소성공
+OrderService->>PaymentRepository:paymentCANCELLED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=CANCELLEDOrderService->>OrderRepository:orderCANCELLED변경OrderRepository->>DB:UPDATEordersSETstatus=CANCELLEDloop주문상품별재고복구OrderService->>InventoryRepository:restoreStock(productId,quantity)InventoryRepository->>DB:UPDATEinventorySETtotal+=q, available+=qendOrderService->>OrderEventLogRepository:취소이벤트저장OrderEventLogRepository->>DB:INSERTorder_event_logOrderService-->>OrderController:취소완료OrderController-->>Client:200OK Client-->>User:주문 취소 완료endOrderService->>PaymentRepository:paymentCANCELLED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=CANCELLEDOrderService->>OrderRepository:orderCANCELLED변경OrderRepository->>DB:UPDATEordersSETstatus=CANCELLEDloop주문상품별재고복구OrderService->>InventoryRepository:restoreStock(productId,quantity)InventoryRepository->>DB:UPDATEinventorySETtotal+=q, available+=qendOrderService->>OrderEventLogRepository:취소이벤트저장OrderEventLogRepository->>DB:INSERTorder_event_logOrderService-->>OrderController:취소완료OrderController-->>Client:200OK Client-->>User:주문 취소 완료end리뷰작성
+OrderService->>PaymentRepository:paymentCANCELLED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=CANCELLED
+OrderService->>OrderRepository:orderCANCELLED변경
+OrderRepository->>DB:UPDATEordersSETstatus=CANCELLED
+loop주문상품별재고복구
+OrderService->>InventoryRepository:restoreStock(productId,
+quantity)
+InventoryRepository->>DB:UPDATEinventorySETtotal+=q, available+=q
+end
+OrderService->>OrderEventLogRepository:취소이벤트저장
+OrderEventLogRepository->>DB:INSERTorder_event_log
+OrderService-->>OrderController:취소완료
+OrderController-->>Client:200OK Client-->>User:주문 취소 완료
+end
+OrderService->>PaymentRepository:paymentCANCELLED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=CANCELLED
+OrderService->>OrderRepository:orderCANCELLED변경
+OrderRepository->>DB:UPDATEordersSETstatus=CANCELLED
+loop주문상품별재고복구
+OrderService->>InventoryRepository:restoreStock(productId,
+quantity)
+InventoryRepository->>DB:UPDATEinventorySETtotal+=q, available+=q
+end
+OrderService->>OrderEventLogRepository:취소이벤트저장
+OrderEventLogRepository->>DB:INSERTorder_event_log
+OrderService-->>OrderController:취소완료
+OrderController-->>Client:200OK Client-->>User:주문 취소 완료
+end
+6-1.목적
+리뷰는실제구매자만작성할수있으며,하나의주문상품에는하나의리뷰만작성할수있다.
+order_item이본인주문에속해야한다.주문상태가DELIVERED또는CONFIRMED여야한다.같은order_item에는 리뷰를 한 번만 작성할수 있다.중복리뷰방지는DBUNIQUE제약조건으로최종보장한다.order_item이본인주문에속해야한다.주문상태가DELIVERED또는CONFIRMED여야한다.같은order_item에는 리뷰를 한 번만 작성할수 있다.중복리뷰방지는DBUNIQUE제약조건으로최종보장한다.6-2.핵심규칙
+order_item이본인주문에속해야한다.
+주문상태가DELIVERED또는CONFIRMED여야한다.
+같은order_item에는 리뷰를 한 번만 작성할수 있다.
+중복리뷰방지는DBUNIQUE제약조건으로최종보장한다.
+order_item이본인주문에속해야한다.
+주문상태가DELIVERED또는CONFIRMED여야한다.
+같은order_item에는 리뷰를 한 번만 작성할수 있다.
+중복리뷰방지는DBUNIQUE제약조건으로최종보장한다.
+sequenceDiagram actorUserparticipantClient participantReviewController participantReviewServiceparticipantOrderItemRepository participantOrderRepositorysequenceDiagram actorUserparticipantClient participantReviewController participantReviewServiceparticipantOrderItemRepository participantOrderRepository6-3.시퀀스다이어그램
+sequenceDiagram actorUser
+participantClient participantReviewController participantReviewService
+participantOrderItemRepository participantOrderRepository
+sequenceDiagram actorUser
+participantClient participantReviewController participantReviewService
+participantOrderItemRepository participantOrderRepository
+participant ReviewRepository participant OutboxRepository participantDB
+User->>Client:리뷰 작성
+Client->>ReviewController:POST/api/products/{productId}/reviews ReviewController->>ReviewService:createReview(memberId,productId,
+request)
+ReviewService->>OrderItemRepository:orderItem조회 OrderItemRepository->>DB:SELECTorder_itemWHEREorder_item_id=? DB-->>OrderItemRepository:orderItem반환
+OrderItemRepository-->>ReviewService:orderItem반환
+ReviewService->>OrderRepository:주문 조회 OrderRepository->>DB:SELECTordersWHEREorder_id=? DB-->>OrderRepository:주문 반환
+OrderRepository-->>ReviewService:주문반환
+ReviewService->>ReviewService:본인주문여부확인
+ReviewService->>ReviewService:주문상태DELIVERED또는CONFIRMED확인
+ReviewService->>ReviewRepository:기존 리뷰 조회 ReviewRepository->>DB:SELECTreviewWHEREorder_item_id=? DB-->>ReviewRepository:없음
+ReviewRepository-->>ReviewService:없음
+ReviewService->>ReviewRepository:리뷰저장
+ReviewRepository->>DB:INSERTreview
+alt동시에중복INSERT발생
+DB-->>ReviewRepository:UNIQUE제약조건위반
+ReviewRepository-->>ReviewService:DUPLICATE_REVIEW예외
+ReviewService-->>ReviewController:DUPLICATE_REVIEW ReviewController-->>Client:409Conflict
+Client-->>User:이미리뷰작성됨안내
+else저장성공
+ReviewService->>OutboxRepository:ReviewCreatedEvent저장
+OutboxRepository->>DB:INSERToutbox_event
+ReviewService-->>ReviewController:리뷰작성성공
+ReviewController-->>Client:200OK Client-->>User:리뷰 작성 완료
+end
+결제대기주문만료배치
+7-1.목적
+결제대기상태가오래지속된주문은자동만료처리하고예약재고를해제한다.
+PENDING_PAYMENT상태가일정시간이상지속된주문을대상으로한다.PG에실제결제승인내역이없는지확인한다.결제승인내역이없다면주문을PAYMENT_FAILED또는CANCELLED로변경한다.예약 재고를 해제한다.배치실행이력과실패데이터를저장한다.PENDING_PAYMENT상태가일정시간이상지속된주문을대상으로한다.PG에실제결제승인내역이없는지확인한다.결제승인내역이없다면주문을PAYMENT_FAILED또는CANCELLED로변경한다.예약 재고를 해제한다.배치실행이력과실패데이터를저장한다.7-2.핵심규칙
+PENDING_PAYMENT상태가일정시간이상지속된주문을대상으로한다.
+PG에실제결제승인내역이없는지확인한다.
+결제승인내역이없다면주문을PAYMENT_FAILED또는CANCELLED로변경한다.
+예약 재고를 해제한다.
+배치실행이력과실패데이터를저장한다.
+PENDING_PAYMENT상태가일정시간이상지속된주문을대상으로한다.
+PG에실제결제승인내역이없는지확인한다.
+결제승인내역이없다면주문을PAYMENT_FAILED또는CANCELLED로변경한다.
+예약 재고를 해제한다.
+배치실행이력과실패데이터를저장한다.
+sequenceDiagram participantSchedulerparticipantPendingPaymentExpirationJob participantOrderRepositoryparticipantPaymentRepository participantPGparticipantInventoryRepository participantBatchRepository participantDBScheduler->>PendingPaymentExpirationJob:배치 실행 PendingPaymentExpirationJob->>BatchRepository:배치실행이력STARTED저장 BatchRepository->>DB:INSERTbatch_job_executionPendingPaymentExpirationJob->>OrderRepository:만료대상주문조회OrderRepository->>DB:SELECTordersWHEREstatus=PENDING_PAYMENTAND created_at<?DB-->>OrderRepository:주문목록OrderRepository-->>PendingPaymentExpirationJob:대상주문반환loop주문별처리PendingPaymentExpirationJob->>PaymentRepository:결제정보조회PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentREADYPaymentRepository-->>PendingPaymentExpirationJob:결제정보반환PendingPaymentExpirationJob->>PG:실제결제승인여부조회PG-->>PendingPaymentExpirationJob:승인내역없음sequenceDiagram participantSchedulerparticipantPendingPaymentExpirationJob participantOrderRepositoryparticipantPaymentRepository participantPGparticipantInventoryRepository participantBatchRepository participantDBScheduler->>PendingPaymentExpirationJob:배치 실행 PendingPaymentExpirationJob->>BatchRepository:배치실행이력STARTED저장 BatchRepository->>DB:INSERTbatch_job_executionPendingPaymentExpirationJob->>OrderRepository:만료대상주문조회OrderRepository->>DB:SELECTordersWHEREstatus=PENDING_PAYMENTAND created_at<?DB-->>OrderRepository:주문목록OrderRepository-->>PendingPaymentExpirationJob:대상주문반환loop주문별처리PendingPaymentExpirationJob->>PaymentRepository:결제정보조회PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentREADYPaymentRepository-->>PendingPaymentExpirationJob:결제정보반환PendingPaymentExpirationJob->>PG:실제결제승인여부조회PG-->>PendingPaymentExpirationJob:승인내역없음7-3.시퀀스다이어그램
+sequenceDiagram participantScheduler
+participantPendingPaymentExpirationJob participantOrderRepositoryparticipantPaymentRepository participantPG
+participantInventoryRepository participantBatchRepository participantDB
+Scheduler->>PendingPaymentExpirationJob:배치 실행 PendingPaymentExpirationJob->>BatchRepository:배치실행이력STARTED저장 BatchRepository->>DB:INSERTbatch_job_execution
+PendingPaymentExpirationJob->>OrderRepository:만료대상주문조회
+OrderRepository->>DB:SELECTordersWHEREstatus=PENDING_PAYMENTAND created_at<?
+DB-->>OrderRepository:주문목록
+OrderRepository-->>PendingPaymentExpirationJob:대상주문반환
+loop주문별처리
+PendingPaymentExpirationJob->>PaymentRepository:결제정보조회
+PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentREADY
+PaymentRepository-->>PendingPaymentExpirationJob:결제정보반환
+PendingPaymentExpirationJob->>PG:실제결제승인여부조회
+PG-->>PendingPaymentExpirationJob:승인내역없음
+sequenceDiagram participantScheduler
+participantPendingPaymentExpirationJob participantOrderRepositoryparticipantPaymentRepository participantPG
+participantInventoryRepository participantBatchRepository participantDB
+Scheduler->>PendingPaymentExpirationJob:배치 실행 PendingPaymentExpirationJob->>BatchRepository:배치실행이력STARTED저장 BatchRepository->>DB:INSERTbatch_job_execution
+PendingPaymentExpirationJob->>OrderRepository:만료대상주문조회
+OrderRepository->>DB:SELECTordersWHEREstatus=PENDING_PAYMENTAND created_at<?
+DB-->>OrderRepository:주문목록
+OrderRepository-->>PendingPaymentExpirationJob:대상주문반환
+loop주문별처리
+PendingPaymentExpirationJob->>PaymentRepository:결제정보조회
+PaymentRepository->>DB:SELECTpaymentWHEREorder_id=? DB-->>PaymentRepository:paymentREADY
+PaymentRepository-->>PendingPaymentExpirationJob:결제정보반환
+PendingPaymentExpirationJob->>PG:실제결제승인여부조회
+PG-->>PendingPaymentExpirationJob:승인내역없음
+PendingPaymentExpirationJob->>OrderRepository:주문PAYMENT_FAILED변경OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILEDPendingPaymentExpirationJob->>PaymentRepository:paymentFAILED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILEDloop주문상품별예약재고해제PendingPaymentExpirationJob->>InventoryRepository: releaseReservedStock(productId,quantity)InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=qendendPendingPaymentExpirationJob->>BatchRepository:배치실행이력COMPLETED변경BatchRepository->>DB:UPDATEbatch_job_executionPendingPaymentExpirationJob->>OrderRepository:주문PAYMENT_FAILED변경OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILEDPendingPaymentExpirationJob->>PaymentRepository:paymentFAILED변경PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILEDloop주문상품별예약재고해제PendingPaymentExpirationJob->>InventoryRepository: releaseReservedStock(productId,quantity)InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=qendendPendingPaymentExpirationJob->>BatchRepository:배치실행이력COMPLETED변경BatchRepository->>DB:UPDATEbatch_job_execution결제상태불일치복구배치
+PendingPaymentExpirationJob->>OrderRepository:주문PAYMENT_FAILED변경
+OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILED
+PendingPaymentExpirationJob->>PaymentRepository:paymentFAILED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILED
+loop주문상품별예약재고해제
+PendingPaymentExpirationJob->>InventoryRepository: releaseReservedStock(productId,quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=q
+end
+end
+PendingPaymentExpirationJob->>BatchRepository:배치실행이력COMPLETED변경
+BatchRepository->>DB:UPDATEbatch_job_execution
+PendingPaymentExpirationJob->>OrderRepository:주문PAYMENT_FAILED변경
+OrderRepository->>DB:UPDATEordersSETstatus=PAYMENT_FAILED
+PendingPaymentExpirationJob->>PaymentRepository:paymentFAILED변경
+PaymentRepository->>DB:UPDATEpaymentSETstatus=FAILED
+loop주문상품별예약재고해제
+PendingPaymentExpirationJob->>InventoryRepository: releaseReservedStock(productId,quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q, available+=q
+end
+end
+PendingPaymentExpirationJob->>BatchRepository:배치실행이력COMPLETED변경
+BatchRepository->>DB:UPDATEbatch_job_execution
+8-1.목적
+PAIDPAIDPG결제는성공했지만서버장애로인해주문상태가
+PAID
+PAID
+payment.status=APPROVED orders.status=PENDING_PAYMENT또는PG에는 결제 승인 존재 payment.status=READY orders.status=PENDING_PAYMENTpayment.status=APPROVED orders.status=PENDING_PAYMENT또는PG에는 결제 승인 존재 payment.status=READY orders.status=PENDING_PAYMENT8-2.대표불일치상황
+payment.status=APPROVED orders.status=PENDING_PAYMENT
+또는
+PG에는 결제 승인 존재 payment.status=READY orders.status=PENDING_PAYMENT
+payment.status=APPROVED orders.status=PENDING_PAYMENT
+또는
+PG에는 결제 승인 존재 payment.status=READY orders.status=PENDING_PAYMENT
+로변경되지못한경우를복구한다.
+payment_key기준으로PG결제상태를재조회한다.PG승인내역이확인되면paymentAPPROVED로보정한다.주문상태를PAID로보정한다.예약재고를확정차감한다.보정이력을order_event_log에남긴다.payment_key기준으로PG결제상태를재조회한다.PG승인내역이확인되면paymentAPPROVED로보정한다.주문상태를PAID로보정한다.예약재고를확정차감한다.보정이력을order_event_log에남긴다.8-3.핵심규칙
+payment_key기준으로PG결제상태를재조회한다.
+PG승인내역이확인되면paymentAPPROVED로보정한다.
+주문상태를PAID로보정한다.
+예약재고를확정차감한다.
+보정이력을order_event_log에남긴다.
+payment_key기준으로PG결제상태를재조회한다.
+PG승인내역이확인되면paymentAPPROVED로보정한다.
+주문상태를PAID로보정한다.
+예약재고를확정차감한다.
+보정이력을order_event_log에남긴다.
+8-4.시퀀스다이어그램
+sequenceDiagram participantScheduler
+participantPaymentReconciliationJob participantPaymentRepository participantOrderRepository participantPG
+participantInventoryRepository participantOrderEventLogRepository participantBatchRepository participantDB
+Scheduler->>PaymentReconciliationJob:배치 실행 PaymentReconciliationJob->>BatchRepository:실행 이력 STARTED저장 BatchRepository->>DB:INSERTbatch_job_execution
+PaymentReconciliationJob->>PaymentRepository:불일치후보조회 PaymentRepository->>DB:SELECTpaymentWHEREstatusIN(READY,REQUESTED) DB-->>PaymentRepository:결제후보목록
+PaymentRepository-->>PaymentReconciliationJob:후보반환
+loop결제후보별처리
+PaymentReconciliationJob->>PG:paymentKey로결제상태조회
+PG-->>PaymentReconciliationJob:APPROVED
+PaymentReconciliationJob->>PaymentRepository:paymentAPPROVED보정
+PaymentRepository->>DB:UPDATEpaymentSETstatus=APPROVED
+PaymentReconciliationJob->>OrderRepository:orderPAID보정
+OrderRepository->>DB:UPDATEordersSETstatus=PAID
+loop주문상품별예약재고확정
+PaymentReconciliationJob->>InventoryRepository: confirmReservedStock(productId,quantity)
+InventoryRepository->>DB:UPDATEinventorySETreserved-=q,
+total-=q
+end
+PaymentReconciliationJob->>OrderEventLogRepository:보정이력저장
+OrderEventLogRepository->>DB:INSERTorder_event_log
+end
+PaymentReconciliationJob->>BatchRepository:실행이력COMPLETED변경
+BatchRepository->>DB:UPDATEbatch_job_execution
+stateDiagram-v2[*]-->PENDING_PAYMENTPENDING_PAYMENT-->PAID:결제 승인 PENDING_PAYMENT-->PAYMENT_FAILED:결제 실패 PENDING_PAYMENT-->CANCELLED:결제 대기 만료PAID-->PREPARING:상품준비시작PAID-->CANCEL_REQUESTED:취소요청PREPARING-->SHIPPED:배송시작PREPARING-->CANCEL_REQUESTED:취소요청SHIPPED-->DELIVERED:배송완료DELIVERED-->CONFIRMED:구매확정DELIVERED-->REFUND_REQUESTED:환불요청CANCEL_REQUESTED-->CANCELLED:취소승인REFUND_REQUESTED-->REFUNDED:환불완료CANCELLED-->[*] REFUNDED--> [*] CONFIRMED--> [*]stateDiagram-v2[*]-->PENDING_PAYMENTPENDING_PAYMENT-->PAID:결제 승인 PENDING_PAYMENT-->PAYMENT_FAILED:결제 실패 PENDING_PAYMENT-->CANCELLED:결제 대기 만료PAID-->PREPARING:상품준비시작PAID-->CANCEL_REQUESTED:취소요청PREPARING-->SHIPPED:배송시작PREPARING-->CANCEL_REQUESTED:취소요청SHIPPED-->DELIVERED:배송완료DELIVERED-->CONFIRMED:구매확정DELIVERED-->REFUND_REQUESTED:환불요청CANCEL_REQUESTED-->CANCELLED:취소승인REFUND_REQUESTED-->REFUNDED:환불완료CANCELLED-->[*] REFUNDED--> [*] CONFIRMED--> [*]주문상태전이다이어그램
+stateDiagram-v2
+[*]-->PENDING_PAYMENT
+PENDING_PAYMENT-->PAID:결제 승인 PENDING_PAYMENT-->PAYMENT_FAILED:결제 실패 PENDING_PAYMENT-->CANCELLED:결제 대기 만료
+PAID-->PREPARING:상품준비시작
+PAID-->CANCEL_REQUESTED:취소요청
+PREPARING-->SHIPPED:배송시작
+PREPARING-->CANCEL_REQUESTED:취소요청
+SHIPPED-->DELIVERED:배송완료
+DELIVERED-->CONFIRMED:구매확정
+DELIVERED-->REFUND_REQUESTED:환불요청
+CANCEL_REQUESTED-->CANCELLED:취소승인
+REFUND_REQUESTED-->REFUNDED:환불완료
+CANCELLED-->[*] REFUNDED--> [*] CONFIRMED--> [*]
+stateDiagram-v2
+[*]-->PENDING_PAYMENT
+PENDING_PAYMENT-->PAID:결제 승인 PENDING_PAYMENT-->PAYMENT_FAILED:결제 실패 PENDING_PAYMENT-->CANCELLED:결제 대기 만료
+PAID-->PREPARING:상품준비시작
+PAID-->CANCEL_REQUESTED:취소요청
+PREPARING-->SHIPPED:배송시작
+PREPARING-->CANCEL_REQUESTED:취소요청
+SHIPPED-->DELIVERED:배송완료
+DELIVERED-->CONFIRMED:구매확정
+DELIVERED-->REFUND_REQUESTED:환불요청
+CANCEL_REQUESTED-->CANCELLED:취소승인
+REFUND_REQUESTED-->REFUNDED:환불완료
+CANCELLED-->[*] REFUNDED--> [*] CONFIRMED--> [*]
+stateDiagram-v2 [*]-->READYREADY-->REQUESTED:결제요청 REQUESTED-->APPROVED:승인 성공 REQUESTED-->FAILED:승인실패APPROVED-->CANCELLED:전체취소APPROVED-->PARTIAL_CANCELLED:부분취소PARTIAL_CANCELLED-->CANCELLED:잔여금액전체취소CANCELLED-->REFUNDED:환불완료stateDiagram-v2 [*]-->READYREADY-->REQUESTED:결제요청 REQUESTED-->APPROVED:승인 성공 REQUESTED-->FAILED:승인실패APPROVED-->CANCELLED:전체취소APPROVED-->PARTIAL_CANCELLED:부분취소PARTIAL_CANCELLED-->CANCELLED:잔여금액전체취소CANCELLED-->REFUNDED:환불완료결제상태전이다이어그램
+stateDiagram-v2 [*]-->READY
+READY-->REQUESTED:결제요청 REQUESTED-->APPROVED:승인 성공 REQUESTED-->FAILED:승인실패
+APPROVED-->CANCELLED:전체취소
+APPROVED-->PARTIAL_CANCELLED:부분취소
+PARTIAL_CANCELLED-->CANCELLED:잔여금액전체취소
+CANCELLED-->REFUNDED:환불완료
+stateDiagram-v2 [*]-->READY
+READY-->REQUESTED:결제요청 REQUESTED-->APPROVED:승인 성공 REQUESTED-->FAILED:승인실패
+APPROVED-->CANCELLED:전체취소
+APPROVED-->PARTIAL_CANCELLED:부분취소
+PARTIAL_CANCELLED-->CANCELLED:잔여금액전체취소
+CANCELLED-->REFUNDED:환불완료
+FAILED--> [*] REFUNDED-->[*]FAILED--> [*] REFUNDED-->[*]주문생성은결제완료가아니라PENDING_PAYMENT주문과예약재고를만든다.결제승인성공시주문을PAID로바꾸고예약재고를확정한다.PG콜백은중복으로들어올수있으므로멱등하게처리한다.결제실패시예약재고를반드시해제한다.주문취소는주문상태,배송상태,결제상태를함께확인한다.리뷰작성은실제구매자만가능하며DBUNIQUE로중복을막는다.결제대기만료배치는예약재고누수를방지한다.결제상태복구배치는PG와내부DB상태불일치를보정한다.주문생성은결제완료가아니라PENDING_PAYMENT주문과예약재고를만든다.결제승인성공시주문을PAID로바꾸고예약재고를확정한다.PG콜백은중복으로들어올수있으므로멱등하게처리한다.결제실패시예약재고를반드시해제한다.주문취소는주문상태,배송상태,결제상태를함께확인한다.리뷰작성은실제구매자만가능하며DBUNIQUE로중복을막는다.결제대기만료배치는예약재고누수를방지한다.결제상태복구배치는PG와내부DB상태불일치를보정한다.시퀀스설계핵심요약
+FAILED--> [*] REFUNDED-->[*]
+FAILED--> [*] REFUNDED-->[*]
+주문생성은결제완료가아니라PENDING_PAYMENT주문과예약재고를만든다.
+결제승인성공시주문을PAID로바꾸고예약재고를확정한다.
+PG콜백은중복으로들어올수있으므로멱등하게처리한다.
+결제실패시예약재고를반드시해제한다.
+주문취소는주문상태,배송상태,결제상태를함께확인한다.
+리뷰작성은실제구매자만가능하며DBUNIQUE로중복을막는다.
+결제대기만료배치는예약재고누수를방지한다.
+결제상태복구배치는PG와내부DB상태불일치를보정한다.
+주문생성은결제완료가아니라PENDING_PAYMENT주문과예약재고를만든다.
+결제승인성공시주문을PAID로바꾸고예약재고를확정한다.
+PG콜백은중복으로들어올수있으므로멱등하게처리한다.
+결제실패시예약재고를반드시해제한다.
+주문취소는주문상태,배송상태,결제상태를함께확인한다.
+리뷰작성은실제구매자만가능하며DBUNIQUE로중복을막는다.
+결제대기만료배치는예약재고누수를방지한다.
+결제상태복구배치는PG와내부DB상태불일치를보정한다.
+운영가능한쇼핑몰의시퀀스다이어그램은정상흐름뿐아니라중복요청,실패,만료,복구흐름까지포함해야한다.

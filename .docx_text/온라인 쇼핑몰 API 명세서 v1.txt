@@ -1,0 +1,943 @@
+온라인쇼핑몰API 명세서v1
+문서목적
+사용자API와관리자API를분리한다.주문,결제, 재고의상태 변경 API는멱등성과 동시성을 고려한다.목록조회API는cursor기반페이징을기본으로한다.모든 응답은 일관된 포맷을 사용한다.오류응답은운영자가추적할수있도록errorCode를포함한다.사용자API와관리자API를분리한다.주문,결제, 재고의상태 변경 API는멱등성과 동시성을 고려한다.목록조회API는cursor기반페이징을기본으로한다.모든 응답은 일관된 포맷을 사용한다.오류응답은운영자가추적할수있도록errorCode를포함한다.이 문서는 SpringBoot기반 온라인 쇼핑몰의 RESTAPI명세를 정의한다. API 설계의 핵심 목표는 다음과 같다.
+사용자API와관리자API를분리한다.
+주문,결제, 재고의상태 변경 API는멱등성과 동시성을 고려한다.
+목록조회API는cursor기반페이징을기본으로한다.
+모든 응답은 일관된 포맷을 사용한다.
+오류응답은운영자가추적할수있도록errorCode를포함한다.
+사용자API와관리자API를분리한다.
+주문,결제, 재고의상태 변경 API는멱등성과 동시성을 고려한다.
+목록조회API는cursor기반페이징을기본으로한다.
+모든 응답은 일관된 포맷을 사용한다.
+오류응답은운영자가추적할수있도록errorCode를포함한다.
+공통규칙
+/api/api1-1. Base URL
+/api
+/api
+/api/admin/api/admin관리자API:
+/api/admin
+/api/admin
+1-2.인증방식
+사용자인증이필요한API는다음헤더를사용한다.
+Authorization:Bearer{accessToken}Authorization:Bearer{accessToken}ADMINADMIN관리자API는권한이필요하다.
+Authorization:Bearer{accessToken}
+Authorization:Bearer{accessToken}
+ADMIN
+ADMIN
+1-3.공통응답포맷
+성공응답:
+{"success":true, "data": {},"error":null}{"success":true, "data": {},"error":null}{"success":false, "data": null,"error":{"code":"OUT_OF_STOCK","message":"재고가부족합니다.", "traceId": "a1b2c3d4"}}{"success":false, "data": null,"error":{"code":"OUT_OF_STOCK","message":"재고가부족합니다.", "traceId": "a1b2c3d4"}}실패응답:
+{
+"success":true, "data": {},
+"error":null
+}
+{
+"success":true, "data": {},
+"error":null
+}
+{
+"success":false, "data": null,
+"error":{
+"code":"OUT_OF_STOCK",
+"message":"재고가부족합니다.", "traceId": "a1b2c3d4"
+}
+}
+{
+"success":false, "data": null,
+"error":{
+"code":"OUT_OF_STOCK",
+"message":"재고가부족합니다.", "traceId": "a1b2c3d4"
+}
+}
+1-4.공통에러코드
+코드
+설명
+INVALID_REQUEST
+요청값이올바르지않음
+UNAUTHORIZED
+인증필요
+FORBIDDEN
+권한없음
+NOT_FOUND
+리소스없음
+OUT_OF_STOCK
+재고부족
+DUPLICATE_REVIEW
+이미리뷰작성됨
+INVALID_ORDER_STATUS
+주문상태가올바르지않음
+PAYMENT_FAILED
+결제실패
+DUPLICATE_PAYMENT
+중복결제요청
+EXTERNAL_API_ERROR
+외부API 오류
+INTERNAL_SERVER_ERROR
+서버내부오류
+1-5.CursorPagination응답
+목록조회는기본적으로cursor 기반페이징을사용한다.
+{"items":[],"nextCursor":"2026-06-28T12:00:00_100","hasNext":true}{"items":[],"nextCursor":"2026-06-28T12:00:00_100","hasNext":true}회원API
+{
+"items":[],
+"nextCursor":"2026-06-28T12:00:00_100",
+"hasNext":true
+}
+{
+"items":[],
+"nextCursor":"2026-06-28T12:00:00_100",
+"hasNext":true
+}
+POST/api/membersPOST/api/members2-1.회원가입
+POST/api/members
+POST/api/members
+{"email": "user@example.com", "password":"password1234!", "name": "홍길동","phone":"010-1234-5678"}{"email": "user@example.com", "password":"password1234!", "name": "홍길동","phone":"010-1234-5678"}Request
+{
+"email": "user@example.com", "password":"password1234!", "name": "홍길동",
+"phone":"010-1234-5678"
+}
+{
+"email": "user@example.com", "password":"password1234!", "name": "홍길동",
+"phone":"010-1234-5678"
+}
+{"success":true, "data": {"memberId":1,"email": "user@example.com", "name": "홍길동"},"error":null}{"success":true, "data": {"memberId":1,"email": "user@example.com", "name": "홍길동"},"error":null}Response
+{
+"success":true, "data": {
+"memberId":1,
+"email": "user@example.com", "name": "홍길동"
+},
+"error":null
+}
+{
+"success":true, "data": {
+"memberId":1,
+"email": "user@example.com", "name": "홍길동"
+},
+"error":null
+}
+email은UNIQUEpassword는BCrypt로암호화저장동일 이메일 가입 불가email은UNIQUEpassword는BCrypt로암호화저장동일 이메일 가입 불가검증규칙
+email은UNIQUE
+password는BCrypt로암호화저장
+동일 이메일 가입 불가
+email은UNIQUE
+password는BCrypt로암호화저장
+동일 이메일 가입 불가
+POST/api/loginPOST/api/login2-2.로그인
+POST/api/login
+POST/api/login
+{"email":"user@example.com","password":"password1234!"}{"email":"user@example.com","password":"password1234!"}Request
+{
+"email":"user@example.com",
+"password":"password1234!"
+}
+{
+"email":"user@example.com",
+"password":"password1234!"
+}
+{"success":true, "data": {"accessToken": "access-token","refreshToken":"refresh-token"},"error":null}{"success":true, "data": {"accessToken": "access-token","refreshToken":"refresh-token"},"error":null}Response
+{
+"success":true, "data": {
+"accessToken": "access-token","refreshToken":"refresh-token"
+},
+"error":null
+}
+{
+"success":true, "data": {
+"accessToken": "access-token","refreshToken":"refresh-token"
+},
+"error":null
+}
+GET /api/members/meGET /api/members/me2-3.내정보조회
+GET /api/members/me
+GET /api/members/me
+{"success":true, "data": {"memberId":1,"email": "user@example.com", "name": "홍길동","phone":"010-****-5678"},"error":null}{"success":true, "data": {"memberId":1,"email": "user@example.com", "name": "홍길동","phone":"010-****-5678"},"error":null}Response
+{
+"success":true, "data": {
+"memberId":1,
+"email": "user@example.com", "name": "홍길동",
+"phone":"010-****-5678"
+},
+"error":null
+}
+{
+"success":true, "data": {
+"memberId":1,
+"email": "user@example.com", "name": "홍길동",
+"phone":"010-****-5678"
+},
+"error":null
+}
+상품API
+GET/api/products?categoryId=1&sort=latest&cursor=2026-06-28T12:00:00_100&size=20GET/api/products?categoryId=1&sort=latest&cursor=2026-06-28T12:00:00_100&size=203-1.상품목록조회
+GET/api/products?categoryId=1&sort=latest&cursor=2026-06-28T12:00:00_100&size=20
+GET/api/products?categoryId=1&sort=latest&cursor=2026-06-28T12:00:00_100&size=20
+Query Parameters
+이름
+필수
+설명
+categoryId
+N
+카테고리ID
+sort
+N
+latest,priceAsc,priceDesc
+cursor
+N
+다음페이지커서
+size
+N
+조회개수,기본20
+{"success":true, "data": {"items":[{"productId": 100, "name":"무선마우스", "price": 29000,"thumbnailUrl": "https://image.example.com/mouse.png", "reviewCount": 120,"averageRating":4.7, "status": "SELLING"}],"nextCursor":"2026-06-28T11:50:00_99","hasNext":true},"error":null}{"success":true, "data": {"items":[{"productId": 100, "name":"무선마우스", "price": 29000,"thumbnailUrl": "https://image.example.com/mouse.png", "reviewCount": 120,"averageRating":4.7, "status": "SELLING"}],"nextCursor":"2026-06-28T11:50:00_99","hasNext":true},"error":null}Response
+{
+"success":true, "data": {
+"items":[
+{
+"productId": 100, "name":"무선마우스", "price": 29000,
+"thumbnailUrl": "https://image.example.com/mouse.png", "reviewCount": 120,
+"averageRating":4.7, "status": "SELLING"
+}
+],
+"nextCursor":"2026-06-28T11:50:00_99",
+"hasNext":true
+},
+"error":null
+}
+{
+"success":true, "data": {
+"items":[
+{
+"productId": 100, "name":"무선마우스", "price": 29000,
+"thumbnailUrl": "https://image.example.com/mouse.png", "reviewCount": 120,
+"averageRating":4.7, "status": "SELLING"
+}
+],
+"nextCursor":"2026-06-28T11:50:00_99",
+"hasNext":true
+},
+"error":null
+}
+Entity직접노출금지목록에필요한컬럼만DTO로 조회category_id,status,created_at,product_id복합인덱스 사용Entity직접노출금지목록에필요한컬럼만DTO로 조회category_id,status,created_at,product_id복합인덱스 사용성능기준
+Entity직접노출금지
+목록에필요한컬럼만DTO로 조회
+category_id,status,created_at,product_id복합인덱스 사용
+Entity직접노출금지
+목록에필요한컬럼만DTO로 조회
+category_id,status,created_at,product_id복합인덱스 사용
+GET /api/products/{productId}GET /api/products/{productId}3-2.상품상세조회
+GET /api/products/{productId}
+GET /api/products/{productId}
+{"success": true, "data": { "productId": 100,"name":"무선마우스", "price": 29000,"description":"인체공학무선마우스","thumbnailUrl": "https://image.example.com/mouse.png", "status": "SELLING","availableQuantity":30,"reviewCount":120,"averageRating":4.7},"error":null}{"success": true, "data": { "productId": 100,"name":"무선마우스", "price": 29000,"description":"인체공학무선마우스","thumbnailUrl": "https://image.example.com/mouse.png", "status": "SELLING","availableQuantity":30,"reviewCount":120,"averageRating":4.7},"error":null}Response
+{
+"success": true, "data": { "productId": 100,
+"name":"무선마우스", "price": 29000,
+"description":"인체공학무선마우스",
+"thumbnailUrl": "https://image.example.com/mouse.png", "status": "SELLING",
+"availableQuantity":30,
+"reviewCount":120,
+"averageRating":4.7
+},
+"error":null
+}
+{
+"success": true, "data": { "productId": 100,
+"name":"무선마우스", "price": 29000,
+"description":"인체공학무선마우스",
+"thumbnailUrl": "https://image.example.com/mouse.png", "status": "SELLING",
+"availableQuantity":30,
+"reviewCount":120,
+"averageRating":4.7
+},
+"error":null
+}
+상품 상세는 캐시 가능상품 수정 시 캐시 무효화재고수량은 캐시하지 않거나짧은 TTL적용상품 상세는 캐시 가능상품 수정 시 캐시 무효화재고수량은 캐시하지 않거나짧은 TTL적용캐시정책
+상품 상세는 캐시 가능
+상품 수정 시 캐시 무효화
+재고수량은 캐시하지 않거나짧은 TTL적용
+상품 상세는 캐시 가능
+상품 수정 시 캐시 무효화
+재고수량은 캐시하지 않거나짧은 TTL적용
+장바구니API
+POST/api/cart/itemsPOST/api/cart/items4-1.장바구니상품추가
+POST/api/cart/items
+POST/api/cart/items
+{"productId":100,"quantity": 2}{"productId":100,"quantity": 2}Request
+{
+"productId":100,
+"quantity": 2
+}
+{
+"productId":100,
+"quantity": 2
+}
+{"success": true, "data": { "cartItemId": 10,"productId":100,"quantity": 2},"error":null}{"success": true, "data": { "cartItemId": 10,"productId":100,"quantity": 2},"error":null}Response
+{
+"success": true, "data": { "cartItemId": 10,
+"productId":100,
+"quantity": 2
+},
+"error":null
+}
+{
+"success": true, "data": { "cartItemId": 10,
+"productId":100,
+"quantity": 2
+},
+"error":null
+}
+동일 상품이 이미 있으면 수량 증가상품상태가SELLING이아니면추가불가동일 상품이 이미 있으면 수량 증가상품상태가SELLING이아니면추가불가규칙
+동일 상품이 이미 있으면 수량 증가
+상품상태가SELLING이아니면추가불가
+동일 상품이 이미 있으면 수량 증가
+상품상태가SELLING이아니면추가불가
+GET /api/cartGET /api/cart4-2.장바구니조회
+GET /api/cart
+GET /api/cart
+{"success":true, "data": {"cartId":1,"items":[{"cartItemId":10,"productId": 100, "productName":"무선마우스", "price": 29000,"quantity":2,"availableQuantity":30}]},"error":null}{"success":true, "data": {"cartId":1,"items":[{"cartItemId":10,"productId": 100, "productName":"무선마우스", "price": 29000,"quantity":2,"availableQuantity":30}]},"error":null}Response
+{
+"success":true, "data": {
+"cartId":1,
+"items":[
+{
+"cartItemId":10,
+"productId": 100, "productName":"무선마우스", "price": 29000,
+"quantity":2,
+"availableQuantity":30
+}
+]
+},
+"error":null
+}
+{
+"success":true, "data": {
+"cartId":1,
+"items":[
+{
+"cartItemId":10,
+"productId": 100, "productName":"무선마우스", "price": 29000,
+"quantity":2,
+"availableQuantity":30
+}
+]
+},
+"error":null
+}
+주문API
+POST/api/ordersPOST/api/orders5-1.주문생성
+POST/api/orders
+POST/api/orders
+{"items":[{"productId":100,"quantity": 2},{"productId":200,"quantity": 1}],"deliveryAddress": { "receiverName": "홍길동", "receiverPhone": "010-1234-5678","zipcode": "05000", "address1":"서울시광진구...", "address2": "101동 1001호"},"couponIssueId":null, "usePointAmount": 0}{"items":[{"productId":100,"quantity": 2},{"productId":200,"quantity": 1}],"deliveryAddress": { "receiverName": "홍길동", "receiverPhone": "010-1234-5678","zipcode": "05000", "address1":"서울시광진구...", "address2": "101동 1001호"},"couponIssueId":null, "usePointAmount": 0}Request
+{
+"items":[
+{
+"productId":100,
+"quantity": 2
+},
+{
+"productId":200,
+"quantity": 1
+}
+],
+"deliveryAddress": { "receiverName": "홍길동", "receiverPhone": "010-1234-5678",
+"zipcode": "05000", "address1":"서울시광진구...", "address2": "101동 1001호"
+},
+"couponIssueId":null, "usePointAmount": 0
+}
+{
+"items":[
+{
+"productId":100,
+"quantity": 2
+},
+{
+"productId":200,
+"quantity": 1
+}
+],
+"deliveryAddress": { "receiverName": "홍길동", "receiverPhone": "010-1234-5678",
+"zipcode": "05000", "address1":"서울시광진구...", "address2": "101동 1001호"
+},
+"couponIssueId":null, "usePointAmount": 0
+}
+{"success":true, "data": { "orderId": 500,"orderNo":"ORD-20260628-000001","orderStatus":"PENDING_PAYMENT", "totalPrice": 87000,"discountAmount":0,"finalPaymentAmount":87000, "paymentReady": { "paymentKey": "pay_abc123","idempotencyKey":"ORD-20260628-000001-1"{"success":true, "data": { "orderId": 500,"orderNo":"ORD-20260628-000001","orderStatus":"PENDING_PAYMENT", "totalPrice": 87000,"discountAmount":0,"finalPaymentAmount":87000, "paymentReady": { "paymentKey": "pay_abc123","idempotencyKey":"ORD-20260628-000001-1"Response
+{
+"success":true, "data": { "orderId": 500,
+"orderNo":"ORD-20260628-000001",
+"orderStatus":"PENDING_PAYMENT", "totalPrice": 87000,
+"discountAmount":0,
+"finalPaymentAmount":87000, "paymentReady": { "paymentKey": "pay_abc123",
+"idempotencyKey":"ORD-20260628-000001-1"
+{
+"success":true, "data": { "orderId": 500,
+"orderNo":"ORD-20260628-000001",
+"orderStatus":"PENDING_PAYMENT", "totalPrice": 87000,
+"discountAmount":0,
+"finalPaymentAmount":87000, "paymentReady": { "paymentKey": "pay_abc123",
+"idempotencyKey":"ORD-20260628-000001-1"
+}},"error":null}}},"error":null}회원 존재 여부 확인상품 존재 여부 확인상품 판매 상태 확인product_id오름차순으로재고예약주문상태PENDING_PAYMENT생성주문상품 스냅샷 저장배송 정보 저장결제 준비 정보 생성회원 존재 여부 확인상품 존재 여부 확인상품 판매 상태 확인product_id오름차순으로재고예약주문상태PENDING_PAYMENT생성주문상품 스냅샷 저장배송 정보 저장결제 준비 정보 생성처리규칙
+}
+},
+"error":null
+}
+}
+},
+"error":null
+}
+회원 존재 여부 확인
+상품 존재 여부 확인
+상품 판매 상태 확인
+product_id오름차순으로재고예약
+주문상태PENDING_PAYMENT생성
+주문상품 스냅샷 저장
+배송 정보 저장
+결제 준비 정보 생성
+회원 존재 여부 확인
+상품 존재 여부 확인
+상품 판매 상태 확인
+product_id오름차순으로재고예약
+주문상태PENDING_PAYMENT생성
+주문상품 스냅샷 저장
+배송 정보 저장
+결제 준비 정보 생성
+트랜잭션범위
+DB 트랜잭션안에서처리:
+재고 예약주문 생성주문상품 생성배송정보 생성결제READY생성재고 예약주문 생성주문상품 생성배송정보 생성결제READY생성외부PG결제창 호출이메일 발송SMS발송외부PG결제창 호출이메일 발송SMS발송DB 트랜잭션밖에서처리:
+재고 예약
+주문 생성
+주문상품 생성
+배송정보 생성
+결제READY생성
+재고 예약
+주문 생성
+주문상품 생성
+배송정보 생성
+결제READY생성
+외부PG결제창 호출
+이메일 발송
+SMS발송
+외부PG결제창 호출
+이메일 발송
+SMS발송
+GET/api/orders?cursor=2026-06-28T12:00:00_500&size=20GET/api/orders?cursor=2026-06-28T12:00:00_500&size=205-2.내주문목록조회
+GET/api/orders?cursor=2026-06-28T12:00:00_500&size=20
+GET/api/orders?cursor=2026-06-28T12:00:00_500&size=20
+{"success":true, "data": {"items":[{"success":true, "data": {"items":[Response
+{
+"success":true, "data": {
+"items":[
+{
+"success":true, "data": {
+"items":[
+{"orderId":500,"orderNo":"ORD-20260628-000001","orderStatus":"PAID", "totalPrice": 87000,"orderedAt":"2026-06-28T12:00:00","mainProductName":"무선마우스", "itemCount": 2}],"nextCursor":"2026-06-27T11:00:00_499","hasNext":true},"error":null}{"orderId":500,"orderNo":"ORD-20260628-000001","orderStatus":"PAID", "totalPrice": 87000,"orderedAt":"2026-06-28T12:00:00","mainProductName":"무선마우스", "itemCount": 2}],"nextCursor":"2026-06-27T11:00:00_499","hasNext":true},"error":null}member_id,ordered_at,order_id복합인덱스사용OffsetPagination지양목록에서는 상세 주문상품 전체를 즉시 로딩하지 않음member_id,ordered_at,order_id복합인덱스사용OffsetPagination지양목록에서는 상세 주문상품 전체를 즉시 로딩하지 않음성능기준
+{
+"orderId":500,
+"orderNo":"ORD-20260628-000001",
+"orderStatus":"PAID", "totalPrice": 87000,
+"orderedAt":"2026-06-28T12:00:00",
+"mainProductName":"무선마우스", "itemCount": 2
+}
+],
+"nextCursor":"2026-06-27T11:00:00_499",
+"hasNext":true
+},
+"error":null
+}
+{
+"orderId":500,
+"orderNo":"ORD-20260628-000001",
+"orderStatus":"PAID", "totalPrice": 87000,
+"orderedAt":"2026-06-28T12:00:00",
+"mainProductName":"무선마우스", "itemCount": 2
+}
+],
+"nextCursor":"2026-06-27T11:00:00_499",
+"hasNext":true
+},
+"error":null
+}
+member_id,ordered_at,order_id복합인덱스사용
+OffsetPagination지양
+목록에서는 상세 주문상품 전체를 즉시 로딩하지 않음
+member_id,ordered_at,order_id복합인덱스사용
+OffsetPagination지양
+목록에서는 상세 주문상품 전체를 즉시 로딩하지 않음
+GET /api/orders/{orderId}GET /api/orders/{orderId}5-3.주문상세조회
+GET /api/orders/{orderId}
+GET /api/orders/{orderId}
+{"success":true, "data": { "orderId": 500,"orderNo":"ORD-20260628-000001","orderStatus":"PAID", "totalPrice": 87000,"discountAmount":0,"finalPaymentAmount": 87000, "items": [{"orderItemId":1,"productId": 100, "productName":"무선마우스","orderPrice":29000,{"success":true, "data": { "orderId": 500,"orderNo":"ORD-20260628-000001","orderStatus":"PAID", "totalPrice": 87000,"discountAmount":0,"finalPaymentAmount": 87000, "items": [{"orderItemId":1,"productId": 100, "productName":"무선마우스","orderPrice":29000,Response
+{
+"success":true, "data": { "orderId": 500,
+"orderNo":"ORD-20260628-000001",
+"orderStatus":"PAID", "totalPrice": 87000,
+"discountAmount":0,
+"finalPaymentAmount": 87000, "items": [
+{
+"orderItemId":1,
+"productId": 100, "productName":"무선마우스",
+"orderPrice":29000,
+{
+"success":true, "data": { "orderId": 500,
+"orderNo":"ORD-20260628-000001",
+"orderStatus":"PAID", "totalPrice": 87000,
+"discountAmount":0,
+"finalPaymentAmount": 87000, "items": [
+{
+"orderItemId":1,
+"productId": 100, "productName":"무선마우스",
+"orderPrice":29000,
+"quantity": 2}],"payment":{"paymentStatus": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"},"delivery": { "deliveryStatus":"READY", "receiverName": "홍길동","receiverPhone": "010-****-5678", "address": "서울시 광진구 ..."}},"error":null}"quantity": 2}],"payment":{"paymentStatus": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"},"delivery": { "deliveryStatus":"READY", "receiverName": "홍길동","receiverPhone": "010-****-5678", "address": "서울시 광진구 ..."}},"error":null}일반 사용자는 본인 주문만 조회 가능관리자만 전체 주문 조회 가능일반 사용자는 본인 주문만 조회 가능관리자만 전체 주문 조회 가능보안규칙
+"quantity": 2
+}
+],
+"payment":{
+"paymentStatus": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"
+},
+"delivery": { "deliveryStatus":"READY", "receiverName": "홍길동",
+"receiverPhone": "010-****-5678", "address": "서울시 광진구 ..."
+}
+},
+"error":null
+}
+"quantity": 2
+}
+],
+"payment":{
+"paymentStatus": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"
+},
+"delivery": { "deliveryStatus":"READY", "receiverName": "홍길동",
+"receiverPhone": "010-****-5678", "address": "서울시 광진구 ..."
+}
+},
+"error":null
+}
+일반 사용자는 본인 주문만 조회 가능
+관리자만 전체 주문 조회 가능
+일반 사용자는 본인 주문만 조회 가능
+관리자만 전체 주문 조회 가능
+POST/api/orders/{orderId}/cancelPOST/api/orders/{orderId}/cancel5-4.주문취소
+POST/api/orders/{orderId}/cancel
+POST/api/orders/{orderId}/cancel
+{"reason":"단순변심"}{"reason":"단순변심"}Request
+{
+"reason":"단순변심"
+}
+{
+"reason":"단순변심"
+}
+{"success":true, "data": { "orderId": 500,"orderStatus": "CANCELLED", "cancelledAt": "2026-06-28T13:00:00"},{"success":true, "data": { "orderId": 500,"orderStatus": "CANCELLED", "cancelledAt": "2026-06-28T13:00:00"},Response
+{
+"success":true, "data": { "orderId": 500,
+"orderStatus": "CANCELLED", "cancelledAt": "2026-06-28T13:00:00"
+},
+{
+"success":true, "data": { "orderId": 500,
+"orderStatus": "CANCELLED", "cancelledAt": "2026-06-28T13:00:00"
+},
+"error":null}"error":null}본인 주문인지 확인주문 상태 확인배송 상태 확인배송 시작 전이면 취소 가능결제승인 상태이면 PG결제 취소 요청결제취소성공시주문CANCELLED변경재고 복구주문 이벤트 로그 저장본인 주문인지 확인주문 상태 확인배송 상태 확인배송 시작 전이면 취소 가능결제승인 상태이면 PG결제 취소 요청결제취소성공시주문CANCELLED변경재고 복구주문 이벤트 로그 저장처리규칙
+"error":null
+}
+"error":null
+}
+본인 주문인지 확인
+주문 상태 확인
+배송 상태 확인
+배송 시작 전이면 취소 가능
+결제승인 상태이면 PG결제 취소 요청
+결제취소성공시주문CANCELLED변경
+재고 복구
+주문 이벤트 로그 저장
+본인 주문인지 확인
+주문 상태 확인
+배송 상태 확인
+배송 시작 전이면 취소 가능
+결제승인 상태이면 PG결제 취소 요청
+결제취소성공시주문CANCELLED변경
+재고 복구
+주문 이벤트 로그 저장
+이미 배송 중이미 배송 완료이미 취소됨환불 프로세스로 넘어간 주문이미 배송 중이미 배송 완료이미 취소됨환불 프로세스로 넘어간 주문취소불가조건
+이미 배송 중
+이미 배송 완료
+이미 취소됨
+환불 프로세스로 넘어간 주문
+이미 배송 중
+이미 배송 완료
+이미 취소됨
+환불 프로세스로 넘어간 주문
+결제API
+POST/api/payments/approvePOST/api/payments/approve6-1.결제승인
+POST/api/payments/approve
+POST/api/payments/approve
+Idempotency-Key:ORD-20260628-000001-1Idempotency-Key:ORD-20260628-000001-1Headers
+Idempotency-Key:ORD-20260628-000001-1
+Idempotency-Key:ORD-20260628-000001-1
+{"orderId":500,"paymentKey":"pay_abc123","amount":87000}{"orderId":500,"paymentKey":"pay_abc123","amount":87000}Request
+{
+"orderId":500,
+"paymentKey":"pay_abc123",
+"amount":87000
+}
+{
+"orderId":500,
+"paymentKey":"pay_abc123",
+"amount":87000
+}
+{"success": true, "data": { "paymentId": 900,"orderId": 500, "paymentStatus":"APPROVED", "orderStatus": "PAID", "approvedAmount": 87000,"approvedAt":"2026-06-28T12:01:00"},"error":null}{"success": true, "data": { "paymentId": 900,"orderId": 500, "paymentStatus":"APPROVED", "orderStatus": "PAID", "approvedAmount": 87000,"approvedAt":"2026-06-28T12:01:00"},"error":null}Response
+{
+"success": true, "data": { "paymentId": 900,
+"orderId": 500, "paymentStatus":"APPROVED", "orderStatus": "PAID", "approvedAmount": 87000,
+"approvedAt":"2026-06-28T12:01:00"
+},
+"error":null
+}
+{
+"success": true, "data": { "paymentId": 900,
+"orderId": 500, "paymentStatus":"APPROVED", "orderStatus": "PAID", "approvedAmount": 87000,
+"approvedAt":"2026-06-28T12:01:00"
+},
+"error":null
+}
+Idempotency-Key확인이미 승인된 결제면 기존 결과 반환주문상태PENDING_PAYMENT확인결제 금액과 주문 금액 일치 확인PG승인 API호출paymentAPPROVED저장orderPAID변경예약 재고 확정outbox_event저장Idempotency-Key확인이미 승인된 결제면 기존 결과 반환주문상태PENDING_PAYMENT확인결제 금액과 주문 금액 일치 확인PG승인 API호출paymentAPPROVED저장orderPAID변경예약 재고 확정outbox_event저장처리규칙
+Idempotency-Key확인
+이미 승인된 결제면 기존 결과 반환
+주문상태PENDING_PAYMENT확인
+결제 금액과 주문 금액 일치 확인
+PG승인 API호출
+paymentAPPROVED저장
+orderPAID변경
+예약 재고 확정
+outbox_event저장
+Idempotency-Key확인
+이미 승인된 결제면 기존 결과 반환
+주문상태PENDING_PAYMENT확인
+결제 금액과 주문 금액 일치 확인
+PG승인 API호출
+paymentAPPROVED저장
+orderPAID변경
+예약 재고 확정
+outbox_event저장
+POST/api/payments/callbackPOST/api/payments/callback6-2. PG 콜백수신
+POST/api/payments/callback
+POST/api/payments/callback
+{"paymentKey": "pay_abc123", "pgTransactionId": "pg_tx_123", "status": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"}{"paymentKey": "pay_abc123", "pgTransactionId": "pg_tx_123", "status": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"}Request
+{
+"paymentKey": "pay_abc123", "pgTransactionId": "pg_tx_123", "status": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"
+}
+{
+"paymentKey": "pay_abc123", "pgTransactionId": "pg_tx_123", "status": "APPROVED", "approvedAmount": 87000, "approvedAt": "2026-06-28T12:01:00"
+}
+{"success": true, "data": { "received": true},"error":null}{"success": true, "data": { "received": true},"error":null}Response
+{
+"success": true, "data": { "received": true
+},
+"error":null
+}
+{
+"success": true, "data": { "received": true
+},
+"error":null
+}
+콜백은 중복 수신될 수 있다.이미APPROVED상태이면무시하고성공응답한다.payment_key기준으로결제정보를찾는다.주문 상태와 결제 상태가 불일치하면 보정한다.콜백은 중복 수신될 수 있다.이미APPROVED상태이면무시하고성공응답한다.payment_key기준으로결제정보를찾는다.주문 상태와 결제 상태가 불일치하면 보정한다.처리규칙
+콜백은 중복 수신될 수 있다.
+이미APPROVED상태이면무시하고성공응답한다.
+payment_key기준으로결제정보를찾는다.
+주문 상태와 결제 상태가 불일치하면 보정한다.
+콜백은 중복 수신될 수 있다.
+이미APPROVED상태이면무시하고성공응답한다.
+payment_key기준으로결제정보를찾는다.
+주문 상태와 결제 상태가 불일치하면 보정한다.
+POST/api/payments/{paymentId}/cancelPOST/api/payments/{paymentId}/cancel6-3.결제취소
+POST/api/payments/{paymentId}/cancel
+POST/api/payments/{paymentId}/cancel
+Idempotency-Key:CANCEL-ORD-20260628-000001-1Idempotency-Key:CANCEL-ORD-20260628-000001-1Headers
+Idempotency-Key:CANCEL-ORD-20260628-000001-1
+Idempotency-Key:CANCEL-ORD-20260628-000001-1
+{"cancelAmount":87000,"reason":"주문취소"}{"cancelAmount":87000,"reason":"주문취소"}Request
+{
+"cancelAmount":87000,
+"reason":"주문취소"
+}
+{
+"cancelAmount":87000,
+"reason":"주문취소"
+}
+{"success": true, "data": { "paymentId": 900,"paymentStatus": "CANCELLED", "cancelledAmount": 87000,"cancelledAt":"2026-06-28T13:00:00"{"success": true, "data": { "paymentId": 900,"paymentStatus": "CANCELLED", "cancelledAmount": 87000,"cancelledAt":"2026-06-28T13:00:00"Response
+{
+"success": true, "data": { "paymentId": 900,
+"paymentStatus": "CANCELLED", "cancelledAmount": 87000,
+"cancelledAt":"2026-06-28T13:00:00"
+{
+"success": true, "data": { "paymentId": 900,
+"paymentStatus": "CANCELLED", "cancelledAmount": 87000,
+"cancelledAt":"2026-06-28T13:00:00"
+},"error":null}},"error":null}리뷰API
+},
+"error":null
+}
+},
+"error":null
+}
+POST/api/products/{productId}/reviewsPOST/api/products/{productId}/reviews7-1.리뷰작성
+POST/api/products/{productId}/reviews
+POST/api/products/{productId}/reviews
+{"orderItemId":1,"rating":5,"content":"배송도빠르고제품도좋아요."}{"orderItemId":1,"rating":5,"content":"배송도빠르고제품도좋아요."}Request
+{
+"orderItemId":1,
+"rating":5,
+"content":"배송도빠르고제품도좋아요."
+}
+{
+"orderItemId":1,
+"rating":5,
+"content":"배송도빠르고제품도좋아요."
+}
+{"success": true, "data": { "reviewId": 300,"productId":100,"rating":5,"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"},"error":null}{"success": true, "data": { "reviewId": 300,"productId":100,"rating":5,"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"},"error":null}Response
+{
+"success": true, "data": { "reviewId": 300,
+"productId":100,
+"rating":5,
+"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"
+},
+"error":null
+}
+{
+"success": true, "data": { "reviewId": 300,
+"productId":100,
+"rating":5,
+"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"
+},
+"error":null
+}
+로그인 회원 확인order_item이본인주문인지확인주문상태가DELIVERED또는CONFIRMED인지확인해당order_item에리뷰가이미있는지확인reviewINSERTproduct_stat갱신이벤트발행로그인 회원 확인order_item이본인주문인지확인주문상태가DELIVERED또는CONFIRMED인지확인해당order_item에리뷰가이미있는지확인reviewINSERTproduct_stat갱신이벤트발행처리규칙
+로그인 회원 확인
+order_item이본인주문인지확인
+주문상태가DELIVERED또는CONFIRMED인지확인
+해당order_item에리뷰가이미있는지확인
+reviewINSERT
+product_stat갱신이벤트발행
+로그인 회원 확인
+order_item이본인주문인지확인
+주문상태가DELIVERED또는CONFIRMED인지확인
+해당order_item에리뷰가이미있는지확인
+reviewINSERT
+product_stat갱신이벤트발행
+review.order_item_idUNIQUEreview.order_item_idUNIQUE최종방어선
+review.order_item_idUNIQUE
+review.order_item_idUNIQUE
+GET/api/products/{productId}/reviews?cursor=2026-06-28T12:00:00_300&size=20GET/api/products/{productId}/reviews?cursor=2026-06-28T12:00:00_300&size=207-2.상품리뷰목록조회
+GET/api/products/{productId}/reviews?cursor=2026-06-28T12:00:00_300&size=20
+GET/api/products/{productId}/reviews?cursor=2026-06-28T12:00:00_300&size=20
+{"success":true, "data": {"items":[{"reviewId": 300, "memberName":"홍*동", "rating": 5,"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"}],"nextCursor":"2026-06-27T10:00:00_299","hasNext":true},"error":null}{"success":true, "data": {"items":[{"reviewId": 300, "memberName":"홍*동", "rating": 5,"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"}],"nextCursor":"2026-06-27T10:00:00_299","hasNext":true},"error":null}Response
+{
+"success":true, "data": {
+"items":[
+{
+"reviewId": 300, "memberName":"홍*동", "rating": 5,
+"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"
+}
+],
+"nextCursor":"2026-06-27T10:00:00_299",
+"hasNext":true
+},
+"error":null
+}
+{
+"success":true, "data": {
+"items":[
+{
+"reviewId": 300, "memberName":"홍*동", "rating": 5,
+"content":"배송도빠르고제품도좋아요.", "createdAt": "2026-06-28T14:00:00"
+}
+],
+"nextCursor":"2026-06-27T10:00:00_299",
+"hasNext":true
+},
+"error":null
+}
+관리자API
+GET/api/admin/orders?status=PAID&from=2026-06-01&to=2026-06-28&cursor=500&size=50GET/api/admin/orders?status=PAID&from=2026-06-01&to=2026-06-28&cursor=500&size=508-1.관리자주문검색
+GET/api/admin/orders?status=PAID&from=2026-06-01&to=2026-06-28&cursor=500&size=50
+GET/api/admin/orders?status=PAID&from=2026-06-01&to=2026-06-28&cursor=500&size=50
+{"success":true, "data": {"items":[{"success":true, "data": {"items":[Response
+{
+"success":true, "data": {
+"items":[
+{
+"success":true, "data": {
+"items":[
+{"orderId":500,"orderNo":"ORD-20260628-000001","memberEmail": "user@example.com", "orderStatus": "PAID","totalPrice":87000,"orderedAt":"2026-06-28T12:00:00"}],"nextCursor":"499", "hasNext": true},"error":null}{"orderId":500,"orderNo":"ORD-20260628-000001","memberEmail": "user@example.com", "orderStatus": "PAID","totalPrice":87000,"orderedAt":"2026-06-28T12:00:00"}],"nextCursor":"499", "hasNext": true},"error":null}POST/api/admin/productsPOST/api/admin/products8-2.상품등록
+{
+"orderId":500,
+"orderNo":"ORD-20260628-000001",
+"memberEmail": "user@example.com", "orderStatus": "PAID",
+"totalPrice":87000,
+"orderedAt":"2026-06-28T12:00:00"
+}
+],
+"nextCursor":"499", "hasNext": true
+},
+"error":null
+}
+{
+"orderId":500,
+"orderNo":"ORD-20260628-000001",
+"memberEmail": "user@example.com", "orderStatus": "PAID",
+"totalPrice":87000,
+"orderedAt":"2026-06-28T12:00:00"
+}
+],
+"nextCursor":"499", "hasNext": true
+},
+"error":null
+}
+POST/api/admin/products
+POST/api/admin/products
+{"categoryId": 1, "name":"무선마우스", "price": 29000,"description":"인체공학무선마우스","thumbnailUrl": "https://image.example.com/mouse.png", "initialQuantity": 100}{"categoryId": 1, "name":"무선마우스", "price": 29000,"description":"인체공학무선마우스","thumbnailUrl": "https://image.example.com/mouse.png", "initialQuantity": 100}Request
+{
+"categoryId": 1, "name":"무선마우스", "price": 29000,
+"description":"인체공학무선마우스",
+"thumbnailUrl": "https://image.example.com/mouse.png", "initialQuantity": 100
+}
+{
+"categoryId": 1, "name":"무선마우스", "price": 29000,
+"description":"인체공학무선마우스",
+"thumbnailUrl": "https://image.example.com/mouse.png", "initialQuantity": 100
+}
+{"success": true, "data": { "productId": 100, "inventory": {"totalQuantity":100,"availableQuantity":100,"reservedQuantity":0}},{"success": true, "data": { "productId": 100, "inventory": {"totalQuantity":100,"availableQuantity":100,"reservedQuantity":0}},Response
+{
+"success": true, "data": { "productId": 100, "inventory": {
+"totalQuantity":100,
+"availableQuantity":100,
+"reservedQuantity":0
+}
+},
+{
+"success": true, "data": { "productId": 100, "inventory": {
+"totalQuantity":100,
+"availableQuantity":100,
+"reservedQuantity":0
+}
+},
+"error":null}"error":null}POST/api/admin/products/bulk-uploadPOST/api/admin/products/bulk-upload8-3.상품대량업로드
+"error":null
+}
+"error":null
+}
+POST/api/admin/products/bulk-upload
+POST/api/admin/products/bulk-upload
+file=products.csvContent-Type:multipart/form-datafile=products.csvContent-Type:multipart/form-dataRequest
+file=products.csv
+Content-Type:multipart/form-data
+file=products.csv
+Content-Type:multipart/form-data
+{"success":true, "data": {"uploadId": "upload_20260628_001", "status": "ACCEPTED"},"error":null}{"success":true, "data": {"uploadId": "upload_20260628_001", "status": "ACCEPTED"},"error":null}Response
+{
+"success":true, "data": {
+"uploadId": "upload_20260628_001", "status": "ACCEPTED"
+},
+"error":null
+}
+{
+"success":true, "data": {
+"uploadId": "upload_20260628_001", "status": "ACCEPTED"
+},
+"error":null
+}
+CSV업로드staging_product적재검증 배치 실행정상데이터product반영실패데이터error테이블 저장CSV업로드staging_product적재검증 배치 실행정상데이터product반영실패데이터error테이블 저장처리흐름
+CSV업로드
+staging_product적재
+검증 배치 실행
+정상데이터product반영
+실패데이터error테이블 저장
+CSV업로드
+staging_product적재
+검증 배치 실행
+정상데이터product반영
+실패데이터error테이블 저장
+배치/운영API
+GET/api/admin/batch-jobs?jobName=PaymentReconciliationJob&size=20GET/api/admin/batch-jobs?jobName=PaymentReconciliationJob&size=209-1.배치실행이력조회
+GET/api/admin/batch-jobs?jobName=PaymentReconciliationJob&size=20
+GET/api/admin/batch-jobs?jobName=PaymentReconciliationJob&size=20
+{"success":true, "data": {"items":[{"executionId":1000,"jobName": "PaymentReconciliationJob", "status": "COMPLETED","processedCount":100,"successCount":100,"failCount":0,"startedAt": "2026-06-28T03:00:00", "endedAt": "2026-06-28T03:01:00"}]},"error":null}{"success":true, "data": {"items":[{"executionId":1000,"jobName": "PaymentReconciliationJob", "status": "COMPLETED","processedCount":100,"successCount":100,"failCount":0,"startedAt": "2026-06-28T03:00:00", "endedAt": "2026-06-28T03:01:00"}]},"error":null}Response
+{
+"success":true, "data": {
+"items":[
+{
+"executionId":1000,
+"jobName": "PaymentReconciliationJob", "status": "COMPLETED",
+"processedCount":100,
+"successCount":100,
+"failCount":0,
+"startedAt": "2026-06-28T03:00:00", "endedAt": "2026-06-28T03:01:00"
+}
+]
+},
+"error":null
+}
+{
+"success":true, "data": {
+"items":[
+{
+"executionId":1000,
+"jobName": "PaymentReconciliationJob", "status": "COMPLETED",
+"processedCount":100,
+"successCount":100,
+"failCount":0,
+"startedAt": "2026-06-28T03:00:00", "endedAt": "2026-06-28T03:01:00"
+}
+]
+},
+"error":null
+}
+POST/api/admin/batch-jobs/{executionId}/retryPOST/api/admin/batch-jobs/{executionId}/retry9-2.배치재실행
+POST/api/admin/batch-jobs/{executionId}/retry
+POST/api/admin/batch-jobs/{executionId}/retry
+{"success":true, "data": {"newExecutionId":1001, "status": "STARTED"},"error":null}{"success":true, "data": {"newExecutionId":1001, "status": "STARTED"},"error":null}Response
+{
+"success":true, "data": {
+"newExecutionId":1001, "status": "STARTED"
+},
+"error":null
+}
+{
+"success":true, "data": {
+"newExecutionId":1001, "status": "STARTED"
+},
+"error":null
+}
+API별핵심주의사항요약
+API
+핵심주의사항
+주문생성
+재고예약,상태PENDING_PAYMENT,트랜잭션범위
+API
+핵심주의사항
+결제승인
+Idempotency-Key,금액검증,중복승인방지
+PG 콜백
+중복콜백허용,이미처리된경우성공응답
+주문취소
+배송상태확인,PG 취소,재고복구
+리뷰작성
+실제구매자검증,UNIQUE 제약조건
+상품목록
+DTO조회,KeysetPagination,인덱스
+관리자검색
+조회조건별인덱스,개인정보마스킹
+배치재실행
+청크처리,실패이력,멱등성
+최종정리
+이API 명세의핵심은다음과같다.
+사용자API와관리자API를분리한다.주문 생성은 결제 완료가 아니라 결제 대기 상태를 만든다.결제승인과 PG콜백은 반드시 멱등하게 처리한다.주문 취소는 결제, 배송, 재고와 함께 처리한다.리뷰 작성은 실제 구매 여부와 중복 작성 여부를 검증한다.목록조회는Offset보다Cursor기반페이징을우선한다.운영자는 배치 실행 이력과 실패 데이터를 조회하고 재실행할 수 있어야 한다.사용자API와관리자API를분리한다.주문 생성은 결제 완료가 아니라 결제 대기 상태를 만든다.결제승인과 PG콜백은 반드시 멱등하게 처리한다.주문 취소는 결제, 배송, 재고와 함께 처리한다.리뷰 작성은 실제 구매 여부와 중복 작성 여부를 검증한다.목록조회는Offset보다Cursor기반페이징을우선한다.운영자는 배치 실행 이력과 실패 데이터를 조회하고 재실행할 수 있어야 한다.운영 가능한 API는 단순히 요청과 응답을 정의하는 것이 아니라, 상태 변경 규칙, 멱등성, 동시성, 장애 복구 기준까지 포함해야 한다.
+사용자API와관리자API를분리한다.
+주문 생성은 결제 완료가 아니라 결제 대기 상태를 만든다.
+결제승인과 PG콜백은 반드시 멱등하게 처리한다.
+주문 취소는 결제, 배송, 재고와 함께 처리한다.
+리뷰 작성은 실제 구매 여부와 중복 작성 여부를 검증한다.
+목록조회는Offset보다Cursor기반페이징을우선한다.
+운영자는 배치 실행 이력과 실패 데이터를 조회하고 재실행할 수 있어야 한다.
+사용자API와관리자API를분리한다.
+주문 생성은 결제 완료가 아니라 결제 대기 상태를 만든다.
+결제승인과 PG콜백은 반드시 멱등하게 처리한다.
+주문 취소는 결제, 배송, 재고와 함께 처리한다.
+리뷰 작성은 실제 구매 여부와 중복 작성 여부를 검증한다.
+목록조회는Offset보다Cursor기반페이징을우선한다.
+운영자는 배치 실행 이력과 실패 데이터를 조회하고 재실행할 수 있어야 한다.

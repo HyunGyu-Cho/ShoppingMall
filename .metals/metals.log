@@ -1,0 +1,64 @@
+2026.06.29 07:59:34 INFO  Started: Metals version 1.6.7 in folders 'C:\Cho\project\shoppingmall' for client Visual Studio Code 1.126.0.
+2026.06.29 07:59:34 INFO  time: initialize in 0.15s
+2026.06.29 07:59:34 INFO  Memory monitor started
+2026.06.29 07:59:36 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.06.29 07:59:52 INFO  running 'C:\Cho\project\shoppingmall\myshop\gradlew.bat --stacktrace --console=plain --init-script C:\Users\Gyu\AppData\Local\Temp\metals14088905019065047653\init-script.gradle bloopInstall'
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>setlocal EnableExtensions 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set DIRNAME=C:\Cho\project\shoppingmall\myshop\ 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>if "C:\Cho\project\shoppingmall\myshop\" == "" set DIRNAME=. 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set APP_BASE_NAME=gradlew 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set APP_HOME=C:\Cho\project\shoppingmall\myshop\ 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>for %i in ("C:\Cho\project\shoppingmall\myshop\") do set APP_HOME=%~fi 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set APP_HOME=C:\Cho\project\shoppingmall\myshop\ 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m" 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>if defined JAVA_HOME goto findJavaFromJavaHome 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set JAVA_HOME=C:\Program Files\Java\jdk-17 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>set JAVA_EXE=C:\Program Files\Java\jdk-17/bin/java.exe 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>if exist "C:\Program Files\Java\jdk-17/bin/java.exe" goto execute 
+2026.06.29 07:59:53 INFO  
+2026.06.29 07:59:53 INFO  C:\Cho\project\shoppingmall\myshop>endlocal   & "C:\Program Files\Java\jdk-17/bin/java.exe" "-Xmx64m" "-Xms64m"   "-Dorg.gradle.appname=gradlew" -jar "C:\Cho\project\shoppingmall\myshop\\gradle\wrapper\gradle-wrapper.jar" --stacktrace --console=plain --init-script C:\Users\Gyu\AppData\Local\Temp\metals14088905019065047653\init-script.gradle bloopInstall   & call :exitWithErrorLevel 
+2026.06.29 07:59:55 INFO  
+2026.06.29 07:59:55 INFO  Welcome to Gradle 9.5.1!
+2026.06.29 07:59:55 INFO  
+2026.06.29 07:59:55 INFO  Here are the highlights of this release:
+2026.06.29 07:59:55 INFO   - Task provenance in reports and failure messages
+2026.06.29 07:59:55 INFO   - Type-safe accessors for precompiled Kotlin Settings plugins
+2026.06.29 07:59:55 INFO  
+2026.06.29 07:59:55 INFO  For more details see https://docs.gradle.org/9.5.1/release-notes.html
+2026.06.29 07:59:55 INFO  
+2026.06.29 07:59:56 INFO  Starting a Gradle Daemon, 1 incompatible and 1 stopped Daemons could not be reused, use --status for details
+2026.06.29 08:00:33 INFO  > Task :configureBloopInstall
+2026.06.29 08:00:34 INFO  no build target found for C:\Cho\project\shoppingmall\myshop\src\main\java\shopingmall\myshop\MyshopApplication.java. Using fallback presentation compiler.
+2026.06.29 08:00:40 INFO  > Task :bloopInstall
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  [Incubating] Problems report is available at: file:///C:/Cho/project/shoppingmall/myshop/build/reports/problems/problems-report.html
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  For more on this, please refer to https://docs.gradle.org/9.5.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  BUILD SUCCESSFUL in 47s
+2026.06.29 08:00:40 INFO  2 actionable tasks: 2 executed
+2026.06.29 08:00:40 INFO  Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.1/userguide/configuration_cache_enabling.html
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  C:\Cho\project\shoppingmall\myshop>"C:\Windows\system32\cmd.exe" /c exit 0 
+2026.06.29 08:00:40 INFO  
+2026.06.29 08:00:40 INFO  C:\Cho\project\shoppingmall\myshop>"C:\Windows\system32\cmd.exe" /c exit 0 
+2026.06.29 08:00:41 INFO  time: ran 'gradle bloopInstall' in 48s
+2026.06.29 08:00:41 INFO  Attempting to connect to the build server...
+2026.06.29 08:00:41 INFO  No running Bloop server found, starting one.
+2026.06.29 08:00:48 INFO  no build target found for C:\Cho\project\shoppingmall\myshop\src\main\java\shopingmall\myshop\MyshopApplication.java. Using fallback presentation compiler.

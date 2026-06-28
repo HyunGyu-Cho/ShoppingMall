@@ -1,0 +1,809 @@
+온라인쇼핑몰프로젝트구현계획초안
+문서목적
+이문서는SpringBoot 기반온라인쇼핑몰프로젝트를실제구현하기위한1차실행계획서이다.
+앞선설계문서에서는온라인쇼핑몰을단순CRUD서비스가아니라,주문·결제·재고의정합성을중심으로운영가능한 시스템으로 정의했다.
+이제 필요한 것은 전체 아키텍처를 한 번에 모두 구현하는 것이 아니라, 구현 가능한 범위로 나누고 핵심 기능부터 검증 하는 것이다.
+프로젝트의1차MVP범위를정의한다.구현우선순위를정한다.먼저작성해야할Entity,Repository,Service,Controller를정리한다.주문·결제·재고흐름을실제코드로옮기기위한기준을세운다.동시성테스트와성능테스트까지포함한실무형구현방향을정리한다.프로젝트의1차MVP범위를정의한다.구현우선순위를정한다.먼저작성해야할Entity,Repository,Service,Controller를정리한다.주문·결제·재고흐름을실제코드로옮기기위한기준을세운다.동시성테스트와성능테스트까지포함한실무형구현방향을정리한다.이문서의목적은다음과같다.
+프로젝트의1차MVP범위를정의한다.
+구현우선순위를정한다.
+먼저작성해야할Entity,Repository,Service,Controller를정리한다.
+주문·결제·재고흐름을실제코드로옮기기위한기준을세운다.
+동시성테스트와성능테스트까지포함한실무형구현방향을정리한다.
+프로젝트의1차MVP범위를정의한다.
+구현우선순위를정한다.
+먼저작성해야할Entity,Repository,Service,Controller를정리한다.
+주문·결제·재고흐름을실제코드로옮기기위한기준을세운다.
+동시성테스트와성능테스트까지포함한실무형구현방향을정리한다.
+현재설계상태
+현재까지정리한산출물은다음과같다.
+온라인쇼핑몰운영아키텍처문서ERD상세설계서API명세서시퀀스다이어그램설계서주문상태머신결제상태머신재고예약/차감전략동시성제어전략배치및장애복구전략운영모니터링기준온라인쇼핑몰운영아키텍처문서ERD상세설계서API명세서시퀀스다이어그램설계서주문상태머신결제상태머신재고예약/차감전략동시성제어전략배치및장애복구전략운영모니터링기준현재설계는운영가능한쇼핑몰전체구조를대상으로한다.
+온라인쇼핑몰운영아키텍처문서
+ERD상세설계서
+API명세서
+시퀀스다이어그램설계서
+주문상태머신
+결제상태머신
+재고예약/차감전략
+동시성제어전략
+배치및장애복구전략
+운영모니터링기준
+온라인쇼핑몰운영아키텍처문서
+ERD상세설계서
+API명세서
+시퀀스다이어그램설계서
+주문상태머신
+결제상태머신
+재고예약/차감전략
+동시성제어전략
+배치및장애복구전략
+운영모니터링기준
+하지만 실제 구현은 전체 범위를 한 번에 진행하지 않는다. 먼저 핵심 도메인을 구현하고, 이후 확장 도메인을 추가한다.
+프로젝트목표
+2-1.최종목표
+이프로젝트의최종목표는다음과같다.
+회원이 상품을 조회하고, 상품을 주문하고,결제를완료하고,재고가정확히차감되며,주문상태와결제상태가일관되게유지되는SpringBoot기반쇼핑몰주문시스템을구현한다.회원이 상품을 조회하고, 상품을 주문하고,결제를완료하고,재고가정확히차감되며,주문상태와결제상태가일관되게유지되는SpringBoot기반쇼핑몰주문시스템을구현한다.동시에주문해도재고가음수가되지않는다.결제성공후주문상태가누락되지않는다.결제실패시예약재고가복구된다.주문조회에서N+1문제가발생하지않도록최적화한다.동시성테스트로정합성을검증한다.성능테스트로인덱스와페이징효과를확인한다.동시에주문해도재고가음수가되지않는다.결제성공후주문상태가누락되지않는다.결제실패시예약재고가복구된다.주문조회에서N+1문제가발생하지않도록최적화한다.동시성테스트로정합성을검증한다.성능테스트로인덱스와페이징효과를확인한다.단순히 상품 CRUD를 만드는 것이 목적이 아니다. 핵심은 다음이다.
+회원이 상품을 조회하고, 상품을 주문하고,
+결제를완료하고,
+재고가정확히차감되며,
+주문상태와결제상태가일관되게유지되는
+SpringBoot기반쇼핑몰주문시스템을구현한다.
+회원이 상품을 조회하고, 상품을 주문하고,
+결제를완료하고,
+재고가정확히차감되며,
+주문상태와결제상태가일관되게유지되는
+SpringBoot기반쇼핑몰주문시스템을구현한다.
+동시에주문해도재고가음수가되지않는다.
+결제성공후주문상태가누락되지않는다.
+결제실패시예약재고가복구된다.
+주문조회에서N+1문제가발생하지않도록최적화한다.
+동시성테스트로정합성을검증한다.
+성능테스트로인덱스와페이징효과를확인한다.
+동시에주문해도재고가음수가되지않는다.
+결제성공후주문상태가누락되지않는다.
+결제실패시예약재고가복구된다.
+주문조회에서N+1문제가발생하지않도록최적화한다.
+동시성테스트로정합성을검증한다.
+성능테스트로인덱스와페이징효과를확인한다.
+1차MVP범위
+3-1.포함할기능
+회원회원가입로그인또는임시인증처리내정보조회상품상품등록상품목록조회상품상세조회재고inventory테이블분리회원회원가입로그인또는임시인증처리내정보조회상품상품등록상품목록조회상품상세조회재고inventory테이블분리1차구현범위는다음으로제한한다.
+회원
+회원가입
+로그인또는임시인증처리
+내정보조회
+상품
+상품등록
+상품목록조회
+상품상세조회
+재고
+inventory테이블분리
+회원
+회원가입
+로그인또는임시인증처리
+내정보조회
+상품
+상품등록
+상품목록조회
+상품상세조회
+재고
+inventory테이블분리
+조건부UPDATE기반재고예약결제성공시예약재고확정결제실패시예약재고해제주문주문생성주문상품저장배송정보저장내주문목록조회주문상세조회주문취소결제실제PG연동은제외Mock결제승인API구현결제성공처리결제실패처리리뷰구매한상품에만리뷰작성하나의order_item에는하나의리뷰만작성가능조건부UPDATE기반재고예약결제성공시예약재고확정결제실패시예약재고해제주문주문생성주문상품저장배송정보저장내주문목록조회주문상세조회주문취소결제실제PG연동은제외Mock결제승인API구현결제성공처리결제실패처리리뷰구매한상품에만리뷰작성하나의order_item에는하나의리뷰만작성가능3-2.1차MVP에서제외할기능
+조건부UPDATE기반재고예약
+결제성공시예약재고확정
+결제실패시예약재고해제
+주문
+주문생성
+주문상품저장
+배송정보저장
+내주문목록조회
+주문상세조회
+주문취소
+결제
+실제PG연동은제외
+Mock결제승인API구현
+결제성공처리
+결제실패처리
+리뷰
+구매한상품에만리뷰작성
+하나의order_item에는하나의리뷰만작성가능
+조건부UPDATE기반재고예약
+결제성공시예약재고확정
+결제실패시예약재고해제
+주문
+주문생성
+주문상품저장
+배송정보저장
+내주문목록조회
+주문상세조회
+주문취소
+결제
+실제PG연동은제외
+Mock결제승인API구현
+결제성공처리
+결제실패처리
+리뷰
+구매한상품에만리뷰작성
+하나의order_item에는하나의리뷰만작성가능
+다음기능은1차구현에서제외한다.
+실제PG사연동실제배송사API연동쿠폰포인트정산Redis캐시MessageQueueOutbox패턴관리자고급검색상품대량업로드배치재실행관리화면실제PG사연동실제배송사API연동쿠폰포인트정산Redis캐시MessageQueueOutbox패턴관리자고급검색상품대량업로드배치재실행관리화면이 기능들은 중요하지만, 처음부터 모두 구현하면 프로젝트 범위가 과도하게 커진다. 1차 목표는 주문·결제·재고 정합성의 핵심 흐름을 먼저 완성하는 것이다.
+실제PG사연동
+실제배송사API연동
+쿠폰
+포인트
+정산
+Redis캐시
+MessageQueue
+Outbox패턴
+관리자고급검색
+상품대량업로드
+배치재실행관리화면
+실제PG사연동
+실제배송사API연동
+쿠폰
+포인트
+정산
+Redis캐시
+MessageQueue
+Outbox패턴
+관리자고급검색
+상품대량업로드
+배치재실행관리화면
+구현우선순위
+구현순서는다음과같이진행한다.
+1단계. 프로젝트 기본 세팅 2단계.핵심Entity 작성 3단계.Repository 작성 4단계. 도메인 로직 작성5단계.주문생성Service구현 6단계.주문생성API 구현7단계.Mock결제성공/실패API구현8단계.주문조회API 구현9단계.리뷰작성API 구현10단계.동시성테스트작성11단계.조회성능최적화12단계.README및포트폴리오문서정리1단계. 프로젝트 기본 세팅 2단계.핵심Entity 작성 3단계.Repository 작성 4단계. 도메인 로직 작성5단계.주문생성Service구현 6단계.주문생성API 구현7단계.Mock결제성공/실패API구현8단계.주문조회API 구현9단계.리뷰작성API 구현10단계.동시성테스트작성11단계.조회성능최적화12단계.README및포트폴리오문서정리핵심은Controller부터만들지않는것이다.
+1단계. 프로젝트 기본 세팅 2단계.핵심Entity 작성 3단계.Repository 작성 4단계. 도메인 로직 작성
+5단계.주문생성Service구현 6단계.주문생성API 구현
+7단계.Mock결제성공/실패API구현
+8단계.주문조회API 구현
+9단계.리뷰작성API 구현
+10단계.동시성테스트작성
+11단계.조회성능최적화
+12단계.README및포트폴리오문서정리
+1단계. 프로젝트 기본 세팅 2단계.핵심Entity 작성 3단계.Repository 작성 4단계. 도메인 로직 작성
+5단계.주문생성Service구현 6단계.주문생성API 구현
+7단계.Mock결제성공/실패API구현
+8단계.주문조회API 구현
+9단계.리뷰작성API 구현
+10단계.동시성테스트작성
+11단계.조회성능최적화
+12단계.README및포트폴리오문서정리
+먼저Entity와도메인로직을만들고,그다음Service 유스케이스를구현한다.
+프로젝트패키지구조초안
+src/main/java/com/example/shopmember├──controller├──service├──repository├──domain└── dtoproduct├──controller├──service├──repository├──domain└── dtoinventory├──service├──repositorysrc/main/java/com/example/shopmember├──controller├──service├──repository├──domain└── dtoproduct├──controller├──service├──repository├──domain└── dtoinventory├──service├──repository패키지구조는도메인기준으로나눈다.
+src/main/java/com/example/shop
+member
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+product
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+inventory
+├──service
+├──repository
+src/main/java/com/example/shop
+member
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+product
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+inventory
+├──service
+├──repository
+├──domain└── dtoorder├──controller├──service├──repository├──domain└── dtopayment├──controller├──service├──repository├──domain└── dtodelivery├──domain└──repositoryreview├──controller├──service├──repository├──domain└── dtoglobal├──config├──exception├──security├──common└──response├──domain└── dtoorder├──controller├──service├──repository├──domain└── dtopayment├──controller├──service├──repository├──domain└── dtodelivery├──domain└──repositoryreview├──controller├──service├──repository├──domain└── dtoglobal├──config├──exception├──security├──common└──response초기에는 패키지를 너무 복잡하게 나누지 않는다. 하지만 주문, 결제, 재고는 반드시 분리한다.
+├──domain
+└── dto
+order
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+payment
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+delivery
+├──domain
+└──repository
+review
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+global
+├──config
+├──exception
+├──security
+├──common
+└──response
+├──domain
+└── dto
+order
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+payment
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+delivery
+├──domain
+└──repository
+review
+├──controller
+├──service
+├──repository
+├──domain
+└── dto
+global
+├──config
+├──exception
+├──security
+├──common
+└──response
+Order→주문상태와주문상품관리Payment→ 결제상태와승인/실패처리Inventory→재고예약,확정,해제처리Order→주문상태와주문상품관리Payment→ 결제상태와승인/실패처리Inventory→재고예약,확정,해제처리이유는세도메인의책임이다르기때문이다.
+Order
+→주문상태와주문상품관리
+Payment→ 결제상태와승인/실패처리
+Inventory→재고예약,확정,해제처리
+Order
+→주문상태와주문상품관리
+Payment→ 결제상태와승인/실패처리
+Inventory→재고예약,확정,해제처리
+1차테이블구현범위
+처음만들테이블은다음과같다.
+member category product inventory orders order_item payment delivery review product_statmember category product inventory orders order_item payment delivery review product_statcart cart_item coupon coupon_issue point_history outbox_eventorder_event_log batch_job_execution batch_failurecart cart_item coupon coupon_issue point_history outbox_eventorder_event_log batch_job_execution batch_failure추후확장할테이블은다음과같다.
+member category product inventory orders order_item payment delivery review product_stat
+member category product inventory orders order_item payment delivery review product_stat
+cart cart_item coupon coupon_issue point_history outbox_event
+order_event_log batch_job_execution batch_failure
+cart cart_item coupon coupon_issue point_history outbox_event
+order_event_log batch_job_execution batch_failure
+핵심Entity 구현순서
+MemberCategoryProductInventoryOrderOrderItemDeliveryPaymentReviewProductStatMemberCategoryProductInventoryOrderOrderItemDeliveryPaymentReviewProductStatEntity는다음순서로작성한다.
+Member
+Category
+Product
+Inventory
+Order
+OrderItem
+Delivery
+Payment
+Review
+ProductStat
+Member
+Category
+Product
+Inventory
+Order
+OrderItem
+Delivery
+Payment
+Review
+ProductStat
+Entity작성시주의할점은다음과같다.
+Entity를API응답으로직접반환하지않는다.Setter를무분별하게열지않는다.상태변경메서드는Entity내부에둔다.생성로직은정적생성메서드로정리한다.연관관계편의메서드를작성한다.Entity를API응답으로직접반환하지않는다.Setter를무분별하게열지않는다.상태변경메서드는Entity내부에둔다.생성로직은정적생성메서드로정리한다.연관관계편의메서드를작성한다.예시:
+Entity를API응답으로직접반환하지않는다.
+Setter를무분별하게열지않는다.
+상태변경메서드는Entity내부에둔다.
+생성로직은정적생성메서드로정리한다.
+연관관계편의메서드를작성한다.
+Entity를API응답으로직접반환하지않는다.
+Setter를무분별하게열지않는다.
+상태변경메서드는Entity내부에둔다.
+생성로직은정적생성메서드로정리한다.
+연관관계편의메서드를작성한다.
+publicclassOrder{
+publicstaticOrdercreatePending(Membermember){ Order order = new Order();
+order.member=member;
+order.status = OrderStatus.PENDING_PAYMENT; order.orderedAt = LocalDateTime.now();
+returnorder;
+}
+publicvoidpay(){
+if(this.status!=OrderStatus.PENDING_PAYMENT){
+thrownewIllegalStateException("결제대기상태에서만결제완료가가능합니다.");
+}
+this.status = OrderStatus.PAID; this.paidAt = LocalDateTime.now();
+}
+publicvoidcancel(){
+if(this.status==OrderStatus.SHIPPED||this.status==OrderStatus.DELIVERED){ thrownewIllegalStateException("배송시작이후에는일반취소가불가능합니다.");
+}
+this.status = OrderStatus.CANCELLED; this.cancelledAt = LocalDateTime.now();
+}
+}
+가장먼저구현할핵심유스케이스
+8-1.주문생성
+가장 먼저 구현할 기능은 주문 생성이다. 주문 생성은 단순 INSERT가 아니다.
+주문생성에는다음작업이포함된다.
+회원조회상품조회상품판매상태검증재고예약주문생성주문상품생성배송정보생성결제READY생성트랜잭션커밋회원조회상품조회상품판매상태검증재고예약주문생성주문상품생성배송정보생성결제READY생성트랜잭션커밋주문생성은하나의트랜잭션으로묶는다.
+회원조회
+상품조회
+상품판매상태검증
+재고예약
+주문생성
+주문상품생성
+배송정보생성
+결제READY생성
+트랜잭션커밋
+회원조회
+상품조회
+상품판매상태검증
+재고예약
+주문생성
+주문상품생성
+배송정보생성
+결제READY생성
+트랜잭션커밋
+외부PG 호출은이트랜잭션안에서수행하지않는다.
+사용자주문요청↓회원조회↓상품목록조회↓product_id오름차순정렬↓상품판매상태검증↓재고예약↓주문PENDING_PAYMENT생성↓주문상품생성↓배송정보생성↓PaymentREADY생성↓응답반환사용자주문요청↓회원조회↓상품목록조회↓product_id오름차순정렬↓상품판매상태검증↓재고예약↓주문PENDING_PAYMENT생성↓주문상품생성↓배송정보생성↓PaymentREADY생성↓응답반환8-2.주문생성흐름
+사용자주문요청
+↓
+회원조회
+↓
+상품목록조회
+↓
+product_id오름차순정렬
+↓
+상품판매상태검증
+↓
+재고예약
+↓
+주문PENDING_PAYMENT생성
+↓
+주문상품생성
+↓
+배송정보생성
+↓
+PaymentREADY생성
+↓
+응답반환
+사용자주문요청
+↓
+회원조회
+↓
+상품목록조회
+↓
+product_id오름차순정렬
+↓
+상품판매상태검증
+↓
+재고예약
+↓
+주문PENDING_PAYMENT생성
+↓
+주문상품생성
+↓
+배송정보생성
+↓
+PaymentREADY생성
+↓
+응답반환
+8-3.주문생성Service초안
+@Transactional
+publicOrderCreateResponsecreateOrder(LongmemberId,OrderCreateRequestrequest){ Member member = memberRepository.findById(memberId)
+.orElseThrow(()->newIllegalArgumentException("회원이 존재하지 않습니다."));
+List<OrderCreateRequest.Item>sortedItems=request.getItems().stream()
+.sorted(Comparator.comparing(OrderCreateRequest.Item::getProductId))
+.toList();
+Orderorder=Order.createPending(member);
+for(OrderCreateRequest.Itemitem:sortedItems){
+Productproduct= productRepository.findById(item.getProductId())
+.orElseThrow(()->newIllegalArgumentException("상품이 존재하지 않습니다."));
+product.validateSelling();inventoryService.reserve(product.getId(), item.getQuantity()); OrderItem orderItem = OrderItem.create(
+product.getId(),product.getName(),product.getPrice(),item.getQuantity()
+);
+order.addOrderItem(orderItem);
+}
+Deliverydelivery=Delivery.create(request.getDeliveryAddress()); order.setDelivery(delivery);
+Payment payment = Payment.ready(order, order.calculateFinalPaymentAmount());orderRepository.save(order);
+paymentRepository.save(payment);
+returnOrderCreateResponse.from(order,payment);
+}
+재고처리구현방향
+9-1.Java에서재고를단순차감하지않는다
+다음방식은위험하다.
+product.decreaseStock(quantity);product.decreaseStock(quantity);이 방식은 동시에 여러 사용자가 주문할 때 RaceCondition이 발생할 수 있다. 재고 차감 또는 예약은 DB 조건부 UPDATE로 처리한다.
+product.decreaseStock(quantity);
+product.decreaseStock(quantity);
+UPDATE inventorySETreserved_quantity=reserved_quantity+:quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;UPDATE inventorySETreserved_quantity=reserved_quantity+:quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;9-2.재고예약SQL
+UPDATE inventory
+SETreserved_quantity=reserved_quantity+:quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+UPDATE inventory
+SETreserved_quantity=reserved_quantity+:quantity, available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+updatedrow=1→예약성공updatedrow=0→재고부족updatedrow=1→예약성공updatedrow=0→재고부족변경된row수로성공여부를판단한다.
+updatedrow=1→예약성공
+updatedrow=0→재고부족
+updatedrow=1→예약성공
+updatedrow=0→재고부족
+@Transactionalpublicvoidreserve(LongproductId,intquantity){intupdated=inventoryRepository.reserve(productId,quantity);if(updated==0){thrownewIllegalStateException("재고가부족합니다.");}}@Transactionalpublicvoidreserve(LongproductId,intquantity){intupdated=inventoryRepository.reserve(productId,quantity);if(updated==0){thrownewIllegalStateException("재고가부족합니다.");}}9-3.InventoryService초안
+@Transactional
+publicvoidreserve(LongproductId,intquantity){
+intupdated=inventoryRepository.reserve(productId,quantity);
+if(updated==0){
+thrownewIllegalStateException("재고가부족합니다.");
+}
+}
+@Transactional
+publicvoidreserve(LongproductId,intquantity){
+intupdated=inventoryRepository.reserve(productId,quantity);
+if(updated==0){
+thrownewIllegalStateException("재고가부족합니다.");
+}
+}
+결제구현방향
+1차 구현에서는 실제 PG사를 연동하지 않는다. 대신 Mock 결제 API를 만든다.
+결제성공요청↓paymentREADY조회↓주문PENDING_PAYMENT조회↓결제금액검증↓paymentAPPROVED변경↓orderPAID변경↓예약재고확정결제성공요청↓paymentREADY조회↓주문PENDING_PAYMENT조회↓결제금액검증↓paymentAPPROVED변경↓orderPAID변경↓예약재고확정10-1.결제성공흐름
+결제성공요청
+↓
+paymentREADY조회
+↓
+주문PENDING_PAYMENT조회
+↓
+결제금액검증
+↓
+paymentAPPROVED변경
+↓
+orderPAID변경
+↓
+예약재고확정
+결제성공요청
+↓
+paymentREADY조회
+↓
+주문PENDING_PAYMENT조회
+↓
+결제금액검증
+↓
+paymentAPPROVED변경
+↓
+orderPAID변경
+↓
+예약재고확정
+결제실패요청↓paymentREADY조회↓paymentFAILED변경↓orderPAYMENT_FAILED변경↓예약재고해제결제실패요청↓paymentREADY조회↓paymentFAILED변경↓orderPAYMENT_FAILED변경↓예약재고해제10-2.결제실패흐름
+결제실패요청
+↓
+paymentREADY조회
+↓
+paymentFAILED변경
+↓
+orderPAYMENT_FAILED변경
+↓
+예약재고해제
+결제실패요청
+↓
+paymentREADY조회
+↓
+paymentFAILED변경
+↓
+orderPAYMENT_FAILED변경
+↓
+예약재고해제
+@TransactionalpublicPaymentApproveResponseapprove(PaymentApproveRequestrequest){Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey()).orElseThrow(()->newIllegalArgumentException("결제 정보가 없습니다."));Orderorder=orderRepository.findById(payment.getOrderId())@TransactionalpublicPaymentApproveResponseapprove(PaymentApproveRequestrequest){Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey()).orElseThrow(()->newIllegalArgumentException("결제 정보가 없습니다."));Orderorder=orderRepository.findById(payment.getOrderId())10-3.결제성공Service초안
+@Transactional
+publicPaymentApproveResponseapprove(PaymentApproveRequestrequest){
+Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey())
+.orElseThrow(()->newIllegalArgumentException("결제 정보가 없습니다."));
+Orderorder=orderRepository.findById(payment.getOrderId())
+@Transactional
+publicPaymentApproveResponseapprove(PaymentApproveRequestrequest){
+Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey())
+.orElseThrow(()->newIllegalArgumentException("결제 정보가 없습니다."));
+Orderorder=orderRepository.findById(payment.getOrderId())
+.orElseThrow(()->newIllegalArgumentException("주문 정보가 없습니다."));if(!order.isPendingPayment()){returnPaymentApproveResponse.alreadyProcessed(order,payment);}payment.approve(request.getAmount());order.pay();for (OrderItem item : order.getOrderItems()) { inventoryService.confirmReservedStock(item.getProductId(), item.getQuantity());}returnPaymentApproveResponse.from(order,payment);}.orElseThrow(()->newIllegalArgumentException("주문 정보가 없습니다."));if(!order.isPendingPayment()){returnPaymentApproveResponse.alreadyProcessed(order,payment);}payment.approve(request.getAmount());order.pay();for (OrderItem item : order.getOrderItems()) { inventoryService.confirmReservedStock(item.getProductId(), item.getQuantity());}returnPaymentApproveResponse.from(order,payment);}주문조회구현방향
+.orElseThrow(()->newIllegalArgumentException("주문 정보가 없습니다."));
+if(!order.isPendingPayment()){
+returnPaymentApproveResponse.alreadyProcessed(order,payment);
+}
+payment.approve(request.getAmount());order.pay();
+for (OrderItem item : order.getOrderItems()) { inventoryService.confirmReservedStock(item.getProductId(), item.getQuantity());
+}
+returnPaymentApproveResponse.from(order,payment);
+}
+.orElseThrow(()->newIllegalArgumentException("주문 정보가 없습니다."));
+if(!order.isPendingPayment()){
+returnPaymentApproveResponse.alreadyProcessed(order,payment);
+}
+payment.approve(request.getAmount());order.pay();
+for (OrderItem item : order.getOrderItems()) { inventoryService.confirmReservedStock(item.getProductId(), item.getQuantity());
+}
+returnPaymentApproveResponse.from(order,payment);
+}
+주문조회는두가지를구분한다.
+주문목록조회주문상세조회주문목록조회주문상세조회목록 조회에서는 모든 주문상품을 즉시 가져오지 않는다. 주문 목록에 필요한 최소 데이터만 조회한다.
+주문목록조회
+주문상세조회
+주문목록조회
+주문상세조회
+상세조회에서는주문,주문상품,결제,배송정보를함께보여준다.
+GET/api/orders?cursor=...&size=20GET/api/orders?cursor=...&size=2011-1.주문목록조회기준
+GET/api/orders?cursor=...&size=20
+GET/api/orders?cursor=...&size=20
+조회기준:
+member_id기준ordered_atDESCorder_idDESCcursor기반페이징member_id기준ordered_atDESCorder_idDESCcursor기반페이징인덱스:
+member_id기준
+ordered_atDESC
+order_idDESC
+cursor기반페이징
+member_id기준
+ordered_atDESC
+order_idDESC
+cursor기반페이징
+CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC,order_idDESC);CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC,order_idDESC);11-2.주문상세조회기준
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC,order_idDESC);
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC,order_idDESC);
+주문상세조회에서는다음정보를반환한다.
+주문기본정보주문상품목록결제정보배송정보주문기본정보주문상품목록결제정보배송정보일반사용자는본인주문만조회가능하다.Entity를직접반환하지않는다.DTO로변환해서응답한다.일반사용자는본인주문만조회가능하다.Entity를직접반환하지않는다.DTO로변환해서응답한다.주의할점:
+주문기본정보
+주문상품목록
+결제정보
+배송정보
+주문기본정보
+주문상품목록
+결제정보
+배송정보
+일반사용자는본인주문만조회가능하다.
+Entity를직접반환하지않는다.
+DTO로변환해서응답한다.
+일반사용자는본인주문만조회가능하다.
+Entity를직접반환하지않는다.
+DTO로변환해서응답한다.
+리뷰작성구현방향
+로그인한회원이어야한다.order_item이본인주문에속해야한다.주문상태가DELIVERED또는CONFIRMED여야한다.하나의order_item에는하나의리뷰만작성할수있다.로그인한회원이어야한다.order_item이본인주문에속해야한다.주문상태가DELIVERED또는CONFIRMED여야한다.하나의order_item에는하나의리뷰만작성할수있다.리뷰는 실제 구매자만 작성할 수 있다. 리뷰 작성 조건은 다음과 같다.
+로그인한회원이어야한다.
+order_item이본인주문에속해야한다.
+주문상태가DELIVERED또는CONFIRMED여야한다.
+하나의order_item에는하나의리뷰만작성할수있다.
+로그인한회원이어야한다.
+order_item이본인주문에속해야한다.
+주문상태가DELIVERED또는CONFIRMED여야한다.
+하나의order_item에는하나의리뷰만작성할수있다.
+ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);최종중복방지는DB UNIQUE 제약조건으로처리한다.
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+반드시작성할테스트
+Product.validateSelling() Order.pay() Order.cancel() Payment.approve() Payment.fail() Inventory.reserve() Inventory.release()Product.validateSelling() Order.pay() Order.cancel() Payment.approve() Payment.fail() Inventory.reserve() Inventory.release()13-1.도메인테스트
+Product.validateSelling() Order.pay() Order.cancel() Payment.approve() Payment.fail() Inventory.reserve() Inventory.release()
+Product.validateSelling() Order.pay() Order.cancel() Payment.approve() Payment.fail() Inventory.reserve() Inventory.release()
+재고가충분하면주문생성성공재고가부족하면주문생성실패주문생성성공시orders저장주문생성성공시order_item저장주문생성성공시delivery저장주문생성성공시paymentREADY저장결제성공시orderPAID변경결제성공시paymentAPPROVED변경결제성공시예약재고확정결제실패시예약재고해제주문취소시재고복구구매하지않은상품리뷰작성실패같은order_item에리뷰중복작성실패재고가충분하면주문생성성공재고가부족하면주문생성실패주문생성성공시orders저장주문생성성공시order_item저장주문생성성공시delivery저장주문생성성공시paymentREADY저장결제성공시orderPAID변경결제성공시paymentAPPROVED변경결제성공시예약재고확정결제실패시예약재고해제주문취소시재고복구구매하지않은상품리뷰작성실패같은order_item에리뷰중복작성실패13-2.통합테스트
+재고가충분하면주문생성성공
+재고가부족하면주문생성실패
+주문생성성공시orders저장
+주문생성성공시order_item저장
+주문생성성공시delivery저장
+주문생성성공시paymentREADY저장
+결제성공시orderPAID변경
+결제성공시paymentAPPROVED변경
+결제성공시예약재고확정
+결제실패시예약재고해제
+주문취소시재고복구
+구매하지않은상품리뷰작성실패
+같은order_item에리뷰중복작성실패
+재고가충분하면주문생성성공
+재고가부족하면주문생성실패
+주문생성성공시orders저장
+주문생성성공시order_item저장
+주문생성성공시delivery저장
+주문생성성공시paymentREADY저장
+결제성공시orderPAID변경
+결제성공시paymentAPPROVED변경
+결제성공시예약재고확정
+결제실패시예약재고해제
+주문취소시재고복구
+구매하지않은상품리뷰작성실패
+같은order_item에리뷰중복작성실패
+13-3.동시성테스트
+동시성테스트는이프로젝트의핵심이다.
+재고1개상품에100명동시주문
+성공 주문 수 = 1 실패주문수=99최종available_quantity=0재고음수발생없음성공 주문 수 = 1 실패주문수=99최종available_quantity=0재고음수발생없음기대결과:
+성공 주문 수 = 1 실패주문수=99
+최종available_quantity=0
+재고음수발생없음
+성공 주문 수 = 1 실패주문수=99
+최종available_quantity=0
+재고음수발생없음
+같은order_item에리뷰10개동시작성
+성공 리뷰 수 = 1 실패리뷰수=9DBUNIQUE제약조건으로중복방지성공 리뷰 수 = 1 실패리뷰수=9DBUNIQUE제약조건으로중복방지기대결과:
+성공 리뷰 수 = 1 실패리뷰수=9
+DBUNIQUE제약조건으로중복방지
+성공 리뷰 수 = 1 실패리뷰수=9
+DBUNIQUE제약조건으로중복방지
+성능최적화계획
+14-1.상품목록조회
+필요한컬럼만DTO로조회category_id,status,created_at,product_id복합인덱스사용OffsetPagination보다KeysetPagination우선고려필요한컬럼만DTO로조회category_id,status,created_at,product_id복합인덱스사용OffsetPagination보다KeysetPagination우선고려상품목록조회는다음방식으로최적화한다.
+필요한컬럼만DTO로조회
+category_id,status,created_at,product_id복합인덱스사용
+OffsetPagination보다KeysetPagination우선고려
+필요한컬럼만DTO로조회
+category_id,status,created_at,product_id복합인덱스사용
+OffsetPagination보다KeysetPagination우선고려
+14-2.주문목록조회
+member_id기준으로조회ordered_atDESC,order_idDESC정렬cursor기반페이징목록조회에서order_item전체를즉시로딩하지않음member_id기준으로조회ordered_atDESC,order_idDESC정렬cursor기반페이징목록조회에서order_item전체를즉시로딩하지않음주문목록조회는다음방식으로최적화한다.
+member_id기준으로조회
+ordered_atDESC,order_idDESC정렬
+cursor기반페이징
+목록조회에서order_item전체를즉시로딩하지않음
+member_id기준으로조회
+ordered_atDESC,order_idDESC정렬
+cursor기반페이징
+목록조회에서order_item전체를즉시로딩하지않음
+14-3.리뷰목록조회
+product_id기준으로조회deleted_atISNULL조건적용created_atDESC,review_idDESC기준cursorpaginationproduct_id기준으로조회deleted_atISNULL조건적용created_atDESC,review_idDESC기준cursorpagination리뷰목록조회는다음방식으로최적화한다.
+product_id기준으로조회
+deleted_atISNULL조건적용
+created_atDESC,review_idDESC기준cursorpagination
+product_id기준으로조회
+deleted_atISNULL조건적용
+created_atDESC,review_idDESC기준cursorpagination
+README작성계획
+GitHubREADME는다음구조로작성한다.
+#운영가능한온라인쇼핑몰주문시스템## 1. 프로젝트 소개 ## 2. 기술 스택##3.핵심목표##4.시스템아키텍처##5.ERD##6.API명세##7.주문생성흐름## 8. 결제 성공/실패 흐름 ## 9. 재고 동시성 제어## 10. 주문 조회 성능 최적화 ## 11. 테스트 전략## 12. 동시성 테스트 결과 ## 13. 트러블슈팅##14.향후개선사항#운영가능한온라인쇼핑몰주문시스템## 1. 프로젝트 소개 ## 2. 기술 스택##3.핵심목표##4.시스템아키텍처##5.ERD##6.API명세##7.주문생성흐름## 8. 결제 성공/실패 흐름 ## 9. 재고 동시성 제어## 10. 주문 조회 성능 최적화 ## 11. 테스트 전략## 12. 동시성 테스트 결과 ## 13. 트러블슈팅##14.향후개선사항단순CRUD쇼핑몰이아니라주문·결제·재고정합성을중심으로설계했다.재고차감은DB조건부UPDATE로처리했다.결제성공/실패에따라주문상태와재고상태를일관되게관리했다.동시성테스트로재고음수발생을방지했다.조회성능을위해인덱스와cursorpagination을적용했다.단순CRUD쇼핑몰이아니라주문·결제·재고정합성을중심으로설계했다.재고차감은DB조건부UPDATE로처리했다.결제성공/실패에따라주문상태와재고상태를일관되게관리했다.동시성테스트로재고음수발생을방지했다.조회성능을위해인덱스와cursorpagination을적용했다.README에서가장강조할내용은다음이다.
+#운영가능한온라인쇼핑몰주문시스템
+## 1. 프로젝트 소개 ## 2. 기술 스택
+##3.핵심목표
+##4.시스템아키텍처
+##5.ERD
+##6.API명세
+##7.주문생성흐름
+## 8. 결제 성공/실패 흐름 ## 9. 재고 동시성 제어
+## 10. 주문 조회 성능 최적화 ## 11. 테스트 전략
+## 12. 동시성 테스트 결과 ## 13. 트러블슈팅
+##14.향후개선사항
+#운영가능한온라인쇼핑몰주문시스템
+## 1. 프로젝트 소개 ## 2. 기술 스택
+##3.핵심목표
+##4.시스템아키텍처
+##5.ERD
+##6.API명세
+##7.주문생성흐름
+## 8. 결제 성공/실패 흐름 ## 9. 재고 동시성 제어
+## 10. 주문 조회 성능 최적화 ## 11. 테스트 전략
+## 12. 동시성 테스트 결과 ## 13. 트러블슈팅
+##14.향후개선사항
+단순CRUD쇼핑몰이아니라주문·결제·재고정합성을중심으로설계했다.
+재고차감은DB조건부UPDATE로처리했다.
+결제성공/실패에따라주문상태와재고상태를일관되게관리했다.
+동시성테스트로재고음수발생을방지했다.
+조회성능을위해인덱스와cursorpagination을적용했다.
+단순CRUD쇼핑몰이아니라주문·결제·재고정합성을중심으로설계했다.
+재고차감은DB조건부UPDATE로처리했다.
+결제성공/실패에따라주문상태와재고상태를일관되게관리했다.
+동시성테스트로재고음수발생을방지했다.
+조회성능을위해인덱스와cursorpagination을적용했다.
+1차구현일정초안
+프로젝트생성패키지구조생성DB연결Member,Product,InventoryEntity작성상품등록/조회API구현프로젝트생성패키지구조생성DB연결Member,Product,InventoryEntity작성상품등록/조회API구현1주차
+프로젝트생성
+패키지구조생성
+DB연결
+Member,Product,InventoryEntity작성
+상품등록/조회API구현
+프로젝트생성
+패키지구조생성
+DB연결
+Member,Product,InventoryEntity작성
+상품등록/조회API구현
+Order,OrderItem,Delivery,PaymentEntity작성주문생성Service구현주문생성API구현재고예약로직구현Order,OrderItem,Delivery,PaymentEntity작성주문생성Service구현주문생성API구현재고예약로직구현2주차
+Order,OrderItem,Delivery,PaymentEntity작성
+주문생성Service구현
+주문생성API구현
+재고예약로직구현
+Order,OrderItem,Delivery,PaymentEntity작성
+주문생성Service구현
+주문생성API구현
+재고예약로직구현
+Mock결제성공API구현Mock결제실패API구현예약재고확정/해제구현주문목록/상세조회구현Mock결제성공API구현Mock결제실패API구현예약재고확정/해제구현주문목록/상세조회구현3주차
+Mock결제성공API구현
+Mock결제실패API구현
+예약재고확정/해제구현
+주문목록/상세조회구현
+Mock결제성공API구현
+Mock결제실패API구현
+예약재고확정/해제구현
+주문목록/상세조회구현
+리뷰작성API구현리뷰중복방지구현주문/결제/재고통합테스트작성동시성테스트작성리뷰작성API구현리뷰중복방지구현주문/결제/재고통합테스트작성동시성테스트작성4주차
+리뷰작성API구현
+리뷰중복방지구현
+주문/결제/재고통합테스트작성
+동시성테스트작성
+리뷰작성API구현
+리뷰중복방지구현
+주문/결제/재고통합테스트작성
+동시성테스트작성
+상품목록조회최적화주문목록조회최적화리뷰목록조회최적화인덱스적용전/후비교README정리상품목록조회최적화주문목록조회최적화리뷰목록조회최적화인덱스적용전/후비교README정리5주차
+상품목록조회최적화
+주문목록조회최적화
+리뷰목록조회최적화
+인덱스적용전/후비교
+README정리
+상품목록조회최적화
+주문목록조회최적화
+리뷰목록조회최적화
+인덱스적용전/후비교
+README정리
+최종구현우선순위요약
+GitHubRepository생성SpringBoot프로젝트생성member,product,inventory테이블작성Member,Product,InventoryEntity작성상품등록/조회API구현orders,order_item,delivery,payment테이블작성Order,OrderItem,Delivery,PaymentEntity작성GitHubRepository생성SpringBoot프로젝트생성member,product,inventory테이블작성Member,Product,InventoryEntity작성상품등록/조회API구현orders,order_item,delivery,payment테이블작성Order,OrderItem,Delivery,PaymentEntity작성가장먼저할일은다음이다.
+GitHubRepository생성
+SpringBoot프로젝트생성
+member,product,inventory테이블작성
+Member,Product,InventoryEntity작성
+상품등록/조회API구현
+orders,order_item,delivery,payment테이블작성
+Order,OrderItem,Delivery,PaymentEntity작성
+GitHubRepository생성
+SpringBoot프로젝트생성
+member,product,inventory테이블작성
+Member,Product,InventoryEntity작성
+상품등록/조회API구현
+orders,order_item,delivery,payment테이블작성
+Order,OrderItem,Delivery,PaymentEntity작성
+주문생성API구현재고예약조건부UPDATE구현Mock결제성공/실패API구현동시성테스트작성주문생성API구현재고예약조건부UPDATE구현Mock결제성공/실패API구현동시성테스트작성결론
+주문생성API구현
+재고예약조건부UPDATE구현
+Mock결제성공/실패API구현
+동시성테스트작성
+주문생성API구현
+재고예약조건부UPDATE구현
+Mock결제성공/실패API구현
+동시성테스트작성
+지금 단계에서 중요한 것은 문서를 계속 확장하는 것이 아니다. 이미 운영 가능한 아키텍처 방향은 충분히 잡혔다.
+이제해야할일은다음이다.
+설계문서↓MVP범위확정↓Entity작성↓주문생성구현↓재고동시성테스트↓Mock결제흐름구현↓조회성능최적화↓README와포트폴리오정리설계문서↓MVP범위확정↓Entity작성↓주문생성구현↓재고동시성테스트↓Mock결제흐름구현↓조회성능최적화↓README와포트폴리오정리온라인쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다.따라서첫번째구현목표는상품화면을예쁘게만드는것이아니라, 동시에주문해도재고가깨지지않는주문시스템을만드는것이다.온라인쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다.따라서첫번째구현목표는상품화면을예쁘게만드는것이아니라, 동시에주문해도재고가깨지지않는주문시스템을만드는것이다.이프로젝트의핵심문장은다음과같다.
+설계문서
+↓
+MVP범위확정
+↓
+Entity작성
+↓
+주문생성구현
+↓
+재고동시성테스트
+↓
+Mock결제흐름구현
+↓
+조회성능최적화
+↓
+README와포트폴리오정리
+설계문서
+↓
+MVP범위확정
+↓
+Entity작성
+↓
+주문생성구현
+↓
+재고동시성테스트
+↓
+Mock결제흐름구현
+↓
+조회성능최적화
+↓
+README와포트폴리오정리
+온라인쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다.
+따라서첫번째구현목표는상품화면을예쁘게만드는것이아니라, 동시에주문해도재고가깨지지않는주문시스템을만드는것이다.
+온라인쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다.
+따라서첫번째구현목표는상품화면을예쁘게만드는것이아니라, 동시에주문해도재고가깨지지않는주문시스템을만드는것이다.

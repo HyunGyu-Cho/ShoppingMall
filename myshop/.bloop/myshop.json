@@ -1,0 +1,2409 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "myshop",
+        "directory": "C:\\Cho\\project\\shoppingmall\\myshop",
+        "workspaceDir": "C:\\Cho\\project\\shoppingmall\\myshop",
+        "sources": [
+            "C:\\Cho\\project\\shoppingmall\\myshop\\src\\main\\java"
+        ],
+        "dependencies": [
+            
+        ],
+        "classpath": [
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.projectlombok\\lombok\\1.18.46\\a5cfe99fdf320e84955ef653f2ce1bf789d11385\\lombok-1.18.46.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-data-jpa\\4.1.0\\252e31911d5042a8ae811ad9bfc3e18ec4ac42a5\\spring-boot-starter-data-jpa-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-restclient\\4.1.0\\2f23541ef00728c2406ba0714ee09d5ea63624c0\\spring-boot-starter-restclient-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-security\\4.1.0\\6993d3e5d7bcc0fb4e8e6aab775bc25b197ef814\\spring-boot-starter-security-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-validation\\4.1.0\\36c16acdbe1b86463616aeb218f18764c9baff2d\\spring-boot-starter-validation-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-webmvc\\4.1.0\\bbde05100fc621297f7dcb5246f631e5af390ef7\\spring-boot-starter-webmvc-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jdbc\\4.1.0\\aa7c6585dd28891cb052d95606776076b5445df2\\spring-boot-starter-jdbc-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jackson\\4.1.0\\2feada57005e69f8d939815af7400b43f2c07b9e\\spring-boot-starter-jackson-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat\\4.1.0\\6dbb6ad6bb33b7f1ce15a5822cfd1443966245e0\\spring-boot-starter-tomcat-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter\\4.1.0\\4d1f5fcf982ec75223a3ee44169e268b6dd044f7\\spring-boot-starter-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-jpa\\4.1.0\\d29dbdc6734afe2f4d5c56cf3112c491c3582642\\spring-boot-data-jpa-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-hibernate\\4.1.0\\af702315125871004a8a7df290f55ac5e5617d91\\spring-boot-hibernate-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jpa\\4.1.0\\bf645cdf194c71f829225793a5d6545d9dfe96ae\\spring-boot-jpa-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jdbc\\4.1.0\\71f00c6af0ae910530d9fce8f5ae6e54c595f690\\spring-boot-jdbc-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-restclient\\4.1.0\\d3f9fadf2847b18b7a5438d7737be3b041fe168e\\spring-boot-restclient-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-security\\4.1.0\\1fe5f10c43305d43d8ac22ae5b721010f4394449\\spring-boot-security-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-jpa\\4.1.0\\6387c88a4a9637f129e0ebcad50ada478ad01c3f\\spring-data-jpa-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-config\\7.1.0\\ebc863ad43703c6f5517881e16d3d73de80cd193\\spring-security-config-7.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-web\\7.1.0\\cec1635393d11a56da5ff111253c88056d5cc0eb\\spring-security-web-7.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-webmvc\\4.1.0\\2cb542ef7d4fa572d3031616544db20b6f7de4c7\\spring-boot-webmvc-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-webmvc\\7.0.8\\d08172cf66f9625a42935d596ca4c83d21265996\\spring-webmvc-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-validation\\4.1.0\\fcd0b07c0c7e29f42e495f91710154dbc81d2c8c\\spring-boot-validation-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-converter\\4.1.0\\c3b90921e920dfa7dcb78a5045f18ca0e4bc0b44\\spring-boot-http-converter-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-autoconfigure\\4.1.0\\a921df4e39389e43dacac5615a1185708ee8a960\\spring-boot-autoconfigure-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-commons\\4.1.0\\3d587cffcde8c18fa784e0486a2c0a8a4728f262\\spring-boot-data-commons-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-sql\\4.1.0\\7a5ef86020d10e926b2e98e1d7b4b79258fb2f38\\spring-boot-sql-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-transaction\\4.1.0\\93b102fb7c2eb6558b8e52fb24f1152c837db3f6\\spring-boot-transaction-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jackson\\4.1.0\\bada14f54b1961279f9942c54b5039c90cd6a252\\spring-boot-jackson-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-client\\4.1.0\\eb43e8087894445e5e84174c910fbf41453c9f66\\spring-boot-http-client-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-servlet\\4.1.0\\a067e9b4b7c255a8587852b6eb842413cc458e70\\spring-boot-servlet-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-persistence\\4.1.0\\12b6d5aa8a97c458a5c8eba8e8cb0e38e326d9d8\\spring-boot-persistence-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat-runtime\\4.1.0\\6107a851e178c1233b64634270b11b8d5490733a\\spring-boot-starter-tomcat-runtime-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-tomcat\\4.1.0\\502aeed70cb11c3754c365324acd9f3ee746354\\spring-boot-tomcat-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-web-server\\4.1.0\\e67513b382c2cef7b8bc364e8e85cd7f0940e331\\spring-boot-web-server-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot\\4.1.0\\bcf26d4c27ab080ef60c13220e96a37d687f9e26\\spring-boot-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-core\\7.1.0\\50064b46aed22d05aa181b2c95d47989c7c99160\\spring-security-core-7.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-context\\7.0.8\\6c58b590fd8d71afc36797cf6555e82500f1eb64\\spring-context-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aop\\7.0.8\\b73e58e9b7dbc4db6b4ebbe3336be0e901b0d261\\spring-aop-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-logging\\4.1.0\\f2e2615d9fb27a035a8fc7aef19670769739ae76\\spring-boot-starter-logging-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.annotation\\jakarta.annotation-api\\3.0.0\\54f928fadec906a99d558536756d171917b9d936\\jakarta.annotation-api-3.0.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.yaml\\snakeyaml\\2.6\\2bc14918a2f8d5414749ab12d0c590cd3198b8c1\\snakeyaml-2.6.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.zaxxer\\HikariCP\\7.0.2\\c2b43c946b86a14a96342379e22b004c56c6166d\\HikariCP-7.0.2.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aspects\\7.0.8\\daf535194ee6cd1e1e23c7368c58b5f02fe18f65\\spring-aspects-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-orm\\7.0.8\\8c40fad8ecc72337353818da54ef2d104b3fa7a9\\spring-orm-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-jdbc\\7.0.8\\f979da380cd01fd363510ca98a7f544d1959a914\\spring-jdbc-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-web\\7.0.8\\d7cddac31ee023d25d37f48e2ff0e168cf635c14\\spring-web-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-commons\\4.1.0\\e8d1077d09c20e9ecf3574a72ce5cc90a29b902a\\spring-data-commons-4.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-tx\\7.0.8\\96c66acfb3920457421a9cb3648a32e62f42f815\\spring-tx-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-beans\\7.0.8\\829cdf4c82a9409e0e10922b9e57e2ef12d5f04d\\spring-beans-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-expression\\7.0.8\\bb844eefd513820e356b575d7ea0f7084147af59\\spring-expression-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-core\\7.0.8\\25f5ebd179f92d7d12779e3761c96da4b0109ad\\spring-core-7.0.8.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-el\\11.0.22\\db92447e16c3561e9ca7bf9311b6b6389816699e\\tomcat-embed-el-11.0.22.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.validator\\hibernate-validator\\9.1.0.Final\\53505ad984428ab42b4a4f3456aab9ec343bf2f2\\hibernate-validator-9.1.0.Final.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-classic\\1.5.34\\e598899bad5824511cd3019299254230468e1fa2\\logback-classic-1.5.34.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-to-slf4j\\2.25.4\\68df56640a5d245192e91bd2ac89e504b477cc10\\log4j-to-slf4j-2.25.4.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\jul-to-slf4j\\2.0.18\\79739c98001d5c9d078d087d5a348ec9e474ec8f\\jul-to-slf4j-2.0.18.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\slf4j-api\\2.0.18\\78a9e7a37cd6360e0b818e86341b24123d28d4df\\slf4j-api-2.0.18.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.orm\\hibernate-core\\7.4.1.Final\\b405096e4aa04ff9c99a3e6e632eb2b8d252e1f1\\hibernate-core-7.4.1.Final.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.antlr\\antlr4-runtime\\4.13.2\\fc3db6d844df652a3d5db31c87fa12757f13691d\\antlr4-runtime-4.13.2.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.aspectj\\aspectjweaver\\1.9.25.1\\a713c790da4d794c7dfb542b550d4e44898d5e23\\aspectjweaver-1.9.25.1.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-core\\3.1.4\\f9fd39204bd3d4922b42f6a54b81f46bd8ed575a\\jackson-core-3.1.4.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-databind\\3.1.4\\c7be3c757289893a791b2a4967ec09d1a8b6c576\\jackson-databind-3.1.4.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\commons-logging\\commons-logging\\1.3.6\\63e78ca6cd446c0ad166d14f03ed99e7efb3896d\\commons-logging-1.3.6.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-observation\\1.17.0\\2037bdaeb5725bdddb2390cbf93be3c19f8b8b48\\micrometer-observation-1.17.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-api\\2.25.4\\89ff2217b193fb187b134aa6ebcbfa8a28b018a9\\log4j-api-2.25.4.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-commons\\1.17.0\\2edbb561cdd2b2777fbcd83aa9f2204ebabf592b\\micrometer-commons-1.17.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jspecify\\jspecify\\1.0.0\\7425a601c1c7ec76645a78d22b8c6a627edee507\\jspecify-1.0.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.validation\\jakarta.validation-api\\3.1.1\\ec8622148afc5564235d17af80ea80288d0e7f92\\jakarta.validation-api-3.1.1.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jboss.logging\\jboss-logging\\3.6.3.Final\\1cc9f976725720bb4a66f80af3e3aa6b9890d969\\jboss-logging-3.6.3.Final.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml\\classmate\\1.7.3\\f61c7e7b81e9249b0f6a05914eff9d54fb09f4a0\\classmate-1.7.3.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-websocket\\11.0.22\\5686ff1ad745491d981d771514027d8fc55aed4f\\tomcat-embed-websocket-11.0.22.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-core\\11.0.22\\cc7307efaa60c0d31784bf053ec4aa48a404f44b\\tomcat-embed-core-11.0.22.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-core\\1.5.34\\378692f76c337b3325c15bffb89e013dc1f897b4\\logback-core-1.5.34.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\biz.aQute.bnd\\biz.aQute.bnd.annotation\\7.1.0\\2f2be18c936d08cf46ea6cfa0043f34afdf38705\\biz.aQute.bnd.annotation-7.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.google.errorprone\\error_prone_annotations\\2.38.0\\fc0ae991433e8590ba51cd558421478318a74c8c\\error_prone_annotations-2.38.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.annotation.bundle\\2.0.0\\f5c2cd6e670c3c5d440d3003efd5ef2ead5c68eb\\org.osgi.annotation.bundle-2.0.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.annotation.versioning\\1.1.2\\dc3cd4ec96c0b3c5459fe00694bd73a816ecf93e\\org.osgi.annotation.versioning-1.1.2.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.persistence\\jakarta.persistence-api\\3.2.0\\bb75a113f3fa191c2c7ee7b206d8e674251b3129\\jakarta.persistence-api-3.2.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.transaction\\jakarta.transaction-api\\2.0.1\\51a520e3fae406abb84e2e1148e6746ce3f80a1a\\jakarta.transaction-api-2.0.1.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml.jackson.core\\jackson-annotations\\2.21\\b1bc1868bf02dc0bd6c7836257a036a331005309\\jackson-annotations-2.21.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-crypto\\7.1.0\\819461a33c5b10b92bb1a125db933a17fc0db792\\spring-security-crypto-7.1.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.resource\\1.0.0\\343c88949132984b3f2d4175a72c40b77dc65619\\org.osgi.resource-1.0.0.jar",
+            "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.service.serviceloader\\1.0.0\\3728ff37909c6a3c1870b3e851342d9f2bd3cc63\\org.osgi.service.serviceloader-1.0.0.jar"
+        ],
+        "out": "C:\\Cho\\project\\shoppingmall\\myshop\\.bloop\\myshop\\build",
+        "classesDir": "C:\\Cho\\project\\shoppingmall\\myshop\\.bloop\\myshop\\build\\classes",
+        "resources": [
+            "C:\\Cho\\project\\shoppingmall\\myshop\\src\\main\\resources"
+        ],
+        "java": {
+            "options": [
+                "-target",
+                "17",
+                "-source",
+                "17",
+                "-encoding",
+                "UTF-8",
+                "-h",
+                "C:\\Cho\\project\\shoppingmall\\myshop\\build\\generated\\sources\\headers\\java\\main",
+                "-g",
+                "-sourcepath",
+                "",
+                "-processorpath",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.projectlombok\\lombok\\1.18.46\\a5cfe99fdf320e84955ef653f2ce1bf789d11385\\lombok-1.18.46.jar",
+                "-s",
+                "C:\\Cho\\project\\shoppingmall\\myshop\\build\\generated\\sources\\annotationProcessor\\java\\main",
+                "-XDuseUnsharedTable=true",
+                "-parameters"
+            ]
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "C:\\Program Files\\Java\\jdk-17",
+                "options": [
+                    
+                ]
+            },
+            "mainClass": [
+                
+            ],
+            "classpath": [
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-data-jpa\\4.1.0\\252e31911d5042a8ae811ad9bfc3e18ec4ac42a5\\spring-boot-starter-data-jpa-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-restclient\\4.1.0\\2f23541ef00728c2406ba0714ee09d5ea63624c0\\spring-boot-starter-restclient-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-security\\4.1.0\\6993d3e5d7bcc0fb4e8e6aab775bc25b197ef814\\spring-boot-starter-security-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-validation\\4.1.0\\36c16acdbe1b86463616aeb218f18764c9baff2d\\spring-boot-starter-validation-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-webmvc\\4.1.0\\bbde05100fc621297f7dcb5246f631e5af390ef7\\spring-boot-starter-webmvc-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.mysql\\mysql-connector-j\\9.7.0\\4e6e3e8765e4a9d0609744b3e8fe75afe1b98cba\\mysql-connector-j-9.7.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jdbc\\4.1.0\\aa7c6585dd28891cb052d95606776076b5445df2\\spring-boot-starter-jdbc-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jackson\\4.1.0\\2feada57005e69f8d939815af7400b43f2c07b9e\\spring-boot-starter-jackson-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat\\4.1.0\\6dbb6ad6bb33b7f1ce15a5822cfd1443966245e0\\spring-boot-starter-tomcat-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter\\4.1.0\\4d1f5fcf982ec75223a3ee44169e268b6dd044f7\\spring-boot-starter-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-jpa\\4.1.0\\d29dbdc6734afe2f4d5c56cf3112c491c3582642\\spring-boot-data-jpa-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-hibernate\\4.1.0\\af702315125871004a8a7df290f55ac5e5617d91\\spring-boot-hibernate-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jpa\\4.1.0\\bf645cdf194c71f829225793a5d6545d9dfe96ae\\spring-boot-jpa-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jdbc\\4.1.0\\71f00c6af0ae910530d9fce8f5ae6e54c595f690\\spring-boot-jdbc-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-restclient\\4.1.0\\d3f9fadf2847b18b7a5438d7737be3b041fe168e\\spring-boot-restclient-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-security\\4.1.0\\1fe5f10c43305d43d8ac22ae5b721010f4394449\\spring-boot-security-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-jpa\\4.1.0\\6387c88a4a9637f129e0ebcad50ada478ad01c3f\\spring-data-jpa-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-config\\7.1.0\\ebc863ad43703c6f5517881e16d3d73de80cd193\\spring-security-config-7.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-web\\7.1.0\\cec1635393d11a56da5ff111253c88056d5cc0eb\\spring-security-web-7.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-webmvc\\4.1.0\\2cb542ef7d4fa572d3031616544db20b6f7de4c7\\spring-boot-webmvc-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-webmvc\\7.0.8\\d08172cf66f9625a42935d596ca4c83d21265996\\spring-webmvc-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-validation\\4.1.0\\fcd0b07c0c7e29f42e495f91710154dbc81d2c8c\\spring-boot-validation-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-client\\4.1.0\\eb43e8087894445e5e84174c910fbf41453c9f66\\spring-boot-http-client-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-converter\\4.1.0\\c3b90921e920dfa7dcb78a5045f18ca0e4bc0b44\\spring-boot-http-converter-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-autoconfigure\\4.1.0\\a921df4e39389e43dacac5615a1185708ee8a960\\spring-boot-autoconfigure-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-commons\\4.1.0\\3d587cffcde8c18fa784e0486a2c0a8a4728f262\\spring-boot-data-commons-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-sql\\4.1.0\\7a5ef86020d10e926b2e98e1d7b4b79258fb2f38\\spring-boot-sql-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-transaction\\4.1.0\\93b102fb7c2eb6558b8e52fb24f1152c837db3f6\\spring-boot-transaction-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jackson\\4.1.0\\bada14f54b1961279f9942c54b5039c90cd6a252\\spring-boot-jackson-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-servlet\\4.1.0\\a067e9b4b7c255a8587852b6eb842413cc458e70\\spring-boot-servlet-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-persistence\\4.1.0\\12b6d5aa8a97c458a5c8eba8e8cb0e38e326d9d8\\spring-boot-persistence-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat-runtime\\4.1.0\\6107a851e178c1233b64634270b11b8d5490733a\\spring-boot-starter-tomcat-runtime-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-tomcat\\4.1.0\\502aeed70cb11c3754c365324acd9f3ee746354\\spring-boot-tomcat-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-web-server\\4.1.0\\e67513b382c2cef7b8bc364e8e85cd7f0940e331\\spring-boot-web-server-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot\\4.1.0\\bcf26d4c27ab080ef60c13220e96a37d687f9e26\\spring-boot-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-core\\7.1.0\\50064b46aed22d05aa181b2c95d47989c7c99160\\spring-security-core-7.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-context\\7.0.8\\6c58b590fd8d71afc36797cf6555e82500f1eb64\\spring-context-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aop\\7.0.8\\b73e58e9b7dbc4db6b4ebbe3336be0e901b0d261\\spring-aop-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-logging\\4.1.0\\f2e2615d9fb27a035a8fc7aef19670769739ae76\\spring-boot-starter-logging-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.annotation\\jakarta.annotation-api\\3.0.0\\54f928fadec906a99d558536756d171917b9d936\\jakarta.annotation-api-3.0.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.yaml\\snakeyaml\\2.6\\2bc14918a2f8d5414749ab12d0c590cd3198b8c1\\snakeyaml-2.6.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.orm\\hibernate-core\\7.4.1.Final\\b405096e4aa04ff9c99a3e6e632eb2b8d252e1f1\\hibernate-core-7.4.1.Final.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.zaxxer\\HikariCP\\7.0.2\\c2b43c946b86a14a96342379e22b004c56c6166d\\HikariCP-7.0.2.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aspects\\7.0.8\\daf535194ee6cd1e1e23c7368c58b5f02fe18f65\\spring-aspects-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-orm\\7.0.8\\8c40fad8ecc72337353818da54ef2d104b3fa7a9\\spring-orm-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-jdbc\\7.0.8\\f979da380cd01fd363510ca98a7f544d1959a914\\spring-jdbc-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-web\\7.0.8\\d7cddac31ee023d25d37f48e2ff0e168cf635c14\\spring-web-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-commons\\4.1.0\\e8d1077d09c20e9ecf3574a72ce5cc90a29b902a\\spring-data-commons-4.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-tx\\7.0.8\\96c66acfb3920457421a9cb3648a32e62f42f815\\spring-tx-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-beans\\7.0.8\\829cdf4c82a9409e0e10922b9e57e2ef12d5f04d\\spring-beans-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-expression\\7.0.8\\bb844eefd513820e356b575d7ea0f7084147af59\\spring-expression-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-core\\7.0.8\\25f5ebd179f92d7d12779e3761c96da4b0109ad\\spring-core-7.0.8.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-el\\11.0.22\\db92447e16c3561e9ca7bf9311b6b6389816699e\\tomcat-embed-el-11.0.22.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.validator\\hibernate-validator\\9.1.0.Final\\53505ad984428ab42b4a4f3456aab9ec343bf2f2\\hibernate-validator-9.1.0.Final.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-classic\\1.5.34\\e598899bad5824511cd3019299254230468e1fa2\\logback-classic-1.5.34.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-to-slf4j\\2.25.4\\68df56640a5d245192e91bd2ac89e504b477cc10\\log4j-to-slf4j-2.25.4.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\jul-to-slf4j\\2.0.18\\79739c98001d5c9d078d087d5a348ec9e474ec8f\\jul-to-slf4j-2.0.18.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\slf4j-api\\2.0.18\\78a9e7a37cd6360e0b818e86341b24123d28d4df\\slf4j-api-2.0.18.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.antlr\\antlr4-runtime\\4.13.2\\fc3db6d844df652a3d5db31c87fa12757f13691d\\antlr4-runtime-4.13.2.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.aspectj\\aspectjweaver\\1.9.25.1\\a713c790da4d794c7dfb542b550d4e44898d5e23\\aspectjweaver-1.9.25.1.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-core\\3.1.4\\f9fd39204bd3d4922b42f6a54b81f46bd8ed575a\\jackson-core-3.1.4.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-databind\\3.1.4\\c7be3c757289893a791b2a4967ec09d1a8b6c576\\jackson-databind-3.1.4.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\commons-logging\\commons-logging\\1.3.6\\63e78ca6cd446c0ad166d14f03ed99e7efb3896d\\commons-logging-1.3.6.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-observation\\1.17.0\\2037bdaeb5725bdddb2390cbf93be3c19f8b8b48\\micrometer-observation-1.17.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-commons\\1.17.0\\2edbb561cdd2b2777fbcd83aa9f2204ebabf592b\\micrometer-commons-1.17.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jspecify\\jspecify\\1.0.0\\7425a601c1c7ec76645a78d22b8c6a627edee507\\jspecify-1.0.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.validation\\jakarta.validation-api\\3.1.1\\ec8622148afc5564235d17af80ea80288d0e7f92\\jakarta.validation-api-3.1.1.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.models\\hibernate-models\\1.1.1\\c890a4cc781fd8720e0e2613b4a24b33cdaa80a1\\hibernate-models-1.1.1.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jboss.logging\\jboss-logging\\3.6.3.Final\\1cc9f976725720bb4a66f80af3e3aa6b9890d969\\jboss-logging-3.6.3.Final.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml\\classmate\\1.7.3\\f61c7e7b81e9249b0f6a05914eff9d54fb09f4a0\\classmate-1.7.3.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-websocket\\11.0.22\\5686ff1ad745491d981d771514027d8fc55aed4f\\tomcat-embed-websocket-11.0.22.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-core\\11.0.22\\cc7307efaa60c0d31784bf053ec4aa48a404f44b\\tomcat-embed-core-11.0.22.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-core\\1.5.34\\378692f76c337b3325c15bffb89e013dc1f897b4\\logback-core-1.5.34.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-api\\2.25.4\\89ff2217b193fb187b134aa6ebcbfa8a28b018a9\\log4j-api-2.25.4.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.persistence\\jakarta.persistence-api\\3.2.0\\bb75a113f3fa191c2c7ee7b206d8e674251b3129\\jakarta.persistence-api-3.2.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.bytebuddy\\byte-buddy\\1.18.10\\5b34812ced047973a6d42654d50c3b69124ce587\\byte-buddy-1.18.10.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\jaxb-runtime\\4.0.9\\500c199572538675d2819c938fbafe34935d8d6b\\jaxb-runtime-4.0.9.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\jaxb-core\\4.0.9\\3f32ec949d109d666fa30994223d1c25a47b105f\\jaxb-core-4.0.9.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.xml.bind\\jakarta.xml.bind-api\\4.0.5\\161811f36cad3c65991502e80317f2f6703361df\\jakarta.xml.bind-api-4.0.5.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.inject\\jakarta.inject-api\\2.0.1\\4c28afe1991a941d7702fe1362c365f0a8641d1e\\jakarta.inject-api-2.0.1.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.transaction\\jakarta.transaction-api\\2.0.1\\51a520e3fae406abb84e2e1148e6746ce3f80a1a\\jakarta.transaction-api-2.0.1.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml.jackson.core\\jackson-annotations\\2.21\\b1bc1868bf02dc0bd6c7836257a036a331005309\\jackson-annotations-2.21.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-crypto\\7.1.0\\819461a33c5b10b92bb1a125db933a17fc0db792\\spring-security-crypto-7.1.0.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.eclipse.angus\\angus-activation\\2.0.3\\7f80607ea5014fef0b1779e6c33d63a88a45a563\\angus-activation-2.0.3.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.activation\\jakarta.activation-api\\2.1.4\\9e5c2a0d75dde71a0bedc4dbdbe47b78a5dc50f8\\jakarta.activation-api-2.1.4.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\txw2\\4.0.9\\70325ebdebca3e7aae1dfa395fd41fc25d8a6f4e\\txw2-4.0.9.jar",
+                "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.sun.istack\\istack-commons-runtime\\4.1.2\\18ec117c85f3ba0ac65409136afa8e42bc74e739\\istack-commons-runtime-4.1.2.jar"
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "com.sun.istack",
+                    "name": "istack-commons-runtime",
+                    "version": "4.1.2",
+                    "artifacts": [
+                        {
+                            "name": "istack-commons-runtime",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.sun.istack\\istack-commons-runtime\\4.1.2\\18ec117c85f3ba0ac65409136afa8e42bc74e739\\istack-commons-runtime-4.1.2.jar"
+                        },
+                        {
+                            "name": "istack-commons-runtime",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.sun.istack\\istack-commons-runtime\\4.1.2\\95757fed099f3293a3510c88a83a2f0b2985fe21\\istack-commons-runtime-4.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.security",
+                    "name": "spring-security-crypto",
+                    "version": "7.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-security-crypto",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-crypto\\7.1.0\\819461a33c5b10b92bb1a125db933a17fc0db792\\spring-security-crypto-7.1.0.jar"
+                        },
+                        {
+                            "name": "spring-security-crypto",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-crypto\\7.1.0\\6d24939f0b11fcfba84e16212fce631d81412feb\\spring-security-crypto-7.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.tomcat.embed",
+                    "name": "tomcat-embed-websocket",
+                    "version": "11.0.22",
+                    "artifacts": [
+                        {
+                            "name": "tomcat-embed-websocket",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-websocket\\11.0.22\\5686ff1ad745491d981d771514027d8fc55aed4f\\tomcat-embed-websocket-11.0.22.jar"
+                        },
+                        {
+                            "name": "tomcat-embed-websocket",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-websocket\\11.0.22\\221a03e7a3c42b5c660f87e12cebc579d4fb0233\\tomcat-embed-websocket-11.0.22-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "jul-to-slf4j",
+                    "version": "2.0.18",
+                    "artifacts": [
+                        {
+                            "name": "jul-to-slf4j",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\jul-to-slf4j\\2.0.18\\d96210ac2dc8841293573f92575a552e93f4614d\\jul-to-slf4j-2.0.18-sources.jar"
+                        },
+                        {
+                            "name": "jul-to-slf4j",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\jul-to-slf4j\\2.0.18\\79739c98001d5c9d078d087d5a348ec9e474ec8f\\jul-to-slf4j-2.0.18.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.platform",
+                    "name": "junit-platform-commons",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-platform-commons",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.platform\\junit-platform-commons\\6.0.3\\1093a7faa2ba47c28aa83f378d9a2083463bb20c\\junit-platform-commons-6.0.3.jar"
+                        },
+                        {
+                            "name": "junit-platform-commons",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.platform\\junit-platform-commons\\6.0.3\\27e4015c025cc02ea68d71b799a84a1508d4f60e\\junit-platform-commons-6.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.objenesis",
+                    "name": "objenesis",
+                    "version": "3.3",
+                    "artifacts": [
+                        {
+                            "name": "objenesis",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.objenesis\\objenesis\\3.3\\5fef34eeee6816b0ba2170755a8a9db7744990c3\\objenesis-3.3-sources.jar"
+                        },
+                        {
+                            "name": "objenesis",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.objenesis\\objenesis\\3.3\\1049c09f1de4331e8193e579448d0916d75b7631\\objenesis-3.3.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.xmlunit",
+                    "name": "xmlunit-core",
+                    "version": "2.11.0",
+                    "artifacts": [
+                        {
+                            "name": "xmlunit-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.xmlunit\\xmlunit-core\\2.11.0\\2dece6f39a574ef59817370d55179d7f537bbb50\\xmlunit-core-2.11.0-sources.jar"
+                        },
+                        {
+                            "name": "xmlunit-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.xmlunit\\xmlunit-core\\2.11.0\\85521d7f60fb599a4ac1bdec0d19628c3a264156\\xmlunit-core-2.11.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-webmvc-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-webmvc-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-webmvc-test\\4.1.0\\6639f46f7b87aa7e70fac8d645be122e952ad06\\spring-boot-webmvc-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-webmvc-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-webmvc-test\\4.1.0\\977bae6039a35c982cd1c75c991a9a55f45ec4d7\\spring-boot-webmvc-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.data",
+                    "name": "spring-data-jpa",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-data-jpa",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-jpa\\4.1.0\\ddf86b7bccec58dbc414797e5ccfd46bc24608b9\\spring-data-jpa-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-data-jpa",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-jpa\\4.1.0\\6387c88a4a9637f129e0ebcad50ada478ad01c3f\\spring-data-jpa-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-jackson",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-jackson",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jackson\\4.1.0\\2feada57005e69f8d939815af7400b43f2c07b9e\\spring-boot-starter-jackson-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-jackson",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jackson\\4.1.0\\2feada57005e69f8d939815af7400b43f2c07b9e\\spring-boot-starter-jackson-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-jpa-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-jpa-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jpa-test\\4.1.0\\20cb01816cc1165232940cca7116a5b7a15a2b7d\\spring-boot-jpa-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-jpa-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jpa-test\\4.1.0\\8c146c3525156c6633204dc4953e4e529d093ab7\\spring-boot-jpa-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-test",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-test\\7.0.8\\e29c7c2107bb4755c593dc67543db24bfdb48420\\spring-test-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-test\\7.0.8\\a69fb470b6fbf2960552150e4a37e6903dbd2f49\\spring-test-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-webmvc",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-webmvc",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-webmvc\\4.1.0\\2cb542ef7d4fa572d3031616544db20b6f7de4c7\\spring-boot-webmvc-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-webmvc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-webmvc\\4.1.0\\be270cdbd5173819ba178872c3c27543ce73b4d\\spring-boot-webmvc-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-hibernate",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-hibernate",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-hibernate\\4.1.0\\85683a2b976f5d84448c8ad92695518709a9cf43\\spring-boot-hibernate-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-hibernate",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-hibernate\\4.1.0\\af702315125871004a8a7df290f55ac5e5617d91\\spring-boot-hibernate-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter\\6.0.3\\fb559da6cf7a1f9d251462a24fcb14856debea38\\junit-jupiter-6.0.3-sources.jar"
+                        },
+                        {
+                            "name": "junit-jupiter",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter\\6.0.3\\da72f4bc0feccbca639b901ace26e3a62512ebec\\junit-jupiter-6.0.3.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-data-jpa",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-data-jpa",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-jpa\\4.1.0\\d29dbdc6734afe2f4d5c56cf3112c491c3582642\\spring-boot-data-jpa-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-data-jpa",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-jpa\\4.1.0\\184798365d75504b9660d80d1e5e21371c4121a1\\spring-boot-data-jpa-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "net.minidev",
+                    "name": "accessors-smart",
+                    "version": "2.6.0",
+                    "artifacts": [
+                        {
+                            "name": "accessors-smart",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.minidev\\accessors-smart\\2.6.0\\5cbfec9876f4e152bed21769d3e4e527f3b9338\\accessors-smart-2.6.0-sources.jar"
+                        },
+                        {
+                            "name": "accessors-smart",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.minidev\\accessors-smart\\2.6.0\\2d96f1d9b6ab7f13261aa81b15703574185747a0\\accessors-smart-2.6.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-orm",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-orm",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-orm\\7.0.8\\8c40fad8ecc72337353818da54ef2d104b3fa7a9\\spring-orm-7.0.8.jar"
+                        },
+                        {
+                            "name": "spring-orm",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-orm\\7.0.8\\a8a8b40f2ed34b3c8e0c74e1c8198448a4b2a9f1\\spring-orm-7.0.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.awaitility",
+                    "name": "awaitility",
+                    "version": "4.3.0",
+                    "artifacts": [
+                        {
+                            "name": "awaitility",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.awaitility\\awaitility\\4.3.0\\a7a6d13aaa125e6c1910ddedc56045b5c4b6a40f\\awaitility-4.3.0-sources.jar"
+                        },
+                        {
+                            "name": "awaitility",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.awaitility\\awaitility\\4.3.0\\f0c0bc1e404e500bab3f498b922eaedeae1c0207\\awaitility-4.3.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-security",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-security",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-security\\4.1.0\\6993d3e5d7bcc0fb4e8e6aab775bc25b197ef814\\spring-boot-starter-security-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-security",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-security\\4.1.0\\6993d3e5d7bcc0fb4e8e6aab775bc25b197ef814\\spring-boot-starter-security-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.osgi",
+                    "name": "org.osgi.service.serviceloader",
+                    "version": "1.0.0",
+                    "artifacts": [
+                        {
+                            "name": "org.osgi.service.serviceloader",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.service.serviceloader\\1.0.0\\e5f6e4bb20e1bdced26b2ba0ea55db2d027e330f\\org.osgi.service.serviceloader-1.0.0-sources.jar"
+                        },
+                        {
+                            "name": "org.osgi.service.serviceloader",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.service.serviceloader\\1.0.0\\3728ff37909c6a3c1870b3e851342d9f2bd3cc63\\org.osgi.service.serviceloader-1.0.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.jayway.jsonpath",
+                    "name": "json-path",
+                    "version": "2.10.0",
+                    "artifacts": [
+                        {
+                            "name": "json-path",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.jayway.jsonpath\\json-path\\2.10.0\\e1a0b2e6db75401181c9c1c64c6d155ca5c6d608\\json-path-2.10.0.jar"
+                        },
+                        {
+                            "name": "json-path",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.jayway.jsonpath\\json-path\\2.10.0\\70ce116c8083ef34509fc71ec221d18fd49fa6b2\\json-path-2.10.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-data-jpa-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-data-jpa-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-data-jpa-test\\4.1.0\\45b886e65ad640f46dd225aaa252c6b1b64e290a\\spring-boot-starter-data-jpa-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-data-jpa-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-data-jpa-test\\4.1.0\\45b886e65ad640f46dd225aaa252c6b1b64e290a\\spring-boot-starter-data-jpa-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.persistence",
+                    "name": "jakarta.persistence-api",
+                    "version": "3.2.0",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.persistence-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.persistence\\jakarta.persistence-api\\3.2.0\\84f75acfc801ed3aabc3607da4eb34755d545ee8\\jakarta.persistence-api-3.2.0-sources.jar"
+                        },
+                        {
+                            "name": "jakarta.persistence-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.persistence\\jakarta.persistence-api\\3.2.0\\bb75a113f3fa191c2c7ee7b206d8e674251b3129\\jakarta.persistence-api-3.2.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.security",
+                    "name": "spring-security-core",
+                    "version": "7.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-security-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-core\\7.1.0\\941f599b0bb912e5afabdc337ce8efc5f73300ca\\spring-security-core-7.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-security-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-core\\7.1.0\\50064b46aed22d05aa181b2c95d47989c7c99160\\spring-security-core-7.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.activation",
+                    "name": "jakarta.activation-api",
+                    "version": "2.1.4",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.activation-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.activation\\jakarta.activation-api\\2.1.4\\a37bf73633c6a43e25953074ac6a28a67f0d9305\\jakarta.activation-api-2.1.4-sources.jar"
+                        },
+                        {
+                            "name": "jakarta.activation-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.activation\\jakarta.activation-api\\2.1.4\\9e5c2a0d75dde71a0bedc4dbdbe47b78a5dc50f8\\jakarta.activation-api-2.1.4.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-beans",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-beans",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-beans\\7.0.8\\ee44bfef38d953b34e08bd8370df4ee81abb9e4b\\spring-beans-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-beans",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-beans\\7.0.8\\829cdf4c82a9409e0e10922b9e57e2ef12d5f04d\\spring-beans-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "tools.jackson.core",
+                    "name": "jackson-databind",
+                    "version": "3.1.4",
+                    "artifacts": [
+                        {
+                            "name": "jackson-databind",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-databind\\3.1.4\\c1e72393f2cf71ee689ec1e7b1273cb47230797f\\jackson-databind-3.1.4-sources.jar"
+                        },
+                        {
+                            "name": "jackson-databind",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-databind\\3.1.4\\c7be3c757289893a791b2a4967ec09d1a8b6c576\\jackson-databind-3.1.4.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.micrometer",
+                    "name": "micrometer-observation",
+                    "version": "1.17.0",
+                    "artifacts": [
+                        {
+                            "name": "micrometer-observation",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-observation\\1.17.0\\2037bdaeb5725bdddb2390cbf93be3c19f8b8b48\\micrometer-observation-1.17.0.jar"
+                        },
+                        {
+                            "name": "micrometer-observation",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-observation\\1.17.0\\628ecaacfe0582908275fe0dd570be8e0b308f12\\micrometer-observation-1.17.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter\\4.1.0\\4d1f5fcf982ec75223a3ee44169e268b6dd044f7\\spring-boot-starter-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter\\4.1.0\\4d1f5fcf982ec75223a3ee44169e268b6dd044f7\\spring-boot-starter-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-tx",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-tx",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-tx\\7.0.8\\4b23ca6b48392d5b56610b161e765192f9ef4eb7\\spring-tx-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-tx",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-tx\\7.0.8\\96c66acfb3920457421a9cb3648a32e62f42f815\\spring-tx-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-validation",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-validation",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-validation\\4.1.0\\36c16acdbe1b86463616aeb218f18764c9baff2d\\spring-boot-starter-validation-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-validation",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-validation\\4.1.0\\36c16acdbe1b86463616aeb218f18764c9baff2d\\spring-boot-starter-validation-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.glassfish.jaxb",
+                    "name": "jaxb-runtime",
+                    "version": "4.0.9",
+                    "artifacts": [
+                        {
+                            "name": "jaxb-runtime",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\jaxb-runtime\\4.0.9\\d1ba82dd56bfde80fecd84190efb200b08b0c114\\jaxb-runtime-4.0.9-sources.jar"
+                        },
+                        {
+                            "name": "jaxb-runtime",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\jaxb-runtime\\4.0.9\\500c199572538675d2819c938fbafe34935d8d6b\\jaxb-runtime-4.0.9.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-security-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-security-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-security-test\\4.1.0\\17bd332e2ecd723dcece947245d87178138bce17\\spring-boot-security-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-security-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-security-test\\4.1.0\\f20f018d4e41dec9829f6e76496fc9ccd3c1b2e7\\spring-boot-security-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.platform",
+                    "name": "junit-platform-launcher",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-platform-launcher",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.platform\\junit-platform-launcher\\6.0.3\\1fe45dac052ad1139918482204196a29e13b212d\\junit-platform-launcher-6.0.3-sources.jar"
+                        },
+                        {
+                            "name": "junit-platform-launcher",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.platform\\junit-platform-launcher\\6.0.3\\4a721cdd640ebdaa4c6850f5eee0b0377cf698b0\\junit-platform-launcher-6.0.3.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter-params",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter-params",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter-params\\6.0.3\\6cd3efadd171a3ddd70413868a9c3af988a45907\\junit-jupiter-params-6.0.3.jar"
+                        },
+                        {
+                            "name": "junit-jupiter-params",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter-params\\6.0.3\\35ed7e38169e88e750d295b91ae465d18233b829\\junit-jupiter-params-6.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.mysql",
+                    "name": "mysql-connector-j",
+                    "version": "9.7.0",
+                    "artifacts": [
+                        {
+                            "name": "mysql-connector-j",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.mysql\\mysql-connector-j\\9.7.0\\9a250ab1efab4f10c694fc98c9bdffbe0d931e11\\mysql-connector-j-9.7.0-sources.jar"
+                        },
+                        {
+                            "name": "mysql-connector-j",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.mysql\\mysql-connector-j\\9.7.0\\4e6e3e8765e4a9d0609744b3e8fe75afe1b98cba\\mysql-connector-j-9.7.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-http-client",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-http-client",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-client\\4.1.0\\fbcf3d4c21304a5295c88062390cfd36cd407c4d\\spring-boot-http-client-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-http-client",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-client\\4.1.0\\eb43e8087894445e5e84174c910fbf41453c9f66\\spring-boot-http-client-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "net.bytebuddy",
+                    "name": "byte-buddy",
+                    "version": "1.18.10",
+                    "artifacts": [
+                        {
+                            "name": "byte-buddy",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.bytebuddy\\byte-buddy\\1.18.10\\c44fb766950409e8b8c610d9ac78ee4d9bf39158\\byte-buddy-1.18.10-sources.jar"
+                        },
+                        {
+                            "name": "byte-buddy",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.bytebuddy\\byte-buddy\\1.18.10\\5b34812ced047973a6d42654d50c3b69124ce587\\byte-buddy-1.18.10.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-test\\4.1.0\\9fdedc132b9cd2ba57857c7f17357def9300cd95\\spring-boot-starter-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-test\\4.1.0\\9fdedc132b9cd2ba57857c7f17357def9300cd95\\spring-boot-starter-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-restclient-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-restclient-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-restclient-test\\4.1.0\\9b4d1b7adef7b3cf54f59dc71c695b1d1cd413fa\\spring-boot-restclient-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-restclient-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-restclient-test\\4.1.0\\45bd65eea3e1efcba0eebd77cbf564759c02c374\\spring-boot-restclient-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mockito",
+                    "name": "mockito-core",
+                    "version": "5.23.0",
+                    "artifacts": [
+                        {
+                            "name": "mockito-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.mockito\\mockito-core\\5.23.0\\37d466cda6cf22f2675bcd0a041ee6a571ae923\\mockito-core-5.23.0-sources.jar"
+                        },
+                        {
+                            "name": "mockito-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.mockito\\mockito-core\\5.23.0\\a5cf3cf244300e4cd05f779827cf50d373a8460e\\mockito-core-5.23.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-jpa",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-jpa",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jpa\\4.1.0\\bf645cdf194c71f829225793a5d6545d9dfe96ae\\spring-boot-jpa-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-jpa",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jpa\\4.1.0\\94042af5f29865288ba12cd06fd80a84a6fdcd2e\\spring-boot-jpa-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "tools.jackson.core",
+                    "name": "jackson-core",
+                    "version": "3.1.4",
+                    "artifacts": [
+                        {
+                            "name": "jackson-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-core\\3.1.4\\f5dd9ca7219def4090f5e45a1a06384693f83c16\\jackson-core-3.1.4-sources.jar"
+                        },
+                        {
+                            "name": "jackson-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\tools.jackson.core\\jackson-core\\3.1.4\\f9fd39204bd3d4922b42f6a54b81f46bd8ed575a\\jackson-core-3.1.4.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "commons-logging",
+                    "name": "commons-logging",
+                    "version": "1.3.6",
+                    "artifacts": [
+                        {
+                            "name": "commons-logging",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\commons-logging\\commons-logging\\1.3.6\\406a3e5b68a1fc11d7e48c4c858c6ed04dc049d3\\commons-logging-1.3.6-sources.jar"
+                        },
+                        {
+                            "name": "commons-logging",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\commons-logging\\commons-logging\\1.3.6\\63e78ca6cd446c0ad166d14f03ed99e7efb3896d\\commons-logging-1.3.6.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.zaxxer",
+                    "name": "HikariCP",
+                    "version": "7.0.2",
+                    "artifacts": [
+                        {
+                            "name": "HikariCP",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.zaxxer\\HikariCP\\7.0.2\\b7d35f0e85bbc811111077785e5fbcd148874d3f\\HikariCP-7.0.2-sources.jar"
+                        },
+                        {
+                            "name": "HikariCP",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.zaxxer\\HikariCP\\7.0.2\\c2b43c946b86a14a96342379e22b004c56c6166d\\HikariCP-7.0.2.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.opentest4j",
+                    "name": "opentest4j",
+                    "version": "1.3.0",
+                    "artifacts": [
+                        {
+                            "name": "opentest4j",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.opentest4j\\opentest4j\\1.3.0\\152ea56b3a72f655d4fd677fc0ef2596c3dd5e6e\\opentest4j-1.3.0.jar"
+                        },
+                        {
+                            "name": "opentest4j",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.opentest4j\\opentest4j\\1.3.0\\afb8ff23cffb021c56f333953aebfe6e8818568e\\opentest4j-1.3.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.yaml",
+                    "name": "snakeyaml",
+                    "version": "2.6",
+                    "artifacts": [
+                        {
+                            "name": "snakeyaml",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.yaml\\snakeyaml\\2.6\\9256bb1fc9d420e70bb1dc9defc33553903b6ebc\\snakeyaml-2.6-sources.jar"
+                        },
+                        {
+                            "name": "snakeyaml",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.yaml\\snakeyaml\\2.6\\2bc14918a2f8d5414749ab12d0c590cd3198b8c1\\snakeyaml-2.6.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-resttestclient",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-resttestclient",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-resttestclient\\4.1.0\\aba3a64a670bfb4d690c68c7abfa5ef020769092\\spring-boot-resttestclient-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-resttestclient",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-resttestclient\\4.1.0\\c28f5c1341632795669850eafb193c321d30ccff\\spring-boot-resttestclient-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-data-commons",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-data-commons",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-commons\\4.1.0\\f97b169840787c8096d1ef0c0674982068b35d01\\spring-boot-data-commons-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-data-commons",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-commons\\4.1.0\\3d587cffcde8c18fa784e0486a2c0a8a4728f262\\spring-boot-data-commons-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.logging.log4j",
+                    "name": "log4j-to-slf4j",
+                    "version": "2.25.4",
+                    "artifacts": [
+                        {
+                            "name": "log4j-to-slf4j",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-to-slf4j\\2.25.4\\68df56640a5d245192e91bd2ac89e504b477cc10\\log4j-to-slf4j-2.25.4.jar"
+                        },
+                        {
+                            "name": "log4j-to-slf4j",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-to-slf4j\\2.25.4\\573d3bd7189afd57c670e0b8f0a24bb6ef04b4df\\log4j-to-slf4j-2.25.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.tomcat.embed",
+                    "name": "tomcat-embed-el",
+                    "version": "11.0.22",
+                    "artifacts": [
+                        {
+                            "name": "tomcat-embed-el",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-el\\11.0.22\\4a5b36227478fa9344c30cb184542373fec5c0fd\\tomcat-embed-el-11.0.22-sources.jar"
+                        },
+                        {
+                            "name": "tomcat-embed-el",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-el\\11.0.22\\db92447e16c3561e9ca7bf9311b6b6389816699e\\tomcat-embed-el-11.0.22.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-context",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-context",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-context\\7.0.8\\f57851bacefb85cb221c687aa5463ecb8cb0cbd0\\spring-context-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-context",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-context\\7.0.8\\6c58b590fd8d71afc36797cf6555e82500f1eb64\\spring-context-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.ow2.asm",
+                    "name": "asm",
+                    "version": "9.7.1",
+                    "artifacts": [
+                        {
+                            "name": "asm",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.ow2.asm\\asm\\9.7.1\\f0ed132a49244b042cd0e15702ab9f2ce3cc8436\\asm-9.7.1.jar"
+                        },
+                        {
+                            "name": "asm",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.ow2.asm\\asm\\9.7.1\\eed93b6cd5ba28fe09a6a11d08f62a3c0d4817ec\\asm-9.7.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.security",
+                    "name": "spring-security-test",
+                    "version": "7.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-security-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-test\\7.1.0\\11082fab18389cc1e4c468df50f2ee1a9d36607a\\spring-security-test-7.1.0.jar"
+                        },
+                        {
+                            "name": "spring-security-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-test\\7.1.0\\d1cf00a5b656d5df956b1dc3c525f11579405c94\\spring-security-test-7.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.platform",
+                    "name": "junit-platform-engine",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-platform-engine",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.platform\\junit-platform-engine\\6.0.3\\101305612e7daa4ce978d3ba73fd02dd4a5f22d9\\junit-platform-engine-6.0.3.jar"
+                        },
+                        {
+                            "name": "junit-platform-engine",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.platform\\junit-platform-engine\\6.0.3\\15cd543d3a2c2a9165ef6108b1bd7d31ec6e9356\\junit-platform-engine-6.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-webmvc",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-webmvc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-webmvc\\4.1.0\\bbde05100fc621297f7dcb5246f631e5af390ef7\\spring-boot-starter-webmvc-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-webmvc",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-webmvc\\4.1.0\\bbde05100fc621297f7dcb5246f631e5af390ef7\\spring-boot-starter-webmvc-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.annotation",
+                    "name": "jakarta.annotation-api",
+                    "version": "3.0.0",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.annotation-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.annotation\\jakarta.annotation-api\\3.0.0\\ef0c4c613c56afb214f2e810a3a5ef0dc4a1c8f\\jakarta.annotation-api-3.0.0-sources.jar"
+                        },
+                        {
+                            "name": "jakarta.annotation-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.annotation\\jakarta.annotation-api\\3.0.0\\54f928fadec906a99d558536756d171917b9d936\\jakarta.annotation-api-3.0.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-core",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-core\\7.0.8\\29596677723a26262470d4432a041044b58c1334\\spring-core-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-core\\7.0.8\\25f5ebd179f92d7d12779e3761c96da4b0109ad\\spring-core-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-aspects",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-aspects",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aspects\\7.0.8\\daf535194ee6cd1e1e23c7368c58b5f02fe18f65\\spring-aspects-7.0.8.jar"
+                        },
+                        {
+                            "name": "spring-aspects",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aspects\\7.0.8\\d17f6f93521288e72b77c0138da62f37cf6e9285\\spring-aspects-7.0.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-data-jpa",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-data-jpa",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-data-jpa\\4.1.0\\252e31911d5042a8ae811ad9bfc3e18ec4ac42a5\\spring-boot-starter-data-jpa-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-data-jpa",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-data-jpa\\4.1.0\\252e31911d5042a8ae811ad9bfc3e18ec4ac42a5\\spring-boot-starter-data-jpa-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-data-jpa-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-data-jpa-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-jpa-test\\4.1.0\\e42e3b676e832da183be0490f3d74014a151c516\\spring-boot-data-jpa-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-data-jpa-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-data-jpa-test\\4.1.0\\935b64b785d52b47b3f02b2fe61003ca519bb811\\spring-boot-data-jpa-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.glassfish.jaxb",
+                    "name": "txw2",
+                    "version": "4.0.9",
+                    "artifacts": [
+                        {
+                            "name": "txw2",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\txw2\\4.0.9\\70325ebdebca3e7aae1dfa395fd41fc25d8a6f4e\\txw2-4.0.9.jar"
+                        },
+                        {
+                            "name": "txw2",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\txw2\\4.0.9\\8c9068525c78a255df56300b46f71dbc1482d322\\txw2-4.0.9-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.xml.bind",
+                    "name": "jakarta.xml.bind-api",
+                    "version": "4.0.5",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.xml.bind-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.xml.bind\\jakarta.xml.bind-api\\4.0.5\\161811f36cad3c65991502e80317f2f6703361df\\jakarta.xml.bind-api-4.0.5.jar"
+                        },
+                        {
+                            "name": "jakarta.xml.bind-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.xml.bind\\jakarta.xml.bind-api\\4.0.5\\d317bbe6ae3ea8307e038a31f394572479bce0bf\\jakarta.xml.bind-api-4.0.5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.tomcat.embed",
+                    "name": "tomcat-embed-core",
+                    "version": "11.0.22",
+                    "artifacts": [
+                        {
+                            "name": "tomcat-embed-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-core\\11.0.22\\cc7307efaa60c0d31784bf053ec4aa48a404f44b\\tomcat-embed-core-11.0.22.jar"
+                        },
+                        {
+                            "name": "tomcat-embed-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.tomcat.embed\\tomcat-embed-core\\11.0.22\\e82e55a62999e0a0d8e3b5fbda11cb0ab0826048\\tomcat-embed-core-11.0.22-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.assertj",
+                    "name": "assertj-core",
+                    "version": "3.27.7",
+                    "artifacts": [
+                        {
+                            "name": "assertj-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.assertj\\assertj-core\\3.27.7\\b015035532daebce8e3bac651fc14f883c03b770\\assertj-core-3.27.7-sources.jar"
+                        },
+                        {
+                            "name": "assertj-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.assertj\\assertj-core\\3.27.7\\2f4f64f054c9d618d4b1d89e7611559f5e2cfff7\\assertj-core-3.27.7.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jboss.logging",
+                    "name": "jboss-logging",
+                    "version": "3.6.3.Final",
+                    "artifacts": [
+                        {
+                            "name": "jboss-logging",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jboss.logging\\jboss-logging\\3.6.3.Final\\1cc9f976725720bb4a66f80af3e3aa6b9890d969\\jboss-logging-3.6.3.Final.jar"
+                        },
+                        {
+                            "name": "jboss-logging",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jboss.logging\\jboss-logging\\3.6.3.Final\\672a66768747a183de4a43110f5fa5a430f6f715\\jboss-logging-3.6.3.Final-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.vaadin.external.google",
+                    "name": "android-json",
+                    "version": "0.0.20131108.vaadin1",
+                    "artifacts": [
+                        {
+                            "name": "android-json",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.vaadin.external.google\\android-json\\0.0.20131108.vaadin1\\fa26d351fe62a6a17f5cda1287c1c6110dec413f\\android-json-0.0.20131108.vaadin1.jar"
+                        },
+                        {
+                            "name": "android-json",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.vaadin.external.google\\android-json\\0.0.20131108.vaadin1\\bf42d7e47a3228513b626dd7d37ac6f072aeca4f\\android-json-0.0.20131108.vaadin1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-tomcat",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-tomcat",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat\\4.1.0\\6dbb6ad6bb33b7f1ce15a5822cfd1443966245e0\\spring-boot-starter-tomcat-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-tomcat",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat\\4.1.0\\6dbb6ad6bb33b7f1ce15a5822cfd1443966245e0\\spring-boot-starter-tomcat-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-test-autoconfigure",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-test-autoconfigure",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-test-autoconfigure\\4.1.0\\d8c05e21151a63ae829cd313418b942c92334874\\spring-boot-test-autoconfigure-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-test-autoconfigure",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-test-autoconfigure\\4.1.0\\311de1330c9956b5b2bfc4e2467111c97a6ea54a\\spring-boot-test-autoconfigure-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.security",
+                    "name": "spring-security-web",
+                    "version": "7.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-security-web",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-web\\7.1.0\\cec1635393d11a56da5ff111253c88056d5cc0eb\\spring-security-web-7.1.0.jar"
+                        },
+                        {
+                            "name": "spring-security-web",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-web\\7.1.0\\1a85f27107371e23a6111efb5c7414d2b9e210bd\\spring-security-web-7.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "ch.qos.logback",
+                    "name": "logback-core",
+                    "version": "1.5.34",
+                    "artifacts": [
+                        {
+                            "name": "logback-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-core\\1.5.34\\378692f76c337b3325c15bffb89e013dc1f897b4\\logback-core-1.5.34.jar"
+                        },
+                        {
+                            "name": "logback-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-core\\1.5.34\\26be6f4388f1762b391d8bc8ed2a067120984caa\\logback-core-1.5.34-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-jdbc-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-jdbc-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jdbc-test\\4.1.0\\670e512cfcf91576dddee06bfd487c07d2f8cf92\\spring-boot-jdbc-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-jdbc-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jdbc-test\\4.1.0\\543e2129f10be95d9cdad17a639e1500469edf3b\\spring-boot-jdbc-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-validation",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-validation",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-validation\\4.1.0\\fcd0b07c0c7e29f42e495f91710154dbc81d2c8c\\spring-boot-validation-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-validation",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-validation\\4.1.0\\3f9fb9d3d9a0cdcf3e23ed028c8bf26bbac83a36\\spring-boot-validation-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-expression",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-expression",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-expression\\7.0.8\\bb844eefd513820e356b575d7ea0f7084147af59\\spring-expression-7.0.8.jar"
+                        },
+                        {
+                            "name": "spring-expression",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-expression\\7.0.8\\c727359d01264be37394ae5e424689343de5cf24\\spring-expression-7.0.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.aspectj",
+                    "name": "aspectjweaver",
+                    "version": "1.9.25.1",
+                    "artifacts": [
+                        {
+                            "name": "aspectjweaver",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.aspectj\\aspectjweaver\\1.9.25.1\\a713c790da4d794c7dfb542b550d4e44898d5e23\\aspectjweaver-1.9.25.1.jar"
+                        },
+                        {
+                            "name": "aspectjweaver",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.aspectj\\aspectjweaver\\1.9.25.1\\46c35556ab44fe25f92fed44ab63121180bab923\\aspectjweaver-1.9.25.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-webmvc-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-webmvc-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-webmvc-test\\4.1.0\\4bc3a9d6f7e15870cade8bcb2dff4bd1683f8fdd\\spring-boot-starter-webmvc-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-webmvc-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-webmvc-test\\4.1.0\\4bc3a9d6f7e15870cade8bcb2dff4bd1683f8fdd\\spring-boot-starter-webmvc-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-servlet",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-servlet",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-servlet\\4.1.0\\a067e9b4b7c255a8587852b6eb842413cc458e70\\spring-boot-servlet-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-servlet",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-servlet\\4.1.0\\eb408198b6f8efcf43a11e6079247b71961aa714\\spring-boot-servlet-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.errorprone",
+                    "name": "error_prone_annotations",
+                    "version": "2.38.0",
+                    "artifacts": [
+                        {
+                            "name": "error_prone_annotations",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.google.errorprone\\error_prone_annotations\\2.38.0\\fc0ae991433e8590ba51cd558421478318a74c8c\\error_prone_annotations-2.38.0.jar"
+                        },
+                        {
+                            "name": "error_prone_annotations",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.google.errorprone\\error_prone_annotations\\2.38.0\\89b24f7eb69d776239d46ae4979e3d61a0784a9\\error_prone_annotations-2.38.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml",
+                    "name": "classmate",
+                    "version": "1.7.3",
+                    "artifacts": [
+                        {
+                            "name": "classmate",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml\\classmate\\1.7.3\\f61c7e7b81e9249b0f6a05914eff9d54fb09f4a0\\classmate-1.7.3.jar"
+                        },
+                        {
+                            "name": "classmate",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml\\classmate\\1.7.3\\51e15ea3494c9f095b984e19520124a0ab2d67dd\\classmate-1.7.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.osgi",
+                    "name": "org.osgi.resource",
+                    "version": "1.0.0",
+                    "artifacts": [
+                        {
+                            "name": "org.osgi.resource",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.resource\\1.0.0\\506ee97481879484d9b76b4169d627396172cc37\\org.osgi.resource-1.0.0-sources.jar"
+                        },
+                        {
+                            "name": "org.osgi.resource",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.resource\\1.0.0\\343c88949132984b3f2d4175a72c40b77dc65619\\org.osgi.resource-1.0.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-persistence",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-persistence",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-persistence\\4.1.0\\ec02883dafb9733a9b2e1bdd16bd3f02db71ae34\\spring-boot-persistence-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-persistence",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-persistence\\4.1.0\\12b6d5aa8a97c458a5c8eba8e8cb0e38e326d9d8\\spring-boot-persistence-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.security",
+                    "name": "spring-security-config",
+                    "version": "7.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-security-config",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-config\\7.1.0\\d6707947bad4cdc00d2b17e0b4cf53ed55c568f2\\spring-security-config-7.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-security-config",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.security\\spring-security-config\\7.1.0\\ebc863ad43703c6f5517881e16d3d73de80cd193\\spring-security-config-7.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-http-converter",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-http-converter",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-converter\\4.1.0\\c3b90921e920dfa7dcb78a5045f18ca0e4bc0b44\\spring-boot-http-converter-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-http-converter",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-http-converter\\4.1.0\\8ecc6e7d0719ce266c7d5583604138636915386c\\spring-boot-http-converter-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-tomcat",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-tomcat",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-tomcat\\4.1.0\\502aeed70cb11c3754c365324acd9f3ee746354\\spring-boot-tomcat-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-tomcat",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-tomcat\\4.1.0\\150c06b4fb2306972f508996645d9214498c1ff9\\spring-boot-tomcat-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.skyscreamer",
+                    "name": "jsonassert",
+                    "version": "1.5.3",
+                    "artifacts": [
+                        {
+                            "name": "jsonassert",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.skyscreamer\\jsonassert\\1.5.3\\a0820ac5c558fe0032d3d400792b184bf960a328\\jsonassert-1.5.3-sources.jar"
+                        },
+                        {
+                            "name": "jsonassert",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.skyscreamer\\jsonassert\\1.5.3\\aaa43e0823d2a0e106e8754d6a9c4ab24e05e9bc\\jsonassert-1.5.3.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-restclient",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-restclient",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-restclient\\4.1.0\\2f23541ef00728c2406ba0714ee09d5ea63624c0\\spring-boot-starter-restclient-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-restclient",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-restclient\\4.1.0\\2f23541ef00728c2406ba0714ee09d5ea63624c0\\spring-boot-starter-restclient-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.glassfish.jaxb",
+                    "name": "jaxb-core",
+                    "version": "4.0.9",
+                    "artifacts": [
+                        {
+                            "name": "jaxb-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\jaxb-core\\4.0.9\\cacff882c508b68172fb610cb2e912e192361708\\jaxb-core-4.0.9-sources.jar"
+                        },
+                        {
+                            "name": "jaxb-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.glassfish.jaxb\\jaxb-core\\4.0.9\\3f32ec949d109d666fa30994223d1c25a47b105f\\jaxb-core-4.0.9.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-transaction",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-transaction",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-transaction\\4.1.0\\4123c5f46db3415ac74ec98e48cc3b03259276\\spring-boot-transaction-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-transaction",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-transaction\\4.1.0\\93b102fb7c2eb6558b8e52fb24f1152c837db3f6\\spring-boot-transaction-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.transaction",
+                    "name": "jakarta.transaction-api",
+                    "version": "2.0.1",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.transaction-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.transaction\\jakarta.transaction-api\\2.0.1\\660c982b9f5a7c8a6613c84f6e1c8b9221a4c574\\jakarta.transaction-api-2.0.1-sources.jar"
+                        },
+                        {
+                            "name": "jakarta.transaction-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.transaction\\jakarta.transaction-api\\2.0.1\\51a520e3fae406abb84e2e1148e6746ce3f80a1a\\jakarta.transaction-api-2.0.1.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-security-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-security-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-security-test\\4.1.0\\5bdd2409691e0f847c59ae679500bb379725bf99\\spring-boot-starter-security-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-security-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-security-test\\4.1.0\\5bdd2409691e0f847c59ae679500bb379725bf99\\spring-boot-starter-security-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "ch.qos.logback",
+                    "name": "logback-classic",
+                    "version": "1.5.34",
+                    "artifacts": [
+                        {
+                            "name": "logback-classic",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-classic\\1.5.34\\e598899bad5824511cd3019299254230468e1fa2\\logback-classic-1.5.34.jar"
+                        },
+                        {
+                            "name": "logback-classic",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\ch.qos.logback\\logback-classic\\1.5.34\\407523d8d762df67c23536400a7b5d7f562ee24c\\logback-classic-1.5.34-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.hibernate.validator",
+                    "name": "hibernate-validator",
+                    "version": "9.1.0.Final",
+                    "artifacts": [
+                        {
+                            "name": "hibernate-validator",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.validator\\hibernate-validator\\9.1.0.Final\\edca336ccd088618839a20c428131663eea9a1f9\\hibernate-validator-9.1.0.Final-sources.jar"
+                        },
+                        {
+                            "name": "hibernate-validator",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.validator\\hibernate-validator\\9.1.0.Final\\53505ad984428ab42b4a4f3456aab9ec343bf2f2\\hibernate-validator-9.1.0.Final.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.projectlombok",
+                    "name": "lombok",
+                    "version": "1.18.46",
+                    "artifacts": [
+                        {
+                            "name": "lombok",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.projectlombok\\lombok\\1.18.46\\e114bc06aa39e4932147e3359b601f4f5d5a196f\\lombok-1.18.46-sources.jar"
+                        },
+                        {
+                            "name": "lombok",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.projectlombok\\lombok\\1.18.46\\a5cfe99fdf320e84955ef653f2ce1bf789d11385\\lombok-1.18.46.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "slf4j-api",
+                    "version": "2.0.18",
+                    "artifacts": [
+                        {
+                            "name": "slf4j-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\slf4j-api\\2.0.18\\cbef69ca0f760268b2cb46acd30a3f50b98c2af2\\slf4j-api-2.0.18-sources.jar"
+                        },
+                        {
+                            "name": "slf4j-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\slf4j-api\\2.0.18\\78a9e7a37cd6360e0b818e86341b24123d28d4df\\slf4j-api-2.0.18.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.hibernate.orm",
+                    "name": "hibernate-core",
+                    "version": "7.4.1.Final",
+                    "artifacts": [
+                        {
+                            "name": "hibernate-core",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.orm\\hibernate-core\\7.4.1.Final\\b405096e4aa04ff9c99a3e6e632eb2b8d252e1f1\\hibernate-core-7.4.1.Final.jar"
+                        },
+                        {
+                            "name": "hibernate-core",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.orm\\hibernate-core\\7.4.1.Final\\236981b5b5f66a6af26449ce81d1c4d6ea00d07\\hibernate-core-7.4.1.Final-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.hamcrest",
+                    "name": "hamcrest",
+                    "version": "3.0",
+                    "artifacts": [
+                        {
+                            "name": "hamcrest",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hamcrest\\hamcrest\\3.0\\9344495cae4f29f88b2e3d8927878dca65cb42bd\\hamcrest-3.0-sources.jar"
+                        },
+                        {
+                            "name": "hamcrest",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hamcrest\\hamcrest\\3.0\\8fd9b78a8e6a6510a078a9e30e9e86a6035cfaf7\\hamcrest-3.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter-api",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter-api\\6.0.3\\2e6cfb62db85350179f0408ed5270f7cdf8cefda\\junit-jupiter-api-6.0.3.jar"
+                        },
+                        {
+                            "name": "junit-jupiter-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter-api\\6.0.3\\281330ce99ad95c2ccc8492503fc5b945e73afb4\\junit-jupiter-api-6.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-jdbc",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-jdbc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jdbc\\4.1.0\\aa7c6585dd28891cb052d95606776076b5445df2\\spring-boot-starter-jdbc-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-jdbc",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jdbc\\4.1.0\\aa7c6585dd28891cb052d95606776076b5445df2\\spring-boot-starter-jdbc-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-test\\4.1.0\\f6c9cb2cc423397ce6c7c8ab5eb4296734290ad0\\spring-boot-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-test\\4.1.0\\77edff422257d0d9a3e0c7ccc51c90dff736ddc5\\spring-boot-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-sql",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-sql",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-sql\\4.1.0\\7a5ef86020d10e926b2e98e1d7b4b79258fb2f38\\spring-boot-sql-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-sql",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-sql\\4.1.0\\ddae630555148bf7f8a5ee6c9faa4fee9cd98334\\spring-boot-sql-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.hibernate.models",
+                    "name": "hibernate-models",
+                    "version": "1.1.1",
+                    "artifacts": [
+                        {
+                            "name": "hibernate-models",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.models\\hibernate-models\\1.1.1\\8d53091c6c865d56baf2d3b4827dfb2f73b70654\\hibernate-models-1.1.1-sources.jar"
+                        },
+                        {
+                            "name": "hibernate-models",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.hibernate.models\\hibernate-models\\1.1.1\\c890a4cc781fd8720e0e2613b4a24b33cdaa80a1\\hibernate-models-1.1.1.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-web",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-web",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-web\\7.0.8\\d7cddac31ee023d25d37f48e2ff0e168cf635c14\\spring-web-7.0.8.jar"
+                        },
+                        {
+                            "name": "spring-web",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-web\\7.0.8\\497e9008f9ddde811690cc3a17f5a38bc73f6d63\\spring-web-7.0.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-restclient",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-restclient",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-restclient\\4.1.0\\84c46e14372eefbdef76a14f05ebae304f796778\\spring-boot-restclient-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-restclient",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-restclient\\4.1.0\\d3f9fadf2847b18b7a5438d7737be3b041fe168e\\spring-boot-restclient-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.data",
+                    "name": "spring-data-commons",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-data-commons",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-commons\\4.1.0\\e8d1077d09c20e9ecf3574a72ce5cc90a29b902a\\spring-data-commons-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-data-commons",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.data\\spring-data-commons\\4.1.0\\a7a2a21da001d5e1e7e6145c8937e5f1305883cd\\spring-data-commons-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-autoconfigure",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-autoconfigure",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-autoconfigure\\4.1.0\\eaad7dc8ddd267df400ec6f9b1a256777bba5ea\\spring-boot-autoconfigure-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-autoconfigure",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-autoconfigure\\4.1.0\\a921df4e39389e43dacac5615a1185708ee8a960\\spring-boot-autoconfigure-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-validation-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-validation-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-validation-test\\4.1.0\\c7264296eecfcd45c8dc2292c174084ddec17935\\spring-boot-starter-validation-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-validation-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-validation-test\\4.1.0\\c7264296eecfcd45c8dc2292c174084ddec17935\\spring-boot-starter-validation-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot\\4.1.0\\b25a085b082c1b3f1e8774ffb3e7abeb9666bbe8\\spring-boot-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot\\4.1.0\\bcf26d4c27ab080ef60c13220e96a37d687f9e26\\spring-boot-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-web-server",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-web-server",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-web-server\\4.1.0\\e67513b382c2cef7b8bc364e8e85cd7f0940e331\\spring-boot-web-server-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-web-server",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-web-server\\4.1.0\\505f3e140e2b224f6e9b5093dac4761e5d6d0feb\\spring-boot-web-server-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.validation",
+                    "name": "jakarta.validation-api",
+                    "version": "3.1.1",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.validation-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.validation\\jakarta.validation-api\\3.1.1\\4fdbc03b207ed00847ebffd7ee599aee7ace6eff\\jakarta.validation-api-3.1.1-sources.jar"
+                        },
+                        {
+                            "name": "jakarta.validation-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.validation\\jakarta.validation-api\\3.1.1\\ec8622148afc5564235d17af80ea80288d0e7f92\\jakarta.validation-api-3.1.1.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.eclipse.angus",
+                    "name": "angus-activation",
+                    "version": "2.0.3",
+                    "artifacts": [
+                        {
+                            "name": "angus-activation",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.eclipse.angus\\angus-activation\\2.0.3\\2639ddee2a9fc3d0cfa64a5a4226394089c1f97c\\angus-activation-2.0.3-sources.jar"
+                        },
+                        {
+                            "name": "angus-activation",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.eclipse.angus\\angus-activation\\2.0.3\\7f80607ea5014fef0b1779e6c33d63a88a45a563\\angus-activation-2.0.3.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-security",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-security",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-security\\4.1.0\\70d42dc7fc5e59b24db62a3b3908ed7b0fdb7634\\spring-boot-security-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-security",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-security\\4.1.0\\1fe5f10c43305d43d8ac22ae5b721010f4394449\\spring-boot-security-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "net.minidev",
+                    "name": "json-smart",
+                    "version": "2.6.0",
+                    "artifacts": [
+                        {
+                            "name": "json-smart",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.minidev\\json-smart\\2.6.0\\75b3757e82a64681edcbd3a252da318d68831b0e\\json-smart-2.6.0-sources.jar"
+                        },
+                        {
+                            "name": "json-smart",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.minidev\\json-smart\\2.6.0\\5f858a43a325a8673da6869ab2bc787a1bcb2244\\json-smart-2.6.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.osgi",
+                    "name": "org.osgi.annotation.versioning",
+                    "version": "1.1.2",
+                    "artifacts": [
+                        {
+                            "name": "org.osgi.annotation.versioning",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.annotation.versioning\\1.1.2\\dc3cd4ec96c0b3c5459fe00694bd73a816ecf93e\\org.osgi.annotation.versioning-1.1.2.jar"
+                        },
+                        {
+                            "name": "org.osgi.annotation.versioning",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.annotation.versioning\\1.1.2\\e6df443d6fbda19c147f7b82171007de8d62471b\\org.osgi.annotation.versioning-1.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.inject",
+                    "name": "jakarta.inject-api",
+                    "version": "2.0.1",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.inject-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.inject\\jakarta.inject-api\\2.0.1\\569d6c5f18d6ff83c82152d1870cf0faf830c594\\jakarta.inject-api-2.0.1-sources.jar"
+                        },
+                        {
+                            "name": "jakarta.inject-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.inject\\jakarta.inject-api\\2.0.1\\4c28afe1991a941d7702fe1362c365f0a8641d1e\\jakarta.inject-api-2.0.1.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-jackson-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-jackson-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jackson-test\\4.1.0\\cab6d664d5307c3c3672b898478593140fc29ff4\\spring-boot-starter-jackson-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-jackson-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jackson-test\\4.1.0\\cab6d664d5307c3c3672b898478593140fc29ff4\\spring-boot-starter-jackson-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-jdbc",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-jdbc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-jdbc\\7.0.8\\7276119f74aad3bb033fcfa9eda3f2199050e6d2\\spring-jdbc-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-jdbc",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-jdbc\\7.0.8\\f979da380cd01fd363510ca98a7f544d1959a914\\spring-jdbc-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-webmvc",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-webmvc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-webmvc\\7.0.8\\90f2fae5ed829cef302e5bcd8b7dea18b58c304d\\spring-webmvc-7.0.8-sources.jar"
+                        },
+                        {
+                            "name": "spring-webmvc",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-webmvc\\7.0.8\\d08172cf66f9625a42935d596ca4c83d21265996\\spring-webmvc-7.0.8.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-restclient-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-restclient-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-restclient-test\\4.1.0\\2c06d3d60d6ffbccde53051e7ef8fa3ac07720c9\\spring-boot-starter-restclient-test-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-restclient-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-restclient-test\\4.1.0\\2c06d3d60d6ffbccde53051e7ef8fa3ac07720c9\\spring-boot-starter-restclient-test-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.osgi",
+                    "name": "org.osgi.annotation.bundle",
+                    "version": "2.0.0",
+                    "artifacts": [
+                        {
+                            "name": "org.osgi.annotation.bundle",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.annotation.bundle\\2.0.0\\f5c2cd6e670c3c5d440d3003efd5ef2ead5c68eb\\org.osgi.annotation.bundle-2.0.0.jar"
+                        },
+                        {
+                            "name": "org.osgi.annotation.bundle",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.osgi\\org.osgi.annotation.bundle\\2.0.0\\833f1460ce117037e9239eaf6a352eef5abf36f6\\org.osgi.annotation.bundle-2.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-logging",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-logging",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-logging\\4.1.0\\f2e2615d9fb27a035a8fc7aef19670769739ae76\\spring-boot-starter-logging-4.1.0-sources.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-logging",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-logging\\4.1.0\\f2e2615d9fb27a035a8fc7aef19670769739ae76\\spring-boot-starter-logging-4.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "biz.aQute.bnd",
+                    "name": "biz.aQute.bnd.annotation",
+                    "version": "7.1.0",
+                    "artifacts": [
+                        {
+                            "name": "biz.aQute.bnd.annotation",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\biz.aQute.bnd\\biz.aQute.bnd.annotation\\7.1.0\\b8a7ac832557135627337fbef68c0fb6b2a306f9\\biz.aQute.bnd.annotation-7.1.0-sources.jar"
+                        },
+                        {
+                            "name": "biz.aQute.bnd.annotation",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\biz.aQute.bnd\\biz.aQute.bnd.annotation\\7.1.0\\2f2be18c936d08cf46ea6cfa0043f34afdf38705\\biz.aQute.bnd.annotation-7.1.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.logging.log4j",
+                    "name": "log4j-api",
+                    "version": "2.25.4",
+                    "artifacts": [
+                        {
+                            "name": "log4j-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-api\\2.25.4\\89ff2217b193fb187b134aa6ebcbfa8a28b018a9\\log4j-api-2.25.4.jar"
+                        },
+                        {
+                            "name": "log4j-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apache.logging.log4j\\log4j-api\\2.25.4\\b0e4753da40534c674b6ff1b2ee3c4ab0c9c0f1f\\log4j-api-2.25.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-tomcat-runtime",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-tomcat-runtime",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat-runtime\\4.1.0\\6107a851e178c1233b64634270b11b8d5490733a\\spring-boot-starter-tomcat-runtime-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-tomcat-runtime",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-tomcat-runtime\\4.1.0\\6107a851e178c1233b64634270b11b8d5490733a\\spring-boot-starter-tomcat-runtime-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-jdbc",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-jdbc",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jdbc\\4.1.0\\71f00c6af0ae910530d9fce8f5ae6e54c595f690\\spring-boot-jdbc-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-jdbc",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jdbc\\4.1.0\\2a3162d08bfcbd95fa8b7c46f9e9b3fdb1aff621\\spring-boot-jdbc-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jspecify",
+                    "name": "jspecify",
+                    "version": "1.0.0",
+                    "artifacts": [
+                        {
+                            "name": "jspecify",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jspecify\\jspecify\\1.0.0\\7425a601c1c7ec76645a78d22b8c6a627edee507\\jspecify-1.0.0.jar"
+                        },
+                        {
+                            "name": "jspecify",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.jspecify\\jspecify\\1.0.0\\f1a67bbcf2f9f282baf3821046563983f16ca9b2\\jspecify-1.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.micrometer",
+                    "name": "micrometer-commons",
+                    "version": "1.17.0",
+                    "artifacts": [
+                        {
+                            "name": "micrometer-commons",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-commons\\1.17.0\\db3ab51332762372d04b9702c8ef9080f4174363\\micrometer-commons-1.17.0-sources.jar"
+                        },
+                        {
+                            "name": "micrometer-commons",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\io.micrometer\\micrometer-commons\\1.17.0\\2edbb561cdd2b2777fbcd83aa9f2204ebabf592b\\micrometer-commons-1.17.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework",
+                    "name": "spring-aop",
+                    "version": "7.0.8",
+                    "artifacts": [
+                        {
+                            "name": "spring-aop",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aop\\7.0.8\\b73e58e9b7dbc4db6b4ebbe3336be0e901b0d261\\spring-aop-7.0.8.jar"
+                        },
+                        {
+                            "name": "spring-aop",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework\\spring-aop\\7.0.8\\9dcfc798f52b62ffe4fec47405834d25b08968da\\spring-aop-7.0.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-starter-jdbc-test",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-starter-jdbc-test",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jdbc-test\\4.1.0\\581473dc473de034683c089f1fb223334b36793c\\spring-boot-starter-jdbc-test-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-starter-jdbc-test",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-starter-jdbc-test\\4.1.0\\581473dc473de034683c089f1fb223334b36793c\\spring-boot-starter-jdbc-test-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.core",
+                    "name": "jackson-annotations",
+                    "version": "2.21",
+                    "artifacts": [
+                        {
+                            "name": "jackson-annotations",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml.jackson.core\\jackson-annotations\\2.21\\3707cf0c88e3ad74a24c99e357906a53ea24b557\\jackson-annotations-2.21-sources.jar"
+                        },
+                        {
+                            "name": "jackson-annotations",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml.jackson.core\\jackson-annotations\\2.21\\b1bc1868bf02dc0bd6c7836257a036a331005309\\jackson-annotations-2.21.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.springframework.boot",
+                    "name": "spring-boot-jackson",
+                    "version": "4.1.0",
+                    "artifacts": [
+                        {
+                            "name": "spring-boot-jackson",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jackson\\4.1.0\\bada14f54b1961279f9942c54b5039c90cd6a252\\spring-boot-jackson-4.1.0.jar"
+                        },
+                        {
+                            "name": "spring-boot-jackson",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.springframework.boot\\spring-boot-jackson\\4.1.0\\9c8ca7cd399104401f53ff0f6ada7f706f209d84\\spring-boot-jackson-4.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "net.bytebuddy",
+                    "name": "byte-buddy-agent",
+                    "version": "1.18.10",
+                    "artifacts": [
+                        {
+                            "name": "byte-buddy-agent",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.bytebuddy\\byte-buddy-agent\\1.18.10\\9426d28828bdcdf42666bb7a68c468279ea78f59\\byte-buddy-agent-1.18.10.jar"
+                        },
+                        {
+                            "name": "byte-buddy-agent",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\net.bytebuddy\\byte-buddy-agent\\1.18.10\\fff7c660c233dd0d4976c7dcfced5a1e1b7f0f5e\\byte-buddy-agent-1.18.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.junit.jupiter",
+                    "name": "junit-jupiter-engine",
+                    "version": "6.0.3",
+                    "artifacts": [
+                        {
+                            "name": "junit-jupiter-engine",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter-engine\\6.0.3\\2a30aff0a9a0d97c0728db5b3102658083f4d74b\\junit-jupiter-engine-6.0.3-sources.jar"
+                        },
+                        {
+                            "name": "junit-jupiter-engine",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.junit.jupiter\\junit-jupiter-engine\\6.0.3\\e26f7e17d06cfc85ba7643b5ad00c87d5f2084dd\\junit-jupiter-engine-6.0.3.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mockito",
+                    "name": "mockito-junit-jupiter",
+                    "version": "5.23.0",
+                    "artifacts": [
+                        {
+                            "name": "mockito-junit-jupiter",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.mockito\\mockito-junit-jupiter\\5.23.0\\e66b5f34ffea58bf4388aba58f66a209daeba4fd\\mockito-junit-jupiter-5.23.0.jar"
+                        },
+                        {
+                            "name": "mockito-junit-jupiter",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.mockito\\mockito-junit-jupiter\\5.23.0\\cec26ac190ce8f70b1d31ae02358eed43f34110c\\mockito-junit-jupiter-5.23.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apiguardian",
+                    "name": "apiguardian-api",
+                    "version": "1.1.2",
+                    "artifacts": [
+                        {
+                            "name": "apiguardian-api",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apiguardian\\apiguardian-api\\1.1.2\\a231e0d844d2721b0fa1b238006d15c6ded6842a\\apiguardian-api-1.1.2.jar"
+                        },
+                        {
+                            "name": "apiguardian-api",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.apiguardian\\apiguardian-api\\1.1.2\\e0787a997746ac32639e0bf3cb27af8dce8a3428\\apiguardian-api-1.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.antlr",
+                    "name": "antlr4-runtime",
+                    "version": "4.13.2",
+                    "artifacts": [
+                        {
+                            "name": "antlr4-runtime",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.antlr\\antlr4-runtime\\4.13.2\\fc3db6d844df652a3d5db31c87fa12757f13691d\\antlr4-runtime-4.13.2.jar"
+                        },
+                        {
+                            "name": "antlr4-runtime",
+                            "classifier": "sources",
+                            "path": "C:\\Users\\Gyu\\.gradle\\caches\\modules-2\\files-2.1\\org.antlr\\antlr4-runtime\\4.13.2\\391aff23db4000ad7a2fa02e182a3767f659c38d\\antlr4-runtime-4.13.2-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "library"
+        ]
+    }
+}

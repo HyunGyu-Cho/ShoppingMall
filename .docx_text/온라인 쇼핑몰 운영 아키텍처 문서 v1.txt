@@ -1,0 +1,1780 @@
+온라인쇼핑몰운영아키텍처문서v1
+문서목적
+이 문서는 SpringBoot기반 온라인 쇼핑몰을 단순 CRUD서비스가 아니라 운영 가능한 주문·결제·재고·배송 시스템으 로설계하기위한아키텍처문서이다.
+쇼핑몰에서 가장 중요한 것은 단순히 상품을 보여주고 주문을 저장하는 것이 아니다. 실제 운영 환경에서는 다음 문제가 반드시발생한다.
+여러사용자가동시에같은상품을주문한다.
+결제요청은성공했지만주문상태변경이실패한다.
+PG사콜백이중복으로들어온다.
+주문취소와배송시작이동시에발생한다.
+대량주문,대량배송상태변경,대량통계집계가필요하다.
+상품목록,주문목록,리뷰목록조회가느려진다.
+캐시와DB데이터가불일치할수있다.
+장애발생후어떤주문을재처리해야하는지추적해야한다.
+따라서이문서의목적은다음과같다.
+온라인쇼핑몰의핵심도메인을정의한다.
+주문,결제,재고,배송의상태변경흐름을명확히한다.
+동시성환경에서데이터정합성을지키는구조를설계한다.
+조회성능과쓰기성능을함께고려한다.
+장애복구,재처리,모니터링까지포함한운영가능한구조를만든다.
+전체시스템개요
+1-1.핵심도메인
+온라인쇼핑몰의핵심도메인은다음과같다.
+도메인
+설명
+Member
+회원, 인증,권한
+Product
+상품,가격,판매상태
+Inventory
+재고,예약재고,판매가능재고
+Cart
+장바구니
+Order
+주문,주문상태
+OrderItem
+주문당시상품스냅샷
+Payment
+결제요청,승인,실패,취소
+도메인
+설명
+Delivery
+배송지,배송상태
+Review
+리뷰,평
+Coupon
+쿠폰발급,사용
+Point
+포인트적립,사용
+Settlement
+정산,매출집계
+Batch
+대량처리,통계,만료처리
+Admin
+운영자관리기능
+Monitoring
+로그,지표,장애추적
+PaymentPaymentDeliveryDelivery처음개발할때는Member,Product,Order,OrderItem,
+Payment
+Payment
+Delivery
+Delivery
+로시작하고,이후Coupon,Point,Settlement,Batch를확장한다.
+운영관점의전체아키텍처
+Client↓Web/MobileFrontend↓APIGateway또는LoadBalancer↓SpringBootApplication├──MemberDomain├──ProductDomain├──InventoryDomain├──OrderDomain├──PaymentDomain├──DeliveryDomain├──ReviewDomain├──AdminDomain└──BatchDomain↓Database├──member├──product├──inventory├──orders├──order_item├──paymentClient↓Web/MobileFrontend↓APIGateway또는LoadBalancer↓SpringBootApplication├──MemberDomain├──ProductDomain├──InventoryDomain├──OrderDomain├──PaymentDomain├──DeliveryDomain├──ReviewDomain├──AdminDomain└──BatchDomain↓Database├──member├──product├──inventory├──orders├──order_item├──payment2-1.논리아키텍처
+Client
+↓
+Web/MobileFrontend
+↓
+APIGateway또는LoadBalancer
+↓
+SpringBootApplication
+├──MemberDomain
+├──ProductDomain
+├──InventoryDomain
+├──OrderDomain
+├──PaymentDomain
+├──DeliveryDomain
+├──ReviewDomain
+├──AdminDomain
+└──BatchDomain
+↓
+Database
+├──member
+├──product
+├──inventory
+├──orders
+├──order_item
+├──payment
+Client
+↓
+Web/MobileFrontend
+↓
+APIGateway또는LoadBalancer
+↓
+SpringBootApplication
+├──MemberDomain
+├──ProductDomain
+├──InventoryDomain
+├──OrderDomain
+├──PaymentDomain
+├──DeliveryDomain
+├──ReviewDomain
+├──AdminDomain
+└──BatchDomain
+↓
+Database
+├──member
+├──product
+├──inventory
+├──orders
+├──order_item
+├──payment
+,
+,
+중심으
+ReviewReview
+Review
+Review
+├──delivery├──review├──coupon├──point├──outbox_event├──order_event_log└──product_statExternalSystems├──PG사결제API├──배송사API├──이메일/SMS알림└──관리자시스템Infrastructure├──Redis├──MessageQueue├──ObjectStorage├──Monitoring└──Logging├──delivery├──review├──coupon├──point├──outbox_event├──order_event_log└──product_statExternalSystems├──PG사결제API├──배송사API├──이메일/SMS알림└──관리자시스템Infrastructure├──Redis├──MessageQueue├──ObjectStorage├──Monitoring└──Logging2-2.주요인프라구성
+├──delivery
+├──review
+├──coupon
+├──point
+├──outbox_event
+├──order_event_log
+└──product_stat
+ExternalSystems
+├──PG사결제API
+├──배송사API
+├──이메일/SMS알림
+└──관리자시스템
+Infrastructure
+├──Redis
+├──MessageQueue
+├──ObjectStorage
+├──Monitoring
+└──Logging
+├──delivery
+├──review
+├──coupon
+├──point
+├──outbox_event
+├──order_event_log
+└──product_stat
+ExternalSystems
+├──PG사결제API
+├──배송사API
+├──이메일/SMS알림
+└──관리자시스템
+Infrastructure
+├──Redis
+├──MessageQueue
+├──ObjectStorage
+├──Monitoring
+└──Logging
+구성요소
+역할
+SpringBoot
+비즈니스API서버
+RDBMS
+주문,결제,재고등정합성이중요한데이터저장
+Redis
+캐시,분산락,임시선데이터
+MessageQueue
+결제후처리,알림,통계,비동기이벤트처리
+ObjectStorage
+상품이미지,리뷰이미지저장
+BatchServer
+통계집계,만료처리,대량상태변경
+Monitoring
+API응답시간,에러율,DB상태,락대기시간추적
+Logging
+주문,결제,장애추적용로그저장
+도메인설계원칙
+3-1.주문과상품은ManyToMany로설계하지않는다
+주문과상품은겉으로보면다대다관계이다.
+OrderN:MProductOrderN:MProductOrderItemOrderItem하지만실무에서는반드시중간엔티티인을둔다.
+OrderN:MProduct
+OrderN:MProduct
+OrderItem
+OrderItem
+Order1 : NOrderItem Product1:NOrderItemOrder1 : NOrderItem Product1:NOrderItem이유는주문상품에단순연결정보만있는것이아니라,주문당시의중요한정보가들어가기때문이다.
+Order1 : NOrderItem Product1:NOrderItem
+Order1 : NOrderItem Product1:NOrderItem
+order_itemorder_item_idorder_idproduct_idproduct_name_snapshotorder_pricequantitydiscount_amountoption_name_snapshotorder_itemorder_item_idorder_idproduct_idproduct_name_snapshotorder_pricequantitydiscount_amountoption_name_snapshot상품명이 나중에 바뀌어도 과거 주문 내역의 상품명은 바뀌면 안 된다. 상품가격이나중에바뀌어도과거주문금액은바뀌면안된다.
+order_item
+order_item_id
+order_id
+product_id
+product_name_snapshot
+order_price
+quantity
+discount_amount
+option_name_snapshot
+order_item
+order_item_id
+order_id
+product_id
+product_name_snapshot
+order_price
+quantity
+discount_amount
+option_name_snapshot
+따라서주문내역에는반드시주문당시상품정보스냅샷을저장한다.
+3-2.상품과재고를분리한다
+product.stock_quantityproduct.stock_quantity초기에는
+product.stock_quantity
+product.stock_quantity
+하나로시작할수있다.
+productproduct_idnamepricestock_quantityproductproduct_idnamepricestock_quantityproductproduct_idnamepricestatuscategory_idproductproduct_idnamepricestatuscategory_id하지만운영수준에서는상품정보와재고정보를분리하는것이좋다.
+product
+product_id
+name
+price
+stock_quantity
+product
+product_id
+name
+price
+stock_quantity
+product
+product_id
+name
+price
+status
+category_id
+product
+product_id
+name
+price
+status
+category_id
+created_atupdated_atdeleted_atinventoryproduct_idtotal_quantityreserved_quantityavailable_quantityversionupdated_atcreated_atupdated_atdeleted_atinventoryproduct_idtotal_quantityreserved_quantityavailable_quantityversionupdated_at판매가능재고는다음처럼계산할수있다.
+created_at
+updated_at
+deleted_at
+inventory
+product_id
+total_quantity
+reserved_quantity
+available_quantity
+version
+updated_at
+created_at
+updated_at
+deleted_at
+inventory
+product_id
+total_quantity
+reserved_quantity
+available_quantity
+version
+updated_at
+available_quantity=total_quantity-reserved_quantityavailable_quantity=total_quantity-reserved_quantitystock_quantitystock_quantityInventoryInventory단순쇼핑몰에서는만으로충분할수있다.
+available_quantity=total_quantity-reserved_quantity
+available_quantity=total_quantity-reserved_quantity
+stock_quantity
+stock_quantity
+Inventory
+Inventory
+하지만 결제 전 재고 예약, 결제 실패 시 재고 복구, 선착순 이벤트를 고려하면 하는 것이 더 안전하다.
+주문상태머신
+4-1.주문상태
+PENDING_PAYMENT결제대기PAID결제완료PAYMENT_FAILED결제실패PREPARING상품준비중SHIPPED배송중DELIVERED배송완료CONFIRMED구매확정CANCEL_REQUESTED취소요청CANCELLED주문취소REFUND_REQUESTED환불요청REFUNDED환불완료PENDING_PAYMENT결제대기PAID결제완료PAYMENT_FAILED결제실패PREPARING상품준비중SHIPPED배송중DELIVERED배송완료CONFIRMED구매확정CANCEL_REQUESTED취소요청CANCELLED주문취소REFUND_REQUESTED환불요청REFUNDED환불완료주문은 단순히 생성되고 취소되는 데이터가 아니다. 주문은 상태를 가진다.
+PENDING_PAYMENT결제대기
+PAID결제완료
+PAYMENT_FAILED결제실패
+PREPARING상품준비중
+SHIPPED배송중
+DELIVERED배송완료
+CONFIRMED구매확정
+CANCEL_REQUESTED취소요청
+CANCELLED주문취소
+REFUND_REQUESTED환불요청
+REFUNDED환불완료
+PENDING_PAYMENT결제대기
+PAID결제완료
+PAYMENT_FAILED결제실패
+PREPARING상품준비중
+SHIPPED배송중
+DELIVERED배송완료
+CONFIRMED구매확정
+CANCEL_REQUESTED취소요청
+CANCELLED주문취소
+REFUND_REQUESTED환불요청
+REFUNDED환불완료
+를별도도메인으로분리
+PENDING_PAYMENT→PAID→PAYMENT_FAILED→CANCELLEDPAID→PREPARING→CANCEL_REQUESTED→REFUND_REQUESTEDPREPARING→SHIPPED→CANCEL_REQUESTEDSHIPPED→DELIVEREDDELIVERED→CONFIRMED→REFUND_REQUESTEDCANCEL_REQUESTED→CANCELLEDREFUND_REQUESTED→REFUNDEDPENDING_PAYMENT→PAID→PAYMENT_FAILED→CANCELLEDPAID→PREPARING→CANCEL_REQUESTED→REFUND_REQUESTEDPREPARING→SHIPPED→CANCEL_REQUESTEDSHIPPED→DELIVEREDDELIVERED→CONFIRMED→REFUND_REQUESTEDCANCEL_REQUESTED→CANCELLEDREFUND_REQUESTED→REFUNDED4-2.주문상태전이
+PENDING_PAYMENT
+→PAID
+→PAYMENT_FAILED
+→CANCELLED
+PAID
+→PREPARING
+→CANCEL_REQUESTED
+→REFUND_REQUESTED
+PREPARING
+→SHIPPED
+→CANCEL_REQUESTED
+SHIPPED
+→DELIVERED
+DELIVERED
+→CONFIRMED
+→REFUND_REQUESTED
+CANCEL_REQUESTED
+→CANCELLED
+REFUND_REQUESTED
+→REFUNDED
+PENDING_PAYMENT
+→PAID
+→PAYMENT_FAILED
+→CANCELLED
+PAID
+→PREPARING
+→CANCEL_REQUESTED
+→REFUND_REQUESTED
+PREPARING
+→SHIPPED
+→CANCEL_REQUESTED
+SHIPPED
+→DELIVERED
+DELIVERED
+→CONFIRMED
+→REFUND_REQUESTED
+CANCEL_REQUESTED
+→CANCELLED
+REFUND_REQUESTED
+→REFUNDED
+4-3.상태별가능한행위
+현재상태
+가능한행위
+PENDING_PAYMENT
+결제승인,결제실패,주문만료
+PAID
+배송준비,주문취소요청
+PREPARING
+배송시작,주문취소요청
+SHIPPED
+배송완료처리
+DELIVERED
+구매확정,반품/환불요청
+CONFIRMED
+리뷰작성
+CANCELLED
+추가변경불가
+REFUNDED
+추가변경불가
+publicvoidpay(){if (this.status!= OrderStatus.PENDING_PAYMENT) {thrownewIllegalStateException("결제대기상태에서만결제완료처리가가능합니다.");}this.status=OrderStatus.PAID;}publicvoidcancel(){if (this.status == OrderStatus.SHIPPED || this.status == OrderStatus.DELIVERED) { thrownewIllegalStateException("배송시작이후에는일반취소가불가능합니다.");}if(this.status==OrderStatus.CANCELLED){thrownewIllegalStateException("이미취소된주문입니다.");}this.status=OrderStatus.CANCELLED;}publicvoidpay(){if (this.status!= OrderStatus.PENDING_PAYMENT) {thrownewIllegalStateException("결제대기상태에서만결제완료처리가가능합니다.");}this.status=OrderStatus.PAID;}publicvoidcancel(){if (this.status == OrderStatus.SHIPPED || this.status == OrderStatus.DELIVERED) { thrownewIllegalStateException("배송시작이후에는일반취소가불가능합니다.");}if(this.status==OrderStatus.CANCELLED){thrownewIllegalStateException("이미취소된주문입니다.");}this.status=OrderStatus.CANCELLED;}4-4.상태전이검증예시
+publicvoidpay(){
+if (this.status!= OrderStatus.PENDING_PAYMENT) {
+thrownewIllegalStateException("결제대기상태에서만결제완료처리가가능합니다.");
+}
+this.status=OrderStatus.PAID;
+}
+publicvoidcancel(){
+if (this.status == OrderStatus.SHIPPED || this.status == OrderStatus.DELIVERED) { thrownewIllegalStateException("배송시작이후에는일반취소가불가능합니다.");
+}
+if(this.status==OrderStatus.CANCELLED){
+thrownewIllegalStateException("이미취소된주문입니다.");
+}
+this.status=OrderStatus.CANCELLED;
+}
+publicvoidpay(){
+if (this.status!= OrderStatus.PENDING_PAYMENT) {
+thrownewIllegalStateException("결제대기상태에서만결제완료처리가가능합니다.");
+}
+this.status=OrderStatus.PAID;
+}
+publicvoidcancel(){
+if (this.status == OrderStatus.SHIPPED || this.status == OrderStatus.DELIVERED) { thrownewIllegalStateException("배송시작이후에는일반취소가불가능합니다.");
+}
+if(this.status==OrderStatus.CANCELLED){
+thrownewIllegalStateException("이미취소된주문입니다.");
+}
+this.status=OrderStatus.CANCELLED;
+}
+OrderOrder상태전이규칙은Controller나Service에흩어놓지말고,가능하면도메인내부에둔다.
+Order
+Order
+주문생성아키텍처
+사용자주문요청↓회원검증↓상품검증↓판매가능상태검증↓재고예약또는재고차감↓주문PENDING_PAYMENT생성↓주문상품생성↓배송정보생성↓결제요청준비사용자주문요청↓회원검증↓상품검증↓판매가능상태검증↓재고예약또는재고차감↓주문PENDING_PAYMENT생성↓주문상품생성↓배송정보생성↓결제요청준비5-1.기본주문생성흐름
+사용자주문요청
+↓
+회원검증
+↓
+상품검증
+↓
+판매가능상태검증
+↓
+재고예약또는재고차감
+↓
+주문PENDING_PAYMENT생성
+↓
+주문상품생성
+↓
+배송정보생성
+↓
+결제요청준비
+사용자주문요청
+↓
+회원검증
+↓
+상품검증
+↓
+판매가능상태검증
+↓
+재고예약또는재고차감
+↓
+주문PENDING_PAYMENT생성
+↓
+주문상품생성
+↓
+배송정보생성
+↓
+결제요청준비
+↓응답반환↓응답반환5-2.주문생성시트랜잭션범위
+↓
+응답반환
+↓
+응답반환
+하나의DB트랜잭션안에서처리할것:
+주문생성주문상품생성배송정보생성재고예약또는재고차감주문생성주문상품생성배송정보생성재고예약또는재고차감트랜잭션밖에서처리할것:
+주문생성
+주문상품생성
+배송정보생성
+재고예약또는재고차감
+주문생성
+주문상품생성
+배송정보생성
+재고예약또는재고차감
+외부PG결제API호출이메일발송문자발송외부배송사API호출외부PG결제API호출이메일발송문자발송외부배송사API호출외부API응답지연동안DB커넥션을점유한다.재고rowlock이오래유지될수있다.다른주문요청이대기한다.PG장애가DB장애로전파될수있다.외부API응답지연동안DB커넥션을점유한다.재고rowlock이오래유지될수있다.다른주문요청이대기한다.PG장애가DB장애로전파될수있다.외부 API 호출을 DB 트랜잭션 안에서 처리하면 위하다. 이유는 다음과 같다.
+외부PG결제API호출
+이메일발송
+문자발송
+외부배송사API호출
+외부PG결제API호출
+이메일발송
+문자발송
+외부배송사API호출
+외부API응답지연동안DB커넥션을점유한다.
+재고rowlock이오래유지될수있다.
+다른주문요청이대기한다.
+PG장애가DB장애로전파될수있다.
+외부API응답지연동안DB커넥션을점유한다.
+재고rowlock이오래유지될수있다.
+다른주문요청이대기한다.
+PG장애가DB장애로전파될수있다.
+DB트랜잭션시작주문PENDING_PAYMENT생성재고예약DB트랜잭션커밋PG결제요청결제승인결과또는콜백수신주문상태PAID변경DB트랜잭션시작주문PENDING_PAYMENT생성재고예약DB트랜잭션커밋PG결제요청결제승인결과또는콜백수신주문상태PAID변경따라서주문생성은다음처럼나눈다.
+DB트랜잭션시작
+주문PENDING_PAYMENT생성
+재고예약
+DB트랜잭션커밋
+PG결제요청
+결제승인결과또는콜백수신
+주문상태PAID변경
+DB트랜잭션시작
+주문PENDING_PAYMENT생성
+재고예약
+DB트랜잭션커밋
+PG결제요청
+결제승인결과또는콜백수신
+주문상태PAID변경
+재고아키텍처
+6-1.재고차감방식선택기준
+상황
+권장방식
+일반상품주문
+조건부UPDATE
+충돌이적은상품수정
+낙관적락
+정합성이매우중요한단건처리
+비관적락
+인기상품선착순판매
+Redis선+DB확정
+결제전재고확보필요
+재고예약테이블또는reserved_quantity
+여러상품을한번에주문
+product_id오름차순으로락획득
+6-2.조건부UPDATE방식
+재고차에서가장실용적인방식은조건부UPDATE다.
+UPDATEinventorySET available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;UPDATEinventorySET available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;성공여부는변경된row수로판단한다.
+UPDATEinventory
+SET available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+UPDATEinventory
+SET available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+updatedrow=1→재고차감성공updatedrow=0→재고부족updatedrow=1→재고차감성공updatedrow=0→재고부족@Modifying @Query("""updateInventoryiset i.availableQuantity = i.availableQuantity - :quantity where i.productId = :productIdandi.availableQuantity>=:quantity """)intdecreaseStock(@Param("productId")LongproductId,@Modifying @Query("""updateInventoryiset i.availableQuantity = i.availableQuantity - :quantity where i.productId = :productIdandi.availableQuantity>=:quantity """)intdecreaseStock(@Param("productId")LongproductId,JPA예시:
+updatedrow=1→재고차감성공
+updatedrow=0→재고부족
+updatedrow=1→재고차감성공
+updatedrow=0→재고부족
+@Modifying @Query("""
+updateInventoryi
+set i.availableQuantity = i.availableQuantity - :quantity where i.productId = :productId
+andi.availableQuantity>=:quantity """)
+intdecreaseStock(@Param("productId")LongproductId,
+@Modifying @Query("""
+updateInventoryi
+set i.availableQuantity = i.availableQuantity - :quantity where i.productId = :productId
+andi.availableQuantity>=:quantity """)
+intdecreaseStock(@Param("productId")LongproductId,
+@Param("quantity")intquantity);@Param("quantity")intquantity);@TransactionalpublicvoiddecreaseStock(LongproductId,intquantity){intupdated=inventoryRepository.decreaseStock(productId, quantity);if(updated==0){throw newIllegalStateException("재고가부족합니다.");}}@TransactionalpublicvoiddecreaseStock(LongproductId,intquantity){intupdated=inventoryRepository.decreaseStock(productId, quantity);if(updated==0){throw newIllegalStateException("재고가부족합니다.");}}사용예시:
+@Param("quantity")intquantity
+);
+@Param("quantity")intquantity
+);
+@Transactional
+publicvoiddecreaseStock(LongproductId,intquantity){
+intupdated=inventoryRepository.decreaseStock(productId, quantity);
+if(updated==0){
+throw newIllegalStateException("재고가부족합니다.");
+}
+}
+@Transactional
+publicvoiddecreaseStock(LongproductId,intquantity){
+intupdated=inventoryRepository.decreaseStock(productId, quantity);
+if(updated==0){
+throw newIllegalStateException("재고가부족합니다.");
+}
+}
+6-3.재고예약방식
+결제전재고를확보해야한다면단순차보다예약방식이좋다.
+사용자주문요청↓재고예약↓주문PENDING_PAYMENT생성↓결제요청↓결제성공→예약재고확정차감↓결제실패→예약재고해제사용자주문요청↓재고예약↓주문PENDING_PAYMENT생성↓결제요청↓결제성공→예약재고확정차감↓결제실패→예약재고해제재고테이블예시:
+사용자주문요청
+↓
+재고예약
+↓
+주문PENDING_PAYMENT생성
+↓
+결제요청
+↓
+결제성공→예약재고확정차감
+↓
+결제실패→예약재고해제
+사용자주문요청
+↓
+재고예약
+↓
+주문PENDING_PAYMENT생성
+↓
+결제요청
+↓
+결제성공→예약재고확정차감
+↓
+결제실패→예약재고해제
+inventoryproduct_idtotal_quantityreserved_quantityavailable_quantityinventoryproduct_idtotal_quantityreserved_quantityavailable_quantityUPDATEinventorySETreserved_quantity=reserved_quantity+:quantity,UPDATEinventorySETreserved_quantity=reserved_quantity+:quantity,재고예약SQL:
+inventory
+product_id
+total_quantity
+reserved_quantity
+available_quantity
+inventory
+product_id
+total_quantity
+reserved_quantity
+available_quantity
+UPDATEinventory
+SETreserved_quantity=reserved_quantity+:quantity,
+UPDATEinventory
+SETreserved_quantity=reserved_quantity+:quantity,
+available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;available_quantity = available_quantity - :quantity WHERE product_id = :productIdANDavailable_quantity>=:quantity;결제실패시예약해제:
+available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+available_quantity = available_quantity - :quantity WHERE product_id = :productId
+ANDavailable_quantity>=:quantity;
+UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productId;UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productId;UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantityWHEREproduct_id=:productId;UPDATEinventorySET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantityWHEREproduct_id=:productId;결제성공시예약확정:
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productId;
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, available_quantity = available_quantity + :quantity WHERE product_id = :productId;
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantity
+WHEREproduct_id=:productId;
+UPDATEinventory
+SET reserved_quantity = reserved_quantity - :quantity, total_quantity = total_quantity - :quantity
+WHEREproduct_id=:productId;
+6-4.재고예약만료배치
+결제대기상태가오래지속되면예약재고를해제해야한다.
+대상:주문상태=PENDING_PAYMENT생성후10분이상경과결제승인내역없음처리:주문상태PAYMENT_FAILED또는CANCELLED변경예약재고해제처리이력저장대상:주문상태=PENDING_PAYMENT생성후10분이상경과결제승인내역없음처리:주문상태PAYMENT_FAILED또는CANCELLED변경예약재고해제처리이력저장PendingPaymentExpirationJob↓PENDING_PAYMENT주문조회↓결제승인여부확인↓예약재고해제↓PendingPaymentExpirationJob↓PENDING_PAYMENT주문조회↓결제승인여부확인↓예약재고해제↓배치예시:
+대상:
+주문상태=PENDING_PAYMENT
+생성후10분이상경과
+결제승인내역없음
+처리:
+주문상태PAYMENT_FAILED또는CANCELLED변경
+예약재고해제
+처리이력저장
+대상:
+주문상태=PENDING_PAYMENT
+생성후10분이상경과
+결제승인내역없음
+처리:
+주문상태PAYMENT_FAILED또는CANCELLED변경
+예약재고해제
+처리이력저장
+PendingPaymentExpirationJob
+↓
+PENDING_PAYMENT주문조회
+↓
+결제승인여부확인
+↓
+예약재고해제
+↓
+PendingPaymentExpirationJob
+↓
+PENDING_PAYMENT주문조회
+↓
+결제승인여부확인
+↓
+예약재고해제
+↓
+주문상태만료처리↓처리로그저장주문상태만료처리↓처리로그저장6-5.데드락방지
+주문상태만료처리
+↓
+처리로그저장
+주문상태만료처리
+↓
+처리로그저장
+트랜잭션 1: 상품 A락 → 상품 B락트랜잭션2:상품B락→상품A락트랜잭션 1: 상품 A락 → 상품 B락트랜잭션2:상품B락→상품A락여러 상품을 동시에 주문할 때는 항상 같은 순서로 재고를 차한다. 나쁜예시:
+트랜잭션 1: 상품 A락 → 상품 B락트랜잭션2:상품B락→상품A락
+트랜잭션 1: 상품 A락 → 상품 B락트랜잭션2:상품B락→상품A락
+항상product_id오름차순으로재고차감항상product_id오름차순으로재고차감좋은예시:
+항상product_id오름차순으로재고차감
+항상product_id오름차순으로재고차감
+List<OrderItemRequest>sortedItems=request.getItems().stream().sorted(Comparator.comparing(OrderItemRequest::getProductId)).toList();List<OrderItemRequest>sortedItems=request.getItems().stream().sorted(Comparator.comparing(OrderItemRequest::getProductId)).toList();결제아키텍처
+List<OrderItemRequest>sortedItems=request.getItems().stream()
+.sorted(Comparator.comparing(OrderItemRequest::getProductId))
+.toList();
+List<OrderItemRequest>sortedItems=request.getItems().stream()
+.sorted(Comparator.comparing(OrderItemRequest::getProductId))
+.toList();
+7-1.결제는외부시스템연동이다
+paymentINSERTpaymentINSERT결제는단순히가아니다.
+paymentINSERT
+paymentINSERT
+PG사라는외부시스템과상태를맞춰야하는작업이다.
+실무에서결제는다음문제가발생한다.
+결제요청이중복으로들어온다.PG콜백이중복으로들어온다.결제는성공했지만서버응답이실패한다.서버는실패로알았지만PG에는성공으로기록된다.주문 취소와 결제승인 콜백이 동시에들어온다.부분 취소가 필요하다.환불이실패할수있다.결제요청이중복으로들어온다.PG콜백이중복으로들어온다.결제는성공했지만서버응답이실패한다.서버는실패로알았지만PG에는성공으로기록된다.주문 취소와 결제승인 콜백이 동시에들어온다.부분 취소가 필요하다.환불이실패할수있다.따라서결제도메인은반드시멱등성과상태동기화를고려해야한다.
+결제요청이중복으로들어온다.
+PG콜백이중복으로들어온다.
+결제는성공했지만서버응답이실패한다.
+서버는실패로알았지만PG에는성공으로기록된다.
+주문 취소와 결제승인 콜백이 동시에들어온다.
+부분 취소가 필요하다.
+환불이실패할수있다.
+결제요청이중복으로들어온다.
+PG콜백이중복으로들어온다.
+결제는성공했지만서버응답이실패한다.
+서버는실패로알았지만PG에는성공으로기록된다.
+주문 취소와 결제승인 콜백이 동시에들어온다.
+부분 취소가 필요하다.
+환불이실패할수있다.
+paymentpayment_idorder_idpayment_keypg_providerpg_transaction_ididempotency_keypayment_statusrequested_amountapproved_amountcancelled_amountapproved_atfailed_atcancelled_atfailure_codefailure_messagecreated_atupdated_atpaymentpayment_idorder_idpayment_keypg_providerpg_transaction_ididempotency_keypayment_statusrequested_amountapproved_amountcancelled_amountapproved_atfailed_atcancelled_atfailure_codefailure_messagecreated_atupdated_at7-2.payment테이블
+payment
+payment_id
+order_id
+payment_key
+pg_provider
+pg_transaction_id
+idempotency_key
+payment_status
+requested_amount
+approved_amount
+cancelled_amount
+approved_at
+failed_at
+cancelled_at
+failure_code
+failure_message
+created_at
+updated_at
+payment
+payment_id
+order_id
+payment_key
+pg_provider
+pg_transaction_id
+idempotency_key
+payment_status
+requested_amount
+approved_amount
+cancelled_amount
+approved_at
+failed_at
+cancelled_at
+failure_code
+failure_message
+created_at
+updated_at
+READY결제준비 REQUESTED결제 요청 APPROVED결제 승인 FAILED결제실패 CANCELLED전체취소PARTIAL_CANCELLED부분취소REFUNDED환불완료READY결제준비 REQUESTED결제 요청 APPROVED결제 승인 FAILED결제실패 CANCELLED전체취소PARTIAL_CANCELLED부분취소REFUNDED환불완료7-3.결제상태
+READY결제준비 REQUESTED결제 요청 APPROVED결제 승인 FAILED결제실패 CANCELLED전체취소
+PARTIAL_CANCELLED부분취소
+REFUNDED환불완료
+READY결제준비 REQUESTED결제 요청 APPROVED결제 승인 FAILED결제실패 CANCELLED전체취소
+PARTIAL_CANCELLED부분취소
+REFUNDED환불완료
+7-4.결제멱등성
+같은주문에대해결제승인요청이중복으로들어와도결제는한번만처리되어야한다.
+idempotency_keyidempotency_key이를위해를저장한다.
+idempotency_key
+idempotency_key
+idempotency_key=order_no+payment_attempt_noidempotency_key=order_no+payment_attempt_noDB제약조건:
+idempotency_key=order_no+payment_attempt_no
+idempotency_key=order_no+payment_attempt_no
+ALTERTABLEpaymentADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);ALTERTABLEpaymentADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);이미같은idempotency_key로APPROVED된결제가있으면 새로 승인하지 않고 기존 결과를 반환한다.이미같은idempotency_key로APPROVED된결제가있으면 새로 승인하지 않고 기존 결과를 반환한다.처리원칙:
+ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);
+ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);
+이미같은idempotency_key로APPROVED된결제가있으면 새로 승인하지 않고 기존 결과를 반환한다.
+이미같은idempotency_key로APPROVED된결제가있으면 새로 승인하지 않고 기존 결과를 반환한다.
+7-5.PG콜백중복처리
+PG콜백은중복으로들어올수있다. 따라서콜백처리도멱등해야한다.
+@TransactionalpublicvoidhandlePaymentCallback(PaymentCallbackRequestrequest){Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey()).orElseThrow(()->newIllegalArgumentException("결제정보가없습니다."));if(payment.isApproved()){ return;}payment.approve(request.getApprovedAmount(),request.getPgTransactionId()); Orderorder= orderRepository.findById(payment.getOrderId()).orElseThrow();order.pay();}@TransactionalpublicvoidhandlePaymentCallback(PaymentCallbackRequestrequest){Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey()).orElseThrow(()->newIllegalArgumentException("결제정보가없습니다."));if(payment.isApproved()){ return;}payment.approve(request.getApprovedAmount(),request.getPgTransactionId()); Orderorder= orderRepository.findById(payment.getOrderId()).orElseThrow();order.pay();}이미 처리된 콜백은 다시 처리하지 않는다. 중복 콜백은 성공 응답으로 무시한다.이미 처리된 콜백은 다시 처리하지 않는다. 중복 콜백은 성공 응답으로 무시한다.핵심은다음이다.
+@Transactional
+publicvoidhandlePaymentCallback(PaymentCallbackRequestrequest){
+Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey())
+.orElseThrow(()->newIllegalArgumentException("결제정보가없습니다."));
+if(payment.isApproved()){ return;
+}
+payment.approve(request.getApprovedAmount(),request.getPgTransactionId()); Orderorder= orderRepository.findById(payment.getOrderId())
+.orElseThrow();
+order.pay();
+}
+@Transactional
+publicvoidhandlePaymentCallback(PaymentCallbackRequestrequest){
+Paymentpayment=paymentRepository.findByPaymentKey(request.getPaymentKey())
+.orElseThrow(()->newIllegalArgumentException("결제정보가없습니다."));
+if(payment.isApproved()){ return;
+}
+payment.approve(request.getApprovedAmount(),request.getPgTransactionId()); Orderorder= orderRepository.findById(payment.getOrderId())
+.orElseThrow();
+order.pay();
+}
+이미 처리된 콜백은 다시 처리하지 않는다. 중복 콜백은 성공 응답으로 무시한다.
+이미 처리된 콜백은 다시 처리하지 않는다. 중복 콜백은 성공 응답으로 무시한다.
+7-6.결제성공후주문상태변경실패대응
+문제상황:
+PG결제승인성공서버에서paymentAPPROVED저장성공order상태PAID변경실패PG결제승인성공서버에서paymentAPPROVED저장성공order상태PAID변경실패이경우결제와주문상태가불일치한다.
+PG결제승인성공
+서버에서paymentAPPROVED저장성공
+order상태PAID변경실패
+PG결제승인성공
+서버에서paymentAPPROVED저장성공
+order상태PAID변경실패
+PaymentReconciliationJob↓payment=APPROVED↓order!=PAID↓PG승인내역재확인↓order상태PAID로 보정↓보정이력저장PaymentReconciliationJob↓payment=APPROVED↓order!=PAID↓PG승인내역재확인↓order상태PAID로 보정↓보정이력저장이를해결하기위해결제상태동기화배치가필요하다.
+PaymentReconciliationJob
+↓
+payment=APPROVED
+↓
+order!=PAID
+↓
+PG승인내역재확인
+↓
+order상태PAID로 보정
+↓
+보정이력저장
+PaymentReconciliationJob
+↓
+payment=APPROVED
+↓
+order!=PAID
+↓
+PG승인내역재확인
+↓
+order상태PAID로 보정
+↓
+보정이력저장
+7-7.결제실패처리
+결제실패시처리할것:
+payment상태FAILED변경failure_code저장failure_message저장주문상태PAYMENT_FAILED변경예약재고해제payment상태FAILED변경failure_code저장failure_message저장주문상태PAYMENT_FAILED변경예약재고해제실패코드저장은중요하다.
+payment상태FAILED변경
+failure_code저장
+failure_message저장
+주문상태PAYMENT_FAILED변경
+예약재고해제
+payment상태FAILED변경
+failure_code저장
+failure_message저장
+주문상태PAYMENT_FAILED변경
+예약재고해제
+운영자가장애원인을분석할수있어야하기때문이다.
+7-8.결제취소와환불
+사용자주문취소요청↓주문상태확인↓사용자주문취소요청↓주문상태확인↓결제취소는주문취소와연결된다.
+사용자주문취소요청
+↓
+주문상태확인
+↓
+사용자주문취소요청
+↓
+주문상태확인
+↓
+배송시작전인지확인↓PG결제취소요청↓결제취소성공↓주문CANCELLED변경↓재고복구배송시작전인지확인↓PG결제취소요청↓결제취소성공↓주문CANCELLED변경↓재고복구주의할:
+배송시작전인지확인
+↓
+PG결제취소요청
+↓
+결제취소성공
+↓
+주문CANCELLED변경
+↓
+재고복구
+배송시작전인지확인
+↓
+PG결제취소요청
+↓
+결제취소성공
+↓
+주문CANCELLED변경
+↓
+재고복구
+PG결제 취소도 실패할 수 있다. 결제 취소 요청도 중복될 수 있다. 부분 취소가 필요할 수 있다.PG결제 취소도 실패할 수 있다. 결제 취소 요청도 중복될 수 있다. 부분 취소가 필요할 수 있다.cancel_idempotency_keycancel_idempotency_key따라서취소요청에도를둔다.
+PG결제 취소도 실패할 수 있다. 결제 취소 요청도 중복될 수 있다. 부분 취소가 필요할 수 있다.
+PG결제 취소도 실패할 수 있다. 결제 취소 요청도 중복될 수 있다. 부분 취소가 필요할 수 있다.
+cancel_idempotency_key
+cancel_idempotency_key
+배송아키텍처
+READY배송 준비 PREPARING상품준비중 SHIPPED배송 중 DELIVERED배송 완료 RETURNING반품 중RETURNED반품완료READY배송 준비 PREPARING상품준비중 SHIPPED배송 중 DELIVERED배송 완료 RETURNING반품 중RETURNED반품완료8-1.배송상태
+READY배송 준비 PREPARING상품준비중 SHIPPED배송 중 DELIVERED배송 완료 RETURNING반품 중
+RETURNED반품완료
+READY배송 준비 PREPARING상품준비중 SHIPPED배송 중 DELIVERED배송 완료 RETURNING반품 중
+RETURNED반품완료
+READY→PREPARING→SHIPPED→DELIVEREDDELIVERED→RETURNING→RETURNEDREADY→PREPARING→SHIPPED→DELIVEREDDELIVERED→RETURNING→RETURNED8-2.배송상태전이
+READY
+→PREPARING
+→SHIPPED
+→DELIVERED
+DELIVERED
+→RETURNING
+→RETURNED
+READY
+→PREPARING
+→SHIPPED
+→DELIVERED
+DELIVERED
+→RETURNING
+→RETURNED
+8-3.주문취소와배송상태
+주문취소가능여부는배송상태와연결된다.
+배송상태
+주문취소
+READY
+가능
+PREPARING
+정책에따라가능
+SHIPPED
+일반취소불가
+DELIVERED
+반품/환불프로세스로전환
+따라서주문취소시단순히주문상태만보면안된다. 배송상태를함께확인해야한다.
+리뷰아키텍처
+9-1.리뷰작성조건
+로그인한회원이어야한다.실제구매한상품이어야한다.주문상태가DELIVERED또는CONFIRMED여야한다.하나의order_item에는하나의리뷰만작성할수있다.삭제된상품에는리뷰를작성할수없다.로그인한회원이어야한다.실제구매한상품이어야한다.주문상태가DELIVERED또는CONFIRMED여야한다.하나의order_item에는하나의리뷰만작성할수있다.삭제된상품에는리뷰를작성할수없다.리뷰는 아무 상품에나 작성할 수 없다. 리뷰 작성 조건:
+로그인한회원이어야한다.
+실제구매한상품이어야한다.
+주문상태가DELIVERED또는CONFIRMED여야한다.
+하나의order_item에는하나의리뷰만작성할수있다.
+삭제된상품에는리뷰를작성할수없다.
+로그인한회원이어야한다.
+실제구매한상품이어야한다.
+주문상태가DELIVERED또는CONFIRMED여야한다.
+하나의order_item에는하나의리뷰만작성할수있다.
+삭제된상품에는리뷰를작성할수없다.
+9-2.리뷰중복방지
+요청:리뷰없음확인요청:리뷰없음확인요청:리뷰INSERT요청:리뷰INSERT요청:리뷰없음확인요청:리뷰없음확인요청:리뷰INSERT요청:리뷰INSERT애플리케이션에서 먼저 조회해서 막는 것만으로는 부족하다. 동시에두요청이들어오면다음문제가발생할수있다.
+요청:리뷰없음확인
+요청:리뷰없음확인
+요청:리뷰INSERT
+요청:리뷰INSERT
+요청:리뷰없음확인
+요청:리뷰없음확인
+요청:리뷰INSERT
+요청:리뷰INSERT
+따라서DB유니크제약조건이필요하다.
+ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);9-3.리뷰통계갱신
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+상품상세화면에서는보통다음정보를보여준다.
+평균평점리뷰수평점분포평균평점리뷰수평점분포reviewreview매번테이블을집계하면느려질수있다.
+평균평점
+리뷰수
+평점분포
+평균평점
+리뷰수
+평점분포
+review
+review
+product_statproduct_stat따라서테이블을둔다.
+product_stat
+product_stat
+product_statproduct_idreview_countaverage_ratingrating_1_countrating_2_countrating_3_countrating_4_countrating_5_countsales_countupdated_atproduct_statproduct_idreview_countaverage_ratingrating_1_countrating_2_countrating_3_countrating_4_countrating_5_countsales_countupdated_at리뷰작성시실시간으로갱신하거나,이벤트기반으로비동기갱신할수있다.
+product_stat
+product_id
+review_count
+average_rating
+rating_1_count
+rating_2_count
+rating_3_count
+rating_4_count
+rating_5_count
+sales_count
+updated_at
+product_stat
+product_id
+review_count
+average_rating
+rating_1_count
+rating_2_count
+rating_3_count
+rating_4_count
+rating_5_count
+sales_count
+updated_at
+데이터베이스설계
+membermember_idemailpasswordnamerolestatuscreated_atmembermember_idemailpasswordnamerolestatuscreated_at10-1.주요테이블
+member
+member_id
+email
+password
+name
+role
+status
+created_at
+member
+member_id
+email
+password
+name
+role
+status
+created_at
+updated_at
+deleted_at
+product
+product_id
+name
+price
+status
+category_id
+thumbnail_url
+created_at
+updated_at
+deleted_at
+inventory
+product_id
+total_quantity
+reserved_quantity
+available_quantity
+version
+updated_at
+orders
+order_id
+order_no
+member_id
+order_status
+total_price
+ordered_at
+paid_at
+cancelled_at
+created_at
+updated_at
+order_item
+order_item_id
+order_id
+product_id
+product_name_snapshot
+order_price
+quantity
+discount_amount
+option_name_snapshot
+payment
+payment_id
+order_id
+payment_key
+pg_providerpg_transaction_ididempotency_keypayment_statusrequested_amountapproved_amountcancelled_amountapproved_atfailed_atcancelled_atfailure_codefailure_messagecreated_atupdated_atdeliverydelivery_idorder_idreceiver_namereceiver_phoneaddressdelivery_statustracking_numbershipped_atdelivered_atreviewreview_idmember_idproduct_idorder_item_idratingcontentcreated_atupdated_atdeleted_atpg_providerpg_transaction_ididempotency_keypayment_statusrequested_amountapproved_amountcancelled_amountapproved_atfailed_atcancelled_atfailure_codefailure_messagecreated_atupdated_atdeliverydelivery_idorder_idreceiver_namereceiver_phoneaddressdelivery_statustracking_numbershipped_atdelivered_atreviewreview_idmember_idproduct_idorder_item_idratingcontentcreated_atupdated_atdeleted_atALTERTABLEmemberADDCONSTRAINTuk_member_emailUNIQUE(email);ALTERTABLEordersADDCONSTRAINTuk_orders_order_noUNIQUE(order_no);ALTERTABLEmemberADDCONSTRAINTuk_member_emailUNIQUE(email);ALTERTABLEordersADDCONSTRAINTuk_orders_order_noUNIQUE(order_no);10-2.필수제약조건
+pg_provider
+pg_transaction_id
+idempotency_key
+payment_status
+requested_amount
+approved_amount
+cancelled_amount
+approved_at
+failed_at
+cancelled_at
+failure_code
+failure_message
+created_at
+updated_at
+delivery
+delivery_id
+order_id
+receiver_name
+receiver_phone
+address
+delivery_status
+tracking_number
+shipped_at
+delivered_at
+review
+review_id
+member_id
+product_id
+order_item_id
+rating
+content
+created_at
+updated_at
+deleted_at
+pg_provider
+pg_transaction_id
+idempotency_key
+payment_status
+requested_amount
+approved_amount
+cancelled_amount
+approved_at
+failed_at
+cancelled_at
+failure_code
+failure_message
+created_at
+updated_at
+delivery
+delivery_id
+order_id
+receiver_name
+receiver_phone
+address
+delivery_status
+tracking_number
+shipped_at
+delivered_at
+review
+review_id
+member_id
+product_id
+order_item_id
+rating
+content
+created_at
+updated_at
+deleted_at
+ALTERTABLEmember
+ADDCONSTRAINTuk_member_emailUNIQUE(email);
+ALTERTABLEorders
+ADDCONSTRAINTuk_orders_order_noUNIQUE(order_no);
+ALTERTABLEmember
+ADDCONSTRAINTuk_member_emailUNIQUE(email);
+ALTERTABLEorders
+ADDCONSTRAINTuk_orders_order_noUNIQUE(order_no);
+ALTERTABLEpaymentADDCONSTRAINTuk_payment_keyUNIQUE(payment_key);ALTERTABLEpaymentADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);ALTERTABLEpaymentADDCONSTRAINTuk_payment_keyUNIQUE(payment_key);ALTERTABLEpaymentADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);ALTERTABLEreviewADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);ALTERTABLEorder_itemADDCONSTRAINTchk_order_item_quantityCHECK(quantity>0);ALTERTABLEinventoryADD CONSTRAINT chk_inventory_quantity CHECK ( total_quantity>=0ANDreserved_quantity>=0 ANDavailable_quantity>=0);ALTERTABLEorder_itemADDCONSTRAINTchk_order_item_quantityCHECK(quantity>0);ALTERTABLEinventoryADD CONSTRAINT chk_inventory_quantity CHECK ( total_quantity>=0ANDreserved_quantity>=0 ANDavailable_quantity>=0);수량관련제약조건:
+ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_keyUNIQUE(payment_key);
+ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_keyUNIQUE(payment_key);
+ALTERTABLEpayment
+ADDCONSTRAINTuk_payment_idempotency_keyUNIQUE(idempotency_key);
+ALTERTABLEreview
+ADDCONSTRAINTuk_review_order_itemUNIQUE(order_item_id);
+ALTERTABLEorder_item
+ADDCONSTRAINTchk_order_item_quantityCHECK(quantity>0);
+ALTERTABLEinventory
+ADD CONSTRAINT chk_inventory_quantity CHECK ( total_quantity>=0
+ANDreserved_quantity>=0 ANDavailable_quantity>=0
+);
+ALTERTABLEorder_item
+ADDCONSTRAINTchk_order_item_quantityCHECK(quantity>0);
+ALTERTABLEinventory
+ADD CONSTRAINT chk_inventory_quantity CHECK ( total_quantity>=0
+ANDreserved_quantity>=0 ANDavailable_quantity>=0
+);
+API설계
+11-1.회원API
+Method
+URI
+설명
+POST
+/api/members
+회원가입
+POST
+/api/login
+로그인
+GET
+/api/members/me
+내정보조회
+PATCH
+/api/members/me
+내정보수정
+DELETE
+/api/members/me
+회원탈퇴
+11-2.상품API
+Method
+URI
+설명
+GET
+/api/products
+상품목록조회
+GET
+/api/products/{productId}
+상품상세조회
+GET
+/api/products/{productId}/reviews
+상품리뷰목록
+Method
+URI
+설명
+POST
+/api/admin/products
+상품등록
+PATCH
+/api/admin/products/{productId}
+상품수정
+DELETE
+/api/admin/products/{productId}
+상품삭제
+11-3.주문API
+Method
+URI
+설명
+POST
+/api/orders
+주문생성
+GET
+/api/orders
+내주문목록조회
+GET
+/api/orders/{orderId}
+주문상세조회
+POST
+/api/orders/{orderId}/cancel
+주문취소
+POST
+/api/orders/{orderId}/confirm
+구매확정
+11-4.결제API
+Method
+URI
+설명
+POST
+/api/payments/ready
+결제준비
+POST
+/api/payments/approve
+결제승인
+POST
+/api/payments/callback
+PG콜백수신
+POST
+/api/payments/{paymentId}/cancel
+결제취소
+11-5.관리자API
+Method
+URI
+설명
+GET
+/api/admin/orders
+주문색
+GET
+/api/admin/payments
+결제색
+GET
+/api/admin/products
+상품관리목록
+POST
+/api/admin/products/bulk-upload
+상품대량업로드
+GET
+/api/admin/batch-jobs
+배치실행이력
+POST
+/api/admin/batch-jobs/{jobName}/retry
+배치재실행
+조회성능최적화
+12-1.상품목록조회
+상품목록은읽기요청이많다.
+GET /api/products?categoryId=1&sort=latest&cursor=100&size=20GET /api/products?categoryId=1&sort=latest&cursor=100&size=20조회쿼리:
+GET /api/products?categoryId=1&sort=latest&cursor=100&size=20
+GET /api/products?categoryId=1&sort=latest&cursor=100&size=20
+SELECT product_id, name, price, thumbnail_url FROMproductWHERE category_id = ? AND status = 'SELLING' ANDdeleted_atISNULLAND(created_at,product_id)<(?,?)ORDERBYcreated_atDESC,product_idDESC LIMIT20;SELECT product_id, name, price, thumbnail_url FROMproductWHERE category_id = ? AND status = 'SELLING' ANDdeleted_atISNULLAND(created_at,product_id)<(?,?)ORDERBYcreated_atDESC,product_idDESC LIMIT20;CREATEINDEXix_product_category_status_createdONproduct(category_id,status,created_atDESC,product_idDESC);CREATEINDEXix_product_category_status_createdONproduct(category_id,status,created_atDESC,product_idDESC);인덱스:
+SELECT product_id, name, price, thumbnail_url FROMproduct
+WHERE category_id = ? AND status = 'SELLING' ANDdeleted_atISNULL
+AND(created_at,product_id)<(?,?)
+ORDERBYcreated_atDESC,product_idDESC LIMIT20;
+SELECT product_id, name, price, thumbnail_url FROMproduct
+WHERE category_id = ? AND status = 'SELLING' ANDdeleted_atISNULL
+AND(created_at,product_id)<(?,?)
+ORDERBYcreated_atDESC,product_idDESC LIMIT20;
+CREATEINDEXix_product_category_status_created
+ONproduct(category_id,status,created_atDESC,product_idDESC);
+CREATEINDEXix_product_category_status_created
+ONproduct(category_id,status,created_atDESC,product_idDESC);
+12-2.주문목록조회
+주문 목록은 OffsetPagination보다 KeysetPagination이적합하다.
+SELECT order_id, order_no, order_status, total_price, ordered_atFROMordersWHEREmember_id=?AND(ordered_at,order_id)<(?,?)ORDERBYordered_atDESC,order_idDESC LIMIT20;SELECT order_id, order_no, order_status, total_price, ordered_atFROMordersWHEREmember_id=?AND(ordered_at,order_id)<(?,?)ORDERBYordered_atDESC,order_idDESC LIMIT20;CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC, order_idDESC);CREATEINDEXix_orders_member_orderedONorders(member_id,ordered_atDESC, order_idDESC);인덱스:
+SELECT order_id, order_no, order_status, total_price, ordered_atFROMorders
+WHEREmember_id=?
+AND(ordered_at,order_id)<(?,?)
+ORDERBYordered_atDESC,order_idDESC LIMIT20;
+SELECT order_id, order_no, order_status, total_price, ordered_atFROMorders
+WHEREmember_id=?
+AND(ordered_at,order_id)<(?,?)
+ORDERBYordered_atDESC,order_idDESC LIMIT20;
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC, order_idDESC);
+CREATEINDEXix_orders_member_ordered
+ONorders(member_id,ordered_atDESC, order_idDESC);
+SELECT review_id, member_id, rating, content, created_at FROMreviewWHERE product_id = ? ANDdeleted_atISNULLAND(created_at,review_id)<(?,?)ORDERBYcreated_atDESC,review_idDESC LIMIT20;SELECT review_id, member_id, rating, content, created_at FROMreviewWHERE product_id = ? ANDdeleted_atISNULLAND(created_at,review_id)<(?,?)ORDERBYcreated_atDESC,review_idDESC LIMIT20;12-3.리뷰목록조회
+SELECT review_id, member_id, rating, content, created_at FROMreview
+WHERE product_id = ? ANDdeleted_atISNULL
+AND(created_at,review_id)<(?,?)
+ORDERBYcreated_atDESC,review_idDESC LIMIT20;
+SELECT review_id, member_id, rating, content, created_at FROMreview
+WHERE product_id = ? ANDdeleted_atISNULL
+AND(created_at,review_id)<(?,?)
+ORDERBYcreated_atDESC,review_idDESC LIMIT20;
+CREATEINDEXix_review_product_createdONreview(product_id,created_atDESC,review_idDESC);CREATEINDEXix_review_product_createdONreview(product_id,created_atDESC,review_idDESC);인덱스:
+CREATEINDEXix_review_product_created
+ONreview(product_id,created_atDESC,review_idDESC);
+CREATEINDEXix_review_product_created
+ONreview(product_id,created_atDESC,review_idDESC);
+12-4.N+1문제해결
+주문목록조회시다음문제가발생할수있다.
+주문 목록 조회 1번주문1의 주문상품 조회 1번 주문2의 주문상품 조회 1번 주문3의주문상품조회1번...주문 목록 조회 1번주문1의 주문상품 조회 1번 주문2의 주문상품 조회 1번 주문3의주문상품조회1번...ToOne관계→fetchjoin우선고려ToMany관계→batchsize또는별도조회후애플리케이션에서묶기복잡한화면조회→DTO직접조회또는QueryDSL사용ToOne관계→fetchjoin우선고려ToMany관계→batchsize또는별도조회후애플리케이션에서묶기복잡한화면조회→DTO직접조회또는QueryDSL사용해결기준:
+주문 목록 조회 1번주문1의 주문상품 조회 1번 주문2의 주문상품 조회 1번 주문3의주문상품조회1번
+...
+주문 목록 조회 1번주문1의 주문상품 조회 1번 주문2의 주문상품 조회 1번 주문3의주문상품조회1번
+...
+ToOne관계
+→fetchjoin우선고려
+ToMany관계
+→batchsize또는별도조회후애플리케이션에서묶기
+복잡한화면조회
+→DTO직접조회또는QueryDSL사용
+ToOne관계
+→fetchjoin우선고려
+ToMany관계
+→batchsize또는별도조회후애플리케이션에서묶기
+복잡한화면조회
+→DTO직접조회또는QueryDSL사용
+쓰기성능최적화
+13-1.대량INSERT
+save()save()상품을100만건등록할때JPA
+save()
+save()
+를반복하면위하다.
+CSV업로드↓staging_product테이블적재↓데이터검증↓정상데이터만product반영↓실패데이터error테이블저장CSV업로드↓staging_product테이블적재↓데이터검증↓정상데이터만product반영↓실패데이터error테이블저장개선흐름:
+CSV업로드
+↓
+staging_product테이블적재
+↓
+데이터검증
+↓
+정상데이터만product반영
+↓
+실패데이터error테이블저장
+CSV업로드
+↓
+staging_product테이블적재
+↓
+데이터검증
+↓
+정상데이터만product반영
+↓
+실패데이터error테이블저장
+13-2.대량UPDATE
+나쁜예시:
+UPDATEordersSET order_status= 'DELIVERED' WHEREorder_status='SHIPPED';UPDATEordersSET order_status= 'DELIVERED' WHEREorder_status='SHIPPED';문제:
+UPDATEorders
+SET order_status= 'DELIVERED' WHEREorder_status='SHIPPED';
+UPDATEorders
+SET order_status= 'DELIVERED' WHEREorder_status='SHIPPED';
+락이오래유지된다.undo로그가커진다.redo로그가커진다.롤백 비용이 커진다.일반API응답이지연될수있다.락이오래유지된다.undo로그가커진다.redo로그가커진다.롤백 비용이 커진다.일반API응답이지연될수있다.개선방식:
+락이오래유지된다.
+undo로그가커진다.
+redo로그가커진다.
+롤백 비용이 커진다.
+일반API응답이지연될수있다.
+락이오래유지된다.
+undo로그가커진다.
+redo로그가커진다.
+롤백 비용이 커진다.
+일반API응답이지연될수있다.
+UPDATEordersSET order_status= 'DELIVERED' WHEREorder_idBETWEEN?AND? AND order_status= 'SHIPPED';UPDATEordersSET order_status= 'DELIVERED' WHEREorder_idBETWEEN?AND? AND order_status= 'SHIPPED';운영원칙:
+UPDATEorders
+SET order_status= 'DELIVERED' WHEREorder_idBETWEEN?AND? AND order_status= 'SHIPPED';
+UPDATEorders
+SET order_status= 'DELIVERED' WHEREorder_idBETWEEN?AND? AND order_status= 'SHIPPED';
+PK범위기준으로나눈다.청크 단위로 커밋한다.실패 지점을 기록한다.재실행가능하게만든다.PK범위기준으로나눈다.청크 단위로 커밋한다.실패 지점을 기록한다.재실행가능하게만든다.13-3.대량DELETE
+PK범위기준으로나눈다.
+청크 단위로 커밋한다.
+실패 지점을 기록한다.
+재실행가능하게만든다.
+PK범위기준으로나눈다.
+청크 단위로 커밋한다.
+실패 지점을 기록한다.
+재실행가능하게만든다.
+로그성 데이터는row단위 DELETE보다파티션DROP이유리할 수있다.
+ALTERTABLEorder_event_logDROPPARTITIONp202601;ALTERTABLEorder_event_logDROPPARTITIONp202601;DELETEFROMproduct_view_log WHERE created_at < ?LIMIT10000;DELETEFROMproduct_view_log WHERE created_at < ?LIMIT10000;대량DELETE가필요하다면LIMIT기반으로나눠서처리한다.
+ALTERTABLEorder_event_logDROPPARTITIONp202601;
+ALTERTABLEorder_event_logDROPPARTITIONp202601;
+DELETEFROMproduct_view_log WHERE created_at < ?
+LIMIT10000;
+DELETEFROMproduct_view_log WHERE created_at < ?
+LIMIT10000;
+캐시아키텍처
+14-1.캐시후보
+데이터
+캐시적합도
+이유
+상품상세
+높음
+읽기많음
+카테고리목록
+높음
+변경적음
+인기상품
+높음
+반복조회많음
+리뷰통계
+중간
+갱신전략필요
+재고수량
+낮음
+정합성위
+주문상태
+낮음
+사용자별민데이터
+14-2.캐시무효화전략
+캐시는 저장보다 무효화가 어렵다. 상품 수정 시:
+상품DB업데이트↓상품상세캐시삭제↓상품목록캐시삭제또는TTL만료대기상품DB업데이트↓상품상세캐시삭제↓상품목록캐시삭제또는TTL만료대기리뷰작성시:
+상품DB업데이트
+↓
+상품상세캐시삭제
+↓
+상품목록캐시삭제또는TTL만료대기
+상품DB업데이트
+↓
+상품상세캐시삭제
+↓
+상품목록캐시삭제또는TTL만료대기
+리뷰INSERT↓product_stat갱신이벤트발행↓상품상세캐시삭제리뷰INSERT↓product_stat갱신이벤트발행↓상품상세캐시삭제상품가격변경시:
+리뷰INSERT
+↓
+product_stat갱신이벤트발행
+↓
+상품상세캐시삭제
+리뷰INSERT
+↓
+product_stat갱신이벤트발행
+↓
+상품상세캐시삭제
+상품가격DB업데이트↓상품상세캐시삭제↓상품목록캐시삭제상품가격DB업데이트↓상품상세캐시삭제↓상품목록캐시삭제재고는캐시하지않는것이기본이다.
+상품가격DB업데이트
+↓
+상품상세캐시삭제
+↓
+상품목록캐시삭제
+상품가격DB업데이트
+↓
+상품상세캐시삭제
+↓
+상품목록캐시삭제
+재고는정합성이중요하므로DB조건부UPDATE를우선사용한다.
+이벤트와비동기처리
+주문완료이메일발송주문완료SMS발송결제완료알림상품판매량통계갱신리뷰통계갱신검색인덱스갱신관리자알림주문완료이메일발송주문완료SMS발송결제완료알림상품판매량통계갱신리뷰통계갱신검색인덱스갱신관리자알림15-1.비동기로처리할수있는작업
+주문완료이메일발송
+주문완료SMS발송
+결제완료알림
+상품판매량통계갱신
+리뷰통계갱신
+검색인덱스갱신
+관리자알림
+주문완료이메일발송
+주문완료SMS발송
+결제완료알림
+상품판매량통계갱신
+리뷰통계갱신
+검색인덱스갱신
+관리자알림
+15-2.Outbox패턴
+DB트랜잭션과메시지발행을안전하게연결하기위해
+outbox_eventoutbox_event테이블을둔다.
+outbox_event
+outbox_event
+outbox_eventevent_idaggregate_typeaggregate_idevent_typepayloadstatusretry_countcreated_atpublished_atoutbox_eventevent_idaggregate_typeaggregate_idevent_typepayloadstatusretry_countcreated_atpublished_at주문결제완료시:
+outbox_event
+event_id
+aggregate_type
+aggregate_id
+event_type
+payload
+status
+retry_count
+created_at
+published_at
+outbox_event
+event_id
+aggregate_type
+aggregate_id
+event_type
+payload
+status
+retry_count
+created_at
+published_at
+DB트랜잭션안에서paymentAPPROVED저장orderPAID변경outbox_eventINSERT트랜잭션커밋후OutboxPublisher가이벤트발행발행성공시status=PUBLISHEDDB트랜잭션안에서paymentAPPROVED저장orderPAID변경outbox_eventINSERT트랜잭션커밋후OutboxPublisher가이벤트발행발행성공시status=PUBLISHED이렇게하면DB저장은성공했는데메시지발행은실패하는문제를재처리할수있다.
+DB트랜잭션안에서
+paymentAPPROVED저장
+orderPAID변경
+outbox_eventINSERT
+트랜잭션커밋후
+OutboxPublisher가이벤트발행
+발행성공시status=PUBLISHED
+DB트랜잭션안에서
+paymentAPPROVED저장
+orderPAID변경
+outbox_eventINSERT
+트랜잭션커밋후
+OutboxPublisher가이벤트발행
+발행성공시status=PUBLISHED
+보안아키텍처
+16-1.인증
+선택지는크게두가지다.
+Session기반인증JWT기반인증Session기반인증JWT기반인증초기쇼핑몰은세션기반도충분히실용적이다.
+Session기반인증
+JWT기반인증
+Session기반인증
+JWT기반인증
+모바일앱,외부API,확장성을고려하면JWT를선택할수있다.
+16-2.비밀번호저장
+비밀번호는절대평문저장하지않는다.
+BCryptPasswordEncoder사용BCryptPasswordEncoder사용StringencodedPassword=passwordEncoder.encode(rawPassword);StringencodedPassword=passwordEncoder.encode(rawPassword);16-3.인가
+BCryptPasswordEncoder사용
+BCryptPasswordEncoder사용
+StringencodedPassword=passwordEncoder.encode(rawPassword);
+StringencodedPassword=passwordEncoder.encode(rawPassword);
+사용자API와관리자API는명확히분리한다.
+일반사용자내정보조회내주문조회내리뷰작성관리자전체주문조회상품등록/수정/삭제배송상태변경회원관리일반사용자내정보조회내주문조회내리뷰작성관리자전체주문조회상품등록/수정/삭제배송상태변경회원관리publicOrdergetMyOrder(LongmemberId,LongorderId){ Orderorder= orderRepository.findById(orderId).orElseThrow();if(!order.isOwner(memberId)){thrownewAccessDeniedException("본인의주문만조회할수있습니다.");}returnorder;}publicOrdergetMyOrder(LongmemberId,LongorderId){ Orderorder= orderRepository.findById(orderId).orElseThrow();if(!order.isOwner(memberId)){thrownewAccessDeniedException("본인의주문만조회할수있습니다.");}returnorder;}주문조회시반드시본인주문인지확인한다.
+일반사용자
+내정보조회
+내주문조회
+내리뷰작성
+관리자
+전체주문조회
+상품등록/수정/삭제
+배송상태변경
+회원관리
+일반사용자
+내정보조회
+내주문조회
+내리뷰작성
+관리자
+전체주문조회
+상품등록/수정/삭제
+배송상태변경
+회원관리
+publicOrdergetMyOrder(LongmemberId,LongorderId){ Orderorder= orderRepository.findById(orderId)
+.orElseThrow();
+if(!order.isOwner(memberId)){
+thrownewAccessDeniedException("본인의주문만조회할수있습니다.");
+}
+returnorder;
+}
+publicOrdergetMyOrder(LongmemberId,LongorderId){ Orderorder= orderRepository.findById(orderId)
+.orElseThrow();
+if(!order.isOwner(memberId)){
+thrownewAccessDeniedException("본인의주문만조회할수있습니다.");
+}
+returnorder;
+}
+16-4.개인정보보호
+이름전화번호이름전화번호개인정보는 최소한으로 저장한다. 보호대상:
+이름
+전화번호
+이름
+전화번호
+주소이메일결제관련식별자주소이메일결제관련식별자홍길동→홍*동010-1234-5678→010-****-5678test@example.com→te**@example.com홍길동→홍*동010-1234-5678→010-****-5678test@example.com→te**@example.com운영화면에서는마스킹한다.
+주소
+이메일
+결제관련식별자
+주소
+이메일
+결제관련식별자
+홍길동→홍*동
+010-1234-5678→010-****-5678
+test@example.com→te**@example.com
+홍길동→홍*동
+010-1234-5678→010-****-5678
+test@example.com→te**@example.com
+배치아키텍처
+결제대기주문만료처리예약재고해제결제상태동기화배송상태대량반영일별매출집계상품별판매량집계리뷰통계갱신쿠폰만료처리포인트만료처리오래된로그삭제결제대기주문만료처리예약재고해제결제상태동기화배송상태대량반영일별매출집계상품별판매량집계리뷰통계갱신쿠폰만료처리포인트만료처리오래된로그삭제17-1.필요한배치
+결제대기주문만료처리
+예약재고해제
+결제상태동기화
+배송상태대량반영
+일별매출집계
+상품별판매량집계
+리뷰통계갱신
+쿠폰만료처리
+포인트만료처리
+오래된로그삭제
+결제대기주문만료처리
+예약재고해제
+결제상태동기화
+배송상태대량반영
+일별매출집계
+상품별판매량집계
+리뷰통계갱신
+쿠폰만료처리
+포인트만료처리
+오래된로그삭제
+한번에너무많이처리하지않는다.청크 단위로 나눈다.각 청크마다 커밋한다.실패 지점을 기록한다.재실행가능해야한다.중복실행되어도결과가깨지면안된다.한번에너무많이처리하지않는다.청크 단위로 나눈다.각 청크마다 커밋한다.실패 지점을 기록한다.재실행가능해야한다.중복실행되어도결과가깨지면안된다.17-2.배치처리원칙
+한번에너무많이처리하지않는다.
+청크 단위로 나눈다.
+각 청크마다 커밋한다.
+실패 지점을 기록한다.
+재실행가능해야한다.
+중복실행되어도결과가깨지면안된다.
+한번에너무많이처리하지않는다.
+청크 단위로 나눈다.
+각 청크마다 커밋한다.
+실패 지점을 기록한다.
+재실행가능해야한다.
+중복실행되어도결과가깨지면안된다.
+batch_job_execution-execution_idbatch_job_execution-execution_id17-3.배치실행이력
+batch_job_execution
+-execution_id
+batch_job_execution
+-execution_id
+job_namestatusstarted_atended_atprocessed_countsuccess_countfail_counterror_messagejob_namestatusstarted_atended_atprocessed_countsuccess_countfail_counterror_messagebatch_failurefailure_idexecution_idtarget_idreasonpayloadcreated_atbatch_failurefailure_idexecution_idtarget_idreasonpayloadcreated_at배치실패데이터:
+job_name
+status
+started_at
+ended_at
+processed_count
+success_count
+fail_count
+error_message
+job_name
+status
+started_at
+ended_at
+processed_count
+success_count
+fail_count
+error_message
+batch_failure
+failure_id
+execution_id
+target_id
+reason
+payload
+created_at
+batch_failure
+failure_id
+execution_id
+target_id
+reason
+payload
+created_at
+모니터링과운영지표
+API요청수API평균 응답 시간APIp95응답시간APIp99응답시간4xx에러율5xx에러율API요청수API평균 응답 시간APIp95응답시간APIp99응답시간4xx에러율5xx에러율18-1.API지표
+API요청수
+API평균 응답 시간
+APIp95응답시간
+APIp99응답시간
+4xx에러율
+5xx에러율
+API요청수
+API평균 응답 시간
+APIp95응답시간
+APIp99응답시간
+4xx에러율
+5xx에러율
+주문생성성공수주문생성실패수재고부족실패수결제실패수주문취소수결제완료후주문상태불일치건수주문생성성공수주문생성실패수재고부족실패수결제실패수주문취소수결제완료후주문상태불일치건수18-2.주문지표
+주문생성성공수
+주문생성실패수
+재고부족실패수
+결제실패수
+주문취소수
+결제완료후주문상태불일치건수
+주문생성성공수
+주문생성실패수
+재고부족실패수
+결제실패수
+주문취소수
+결제완료후주문상태불일치건수
+결제승인성공률결제승인실패율PG응답지연시간PG콜백지연건수중복콜백수결제취소실패수결제승인성공률결제승인실패율PG응답지연시간PG콜백지연건수중복콜백수결제취소실패수18-3.결제지표
+결제승인성공률
+결제승인실패율
+PG응답지연시간
+PG콜백지연건수
+중복콜백수
+결제취소실패수
+결제승인성공률
+결제승인실패율
+PG응답지연시간
+PG콜백지연건수
+중복콜백수
+결제취소실패수
+SlowQueryLockWaitTimeDeadlockCountConnectionPool사용률QueryTimeout수TransactionRollback수SlowQueryLockWaitTimeDeadlockCountConnectionPool사용률QueryTimeout수TransactionRollback수18-4.DB지표
+SlowQuery
+LockWaitTime
+DeadlockCount
+ConnectionPool사용률
+QueryTimeout수
+TransactionRollback수
+SlowQuery
+LockWaitTime
+DeadlockCount
+ConnectionPool사용률
+QueryTimeout수
+TransactionRollback수
+18-5.알림기준
+결제승인실패율5분간10%초과주문생성APIp993초 초과DBConnectionPool사용률90%초과Deadlock5분간5회이상PENDING_PAYMENT주문이30분이상유지paymentAPPROVED인데orderPAID가아닌건수발생결제승인실패율5분간10%초과주문생성APIp993초 초과DBConnectionPool사용률90%초과Deadlock5분간5회이상PENDING_PAYMENT주문이30분이상유지paymentAPPROVED인데orderPAID가아닌건수발생예시:
+결제승인실패율5분간10%초과
+주문생성APIp993초 초과
+DBConnectionPool사용률90%초과
+Deadlock5분간5회이상
+PENDING_PAYMENT주문이30분이상유지
+paymentAPPROVED인데orderPAID가아닌건수발생
+결제승인실패율5분간10%초과
+주문생성APIp993초 초과
+DBConnectionPool사용률90%초과
+Deadlock5분간5회이상
+PENDING_PAYMENT주문이30분이상유지
+paymentAPPROVED인데orderPAID가아닌건수발생
+장애복구전략
+19-1.주문생성중실패
+상황:
+주문생성 중재고 차감 성공후 order저장실패주문생성 중재고 차감 성공후 order저장실패해결:
+주문생성 중재고 차감 성공후 order저장실패
+주문생성 중재고 차감 성공후 order저장실패
+같은DB트랜잭션안에서처리한다.order저장실패시재고차감도 롤백된다.같은DB트랜잭션안에서처리한다.order저장실패시재고차감도 롤백된다.19-2.결제성공후서버장애
+같은DB트랜잭션안에서처리한다.
+order저장실패시재고차감도 롤백된다.
+같은DB트랜잭션안에서처리한다.
+order저장실패시재고차감도 롤백된다.
+상황:
+PG결제 승인 성공 서버 응답 실패사용자는결제실패로인식DB에는주문상태PENDING_PAYMENTPG결제 승인 성공 서버 응답 실패사용자는결제실패로인식DB에는주문상태PENDING_PAYMENTpayment_key기준으로PG결제내역조회결제상태동기화배치수행paymentAPPROVED반영orderPAID반영payment_key기준으로PG결제내역조회결제상태동기화배치수행paymentAPPROVED반영orderPAID반영해결:
+PG결제 승인 성공 서버 응답 실패
+사용자는결제실패로인식
+DB에는주문상태PENDING_PAYMENT
+PG결제 승인 성공 서버 응답 실패
+사용자는결제실패로인식
+DB에는주문상태PENDING_PAYMENT
+payment_key기준으로PG결제내역조회
+결제상태동기화배치수행
+paymentAPPROVED반영
+orderPAID반영
+payment_key기준으로PG결제내역조회
+결제상태동기화배치수행
+paymentAPPROVED반영
+orderPAID반영
+19-3.콜백중복수신
+상황:
+PG사가같은결제성공콜백을여러번보냄PG사가같은결제성공콜백을여러번보냄payment_keyUNIQUE이미APPROVED상태면무시성공응답반환payment_keyUNIQUE이미APPROVED상태면무시성공응답반환해결:
+PG사가같은결제성공콜백을여러번보냄
+PG사가같은결제성공콜백을여러번보냄
+payment_keyUNIQUE
+이미APPROVED상태면무시
+성공응답반환
+payment_keyUNIQUE
+이미APPROVED상태면무시
+성공응답반환
+19-4.배치실패
+배송상태100만건반영중60만건처리후실패배송상태100만건반영중60만건처리후실패상황:
+배송상태100만건반영중60만건처리후실패
+배송상태100만건반영중60만건처리후실패
+청크단위커밋마지막성공PK기록실패데이터기록실패지점부터재실행청크단위커밋마지막성공PK기록실패데이터기록실패지점부터재실행해결:
+청크단위커밋
+마지막성공PK기록
+실패데이터기록
+실패지점부터재실행
+청크단위커밋
+마지막성공PK기록
+실패데이터기록
+실패지점부터재실행
+테스트 전략
+Product.decreaseStock() Inventory.reserve() Inventory.release() Order.pay() Order.cancel() Order.ship() Review.validateWritable() Payment.approve() Payment.cancel()Product.decreaseStock() Inventory.reserve() Inventory.release() Order.pay() Order.cancel() Order.ship() Review.validateWritable() Payment.approve() Payment.cancel()20-1.단위테스트
+Product.decreaseStock() Inventory.reserve() Inventory.release() Order.pay() Order.cancel() Order.ship() Review.validateWritable() Payment.approve() Payment.cancel()
+Product.decreaseStock() Inventory.reserve() Inventory.release() Order.pay() Order.cancel() Order.ship() Review.validateWritable() Payment.approve() Payment.cancel()
+주문생성시orders,order_item,delivery저장확인재고부족시주문실패확인결제성공시orderPAID변경확인결제실패시예약재고해제확인주문취소시결제취소및재고복구확인리뷰중복작성실패확인주문생성시orders,order_item,delivery저장확인재고부족시주문실패확인결제성공시orderPAID변경확인결제실패시예약재고해제확인주문취소시결제취소및재고복구확인리뷰중복작성실패확인20-2.통합테스트
+주문생성시orders,order_item,delivery저장확인
+재고부족시주문실패확인
+결제성공시orderPAID변경확인
+결제실패시예약재고해제확인
+주문취소시결제취소및재고복구확인
+리뷰중복작성실패확인
+주문생성시orders,order_item,delivery저장확인
+재고부족시주문실패확인
+결제성공시orderPAID변경확인
+결제실패시예약재고해제확인
+주문취소시결제취소및재고복구확인
+리뷰중복작성실패확인
+20-3.동시성테스트
+재고 1개 상품에 동시에 100명이 주문한다. 기대결과:
+성공 주문 수 = 1 실패 주문 수 = 99 최종 재고 = 0성공 주문 수 = 1 실패 주문 수 = 99 최종 재고 = 0여러상품주문데드락테스트:
+성공 주문 수 = 1 실패 주문 수 = 99 최종 재고 = 0
+성공 주문 수 = 1 실패 주문 수 = 99 최종 재고 = 0
+요청1:A,B상품주문 요청2:B,A상품주문기대:-product_id오름차순처리로데드락방지요청1:A,B상품주문 요청2:B,A상품주문기대:-product_id오름차순처리로데드락방지동시에같은order_item에리뷰작성요청10개기대:성공1개실패9개동시에같은order_item에리뷰작성요청10개기대:성공1개실패9개리뷰중복작성테스트:
+요청1:A,B상품주문 요청2:B,A상품주문
+기대:
+-product_id오름차순처리로데드락방지
+요청1:A,B상품주문 요청2:B,A상품주문
+기대:
+-product_id오름차순처리로데드락방지
+동시에같은order_item에리뷰작성요청10개
+기대:
+성공1개
+실패9개
+동시에같은order_item에리뷰작성요청10개
+기대:
+성공1개
+실패9개
+상품 100만 건 기준 상품 목록 조회 시간 주문 100만 건 기준 주문 목록 조회 시간 리뷰 100만 건 기준 리뷰 목록 조회 시간 동시 주문 요청 1,000건 처리 결과대량UPDATE실행중일반API응답시간상품 100만 건 기준 상품 목록 조회 시간 주문 100만 건 기준 주문 목록 조회 시간 리뷰 100만 건 기준 리뷰 목록 조회 시간 동시 주문 요청 1,000건 처리 결과대량UPDATE실행중일반API응답시간20-4.성능테스트
+상품 100만 건 기준 상품 목록 조회 시간 주문 100만 건 기준 주문 목록 조회 시간 리뷰 100만 건 기준 리뷰 목록 조회 시간 동시 주문 요청 1,000건 처리 결과
+대량UPDATE실행중일반API응답시간
+상품 100만 건 기준 상품 목록 조회 시간 주문 100만 건 기준 주문 목록 조회 시간 리뷰 100만 건 기준 리뷰 목록 조회 시간 동시 주문 요청 1,000건 처리 결과
+대량UPDATE실행중일반API응답시간
+운영체크리스트
+[]주문상태전이규칙이도메인에구현되어있는가? [ ] 결제 요청에 idempotency_key가 있는가?[]PG콜백중복처리가 가능한가?[]결제성공후주문상태불일치복구배치가있는가? []재고차감이조건부UPDATE또는락으로보호되는가?[]리뷰중복작성이DBUNIQUE제약조건으로막히는가? []주문 조회 시 본인 주문 여부를 검증하는가?[]주문상태전이규칙이도메인에구현되어있는가? [ ] 결제 요청에 idempotency_key가 있는가?[]PG콜백중복처리가 가능한가?[]결제성공후주문상태불일치복구배치가있는가? []재고차감이조건부UPDATE또는락으로보호되는가?[]리뷰중복작성이DBUNIQUE제약조건으로막히는가? []주문 조회 시 본인 주문 여부를 검증하는가?21-1.배포전체크리스트
+[]주문상태전이규칙이도메인에구현되어있는가? [ ] 결제 요청에 idempotency_key가 있는가?
+[]PG콜백중복처리가 가능한가?
+[]결제성공후주문상태불일치복구배치가있는가? []재고차감이조건부UPDATE또는락으로보호되는가?
+[]리뷰중복작성이DBUNIQUE제약조건으로막히는가? []주문 조회 시 본인 주문 여부를 검증하는가?
+[]주문상태전이규칙이도메인에구현되어있는가? [ ] 결제 요청에 idempotency_key가 있는가?
+[]PG콜백중복처리가 가능한가?
+[]결제성공후주문상태불일치복구배치가있는가? []재고차감이조건부UPDATE또는락으로보호되는가?
+[]리뷰중복작성이DBUNIQUE제약조건으로막히는가? []주문 조회 시 본인 주문 여부를 검증하는가?
+[]관리자API권한이분리되어있는가?[]상품목록,주문목록,리뷰목록인덱스가설계되어있는가? []대량UPDATE/DELETE가청크단위로처리되는가?[]캐시무효화전략이정의되어있는가? []배치 실패 이력이 저장되는가?[]SlowQuery를추적할수있는가?[]결제실패율,주문실패율알림이있는가?[]관리자API권한이분리되어있는가?[]상품목록,주문목록,리뷰목록인덱스가설계되어있는가? []대량UPDATE/DELETE가청크단위로처리되는가?[]캐시무효화전략이정의되어있는가? []배치 실패 이력이 저장되는가?[]SlowQuery를추적할수있는가?[]결제실패율,주문실패율알림이있는가?최종결론
+[]관리자API권한이분리되어있는가?
+[]상품목록,주문목록,리뷰목록인덱스가설계되어있는가? []대량UPDATE/DELETE가청크단위로처리되는가?
+[]캐시무효화전략이정의되어있는가? []배치 실패 이력이 저장되는가?
+[]SlowQuery를추적할수있는가?
+[]결제실패율,주문실패율알림이있는가?
+[]관리자API권한이분리되어있는가?
+[]상품목록,주문목록,리뷰목록인덱스가설계되어있는가? []대량UPDATE/DELETE가청크단위로처리되는가?
+[]캐시무효화전략이정의되어있는가? []배치 실패 이력이 저장되는가?
+[]SlowQuery를추적할수있는가?
+[]결제실패율,주문실패율알림이있는가?
+운영가능한온라인쇼핑몰은단순히다음기능을구현하는것이아니다.
+회원가입 상품조회 주문생성 결제배송 리뷰회원가입 상품조회 주문생성 결제배송 리뷰실제운영가능한구조는다음을함께만족해야한다.
+회원가입 상품조회 주문생성 결제
+배송 리뷰
+회원가입 상품조회 주문생성 결제
+배송 리뷰
+동시에주문해도재고가깨지지않아야한다.결제가중복처리되지않아야한다.PG콜백이중복으로와도안전해야한다.결제와주문상태가불일치하면복구할수있어야한다.주문상태는명확한상태머신으로관리되어야한다.대량데이터처리는청크와배치로안정적으로처리해야한다.조회API는인덱스,페이징,DTO조회로최적화해야한다.캐시는무효화전략까지포함해야한다.보안,인가,개인정보보호가적용되어야한다.운영자는로그와모니터링으로장애원인을추적할수있어야한다.동시에주문해도재고가깨지지않아야한다.결제가중복처리되지않아야한다.PG콜백이중복으로와도안전해야한다.결제와주문상태가불일치하면복구할수있어야한다.주문상태는명확한상태머신으로관리되어야한다.대량데이터처리는청크와배치로안정적으로처리해야한다.조회API는인덱스,페이징,DTO조회로최적화해야한다.캐시는무효화전략까지포함해야한다.보안,인가,개인정보보호가적용되어야한다.운영자는로그와모니터링으로장애원인을추적할수있어야한다.쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다. 운영가능한아키텍처는정상흐름보다실패흐름을더많이고려한다.실무시스템은한번성공하는코드가아니라,실패해도복구가능한구조로설계해야한다.쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다. 운영가능한아키텍처는정상흐름보다실패흐름을더많이고려한다.실무시스템은한번성공하는코드가아니라,실패해도복구가능한구조로설계해야한다.핵심문장:
+동시에주문해도재고가깨지지않아야한다.
+결제가중복처리되지않아야한다.
+PG콜백이중복으로와도안전해야한다.
+결제와주문상태가불일치하면복구할수있어야한다.
+주문상태는명확한상태머신으로관리되어야한다.
+대량데이터처리는청크와배치로안정적으로처리해야한다.
+조회API는인덱스,페이징,DTO조회로최적화해야한다.
+캐시는무효화전략까지포함해야한다.
+보안,인가,개인정보보호가적용되어야한다.
+운영자는로그와모니터링으로장애원인을추적할수있어야한다.
+동시에주문해도재고가깨지지않아야한다.
+결제가중복처리되지않아야한다.
+PG콜백이중복으로와도안전해야한다.
+결제와주문상태가불일치하면복구할수있어야한다.
+주문상태는명확한상태머신으로관리되어야한다.
+대량데이터처리는청크와배치로안정적으로처리해야한다.
+조회API는인덱스,페이징,DTO조회로최적화해야한다.
+캐시는무효화전략까지포함해야한다.
+보안,인가,개인정보보호가적용되어야한다.
+운영자는로그와모니터링으로장애원인을추적할수있어야한다.
+쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다. 운영가능한아키텍처는정상흐름보다실패흐름을더많이고려한다.
+실무시스템은한번성공하는코드가아니라,실패해도복구가능한구조로설계해야한다.
+쇼핑몰의핵심은상품CRUD가아니라주문·결제·재고의정합성이다. 운영가능한아키텍처는정상흐름보다실패흐름을더많이고려한다.
+실무시스템은한번성공하는코드가아니라,실패해도복구가능한구조로설계해야한다.
