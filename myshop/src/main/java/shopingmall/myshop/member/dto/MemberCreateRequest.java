@@ -1,6 +1,25 @@
-// 회원가입 요청 DTO 작성
-// email 입력값 검증
-// password 입력값 검증
-// name 입력값 검증
-// phone 입력값 검증
-// Entity 변환은 Service 또는 별도 Mapper에서 처리
+package shopingmall.myshop.member.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberCreateRequest {
+
+    @Email
+    @NotBlank
+    private String email;
+
+    @NotBlank
+    private String password;
+
+    @NotBlank
+    private String name;
+
+    private String phone;
+}
