@@ -63,6 +63,13 @@ public class MemberService {
         return MemberUpdateResponse.from(member);
     }
 
+    @Transactional
+    public void withdraw(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+        member.withdraw();
+    }
+
     public Member findMemberForOrder(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found."));
