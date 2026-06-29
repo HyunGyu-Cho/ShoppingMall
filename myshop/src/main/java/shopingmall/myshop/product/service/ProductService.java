@@ -8,7 +8,7 @@ import shopingmall.myshop.product.domain.Product;
 import shopingmall.myshop.product.dto.ProductCursor;
 import shopingmall.myshop.product.dto.ProductItemResponse;
 import shopingmall.myshop.product.dto.ProductListResponse;
-import shopingmall.myshop.product.dto.ProductSort;
+import shopingmall.myshop.product.dto.enums.ProductSort;
 import shopingmall.myshop.product.repository.ProductRepository;
 
 import java.util.List;
