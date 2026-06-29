@@ -21,7 +21,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
+    
+    // 회원가입
     @Transactional
     public MemberCreateResponse signUp(MemberCreateRequest request) {
         validateDuplicateEmail(request.getEmail());
@@ -36,50 +37,55 @@ public class MemberService {
 
         return MemberCreateResponse.from(memberRepository.save(member));
     }
-
+    
+    // 로그인 처리
     public MemberLoginResponse login(MemberLoginRequest request) {
         Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
         member.validateCanLogin();
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPasswordHash())) {
-            throw new IllegalArgumentException("비밀버호가 일치하지 않습니다");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
 
         return MemberLoginResponse.from(member);
     }
 
+    // 내 정보 보기
     public MemberResponse showMyInfo(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         return MemberResponse.from(member);
     }
-
+    
+    // 회원 정보 업데이트
     @Transactional
     public MemberUpdateResponse updateInfo(Long memberId, MemberUpdateRequest request) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         member.updateProfile(request.getName(), request.getPhone());
         return MemberUpdateResponse.from(member);
     }
 
+    // 회원 탈퇴 로직
     @Transactional
     public void withdraw(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         member.withdraw();
     }
 
+    // 주문용 회원 조회/검증
     public Member findMemberForOrder(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         member.validateCanOrder();
         return member;
     }
 
     private void validateDuplicateEmail(String email) {
         if (memberRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email already exists.");
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다");
         }
     }
 }
